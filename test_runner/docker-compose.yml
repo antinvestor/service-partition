@@ -1,0 +1,49 @@
+version: '3.2'
+
+services:
+
+  keto-migrate:
+    container_name: frame_keto_migration
+    image: oryd/keto:v0.6.0-alpha.1
+    links:
+      - postgresd:postgresd
+    environment:
+      - LOG_LEVEL=debug
+    command:
+      migrate up --yes --all-namespaces
+    restart: on-failure
+    volumes:
+      - ./keto.yaml:/home/ory/keto.yml
+
+  keto:
+    container_name: frame_keto
+    image: oryd/keto:v0.6.0-alpha.1
+    links:
+      - postgresd:postgresd
+    depends_on:
+      - keto-migrate
+    volumes:
+      - ./keto.yaml:/home/ory/keto.yml
+    ports:
+      - 4466:4466
+      - 4467:4467
+
+#  partition_migration:
+#    build: ../
+#    links:
+#      - postgresd:postgresd
+#    environment:
+#      - LOG_LEVEL=debug
+#      - DO_MIGRATION=true
+#      - DATABASE_URL=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
+#    restart: on-failure
+
+  postgresd:
+    container_name: srv_partition_postgres
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=partition
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=partitiondatabase
+    ports:
+      - 5423:5432
