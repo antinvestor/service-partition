@@ -1,10 +1,10 @@
-version: '3.2'
+version: '3.7'
 
 services:
 
   keto-migrate:
-    container_name: frame_keto_migration
-    image: oryd/keto:v0.6.0-alpha.1
+    container_name: service_partition_keto_migration
+    image: oryd/keto:v0.6.0-alpha.3
     links:
       - postgresd:postgresd
     environment:
@@ -16,8 +16,8 @@ services:
       - ./keto.yaml:/home/ory/keto.yml
 
   keto:
-    container_name: frame_keto
-    image: oryd/keto:v0.6.0-alpha.1
+    container_name: service_partition_keto
+    image: oryd/keto:v0.6.0-alpha.3
     links:
       - postgresd:postgresd
     depends_on:
@@ -28,22 +28,54 @@ services:
       - 4466:4466
       - 4467:4467
 
-#  partition_migration:
-#    build: ../
-#    links:
-#      - postgresd:postgresd
-#    environment:
-#      - LOG_LEVEL=debug
-#      - DO_MIGRATION=true
-#      - DATABASE_URL=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
-#    restart: on-failure
+
+  hydra-migrate:
+    container_name: service_partition_hydra_migration
+    image: oryd/hydra:v1
+    links:
+      - postgresd:postgresd
+    environment:
+      - LOG_LEVEL=debug
+      - DSN=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
+    command:
+      migrate sql -e --yes
+    restart: on-failure
+
+  hydra:
+    container_name: service_partition_hydra
+    image: oryd/hydra:v1
+    links:
+      - postgresd:postgresd
+    depends_on:
+      - hydra-migrate
+    command:
+      serve -c /etc/config/hydra.yml all --dangerous-force-http
+    environment:
+      - STRATEGIES_ACCESS_TOKEN=jwt
+      - OIDC_SUBJECT_IDENTIFIERS_SUPPORTED_TYPES=public
+      - DSN=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
+    volumes:
+      - ./hydra.yaml:/etc/config/hydra.yml
+    ports:
+      - 4444:4444
+      - 4445:4445
+
+  partition_migration:
+    build: ../
+    links:
+      - postgresd:postgresd
+    environment:
+      - LOG_LEVEL=debug
+      - DO_MIGRATION=true
+      - DATABASE_URL=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
+    restart: on-failure
 
   postgresd:
-    container_name: srv_partition_postgres
+    container_name: service_partition_postgres
     image: postgres:13
     environment:
       - POSTGRES_USER=partition
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=partitiondatabase
     ports:
-      - 5423:5432
+      - 5422:5432
