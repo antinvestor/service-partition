@@ -21,6 +21,6 @@ func (psq *PartitionSyncQueueHandler) Handle(ctx context.Context, payload []byte
 		return err
 	}
 
-	return business.SyncPartitionOnHydra(ctx, partition)
+	return business.SyncPartitionOnHydra(ctx, psq.Service, partition)
 
 }

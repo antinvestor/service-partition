@@ -49,9 +49,7 @@ func TestPartitionBusiness_SyncPartitionOnHydra(t *testing.T) {
 		return
 	}
 
-	ctx = frame.ToContext(ctx, service)
-
-	err = SyncPartitionOnHydra(ctx, partition)
+	err = SyncPartitionOnHydra(ctx, service, partition)
 	if err != nil {
 		t.Errorf("Could not sync this partition : %v", err)
 		return

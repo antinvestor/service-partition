@@ -74,3 +74,5 @@ func (prtSrv *PartitionServer) RemovePartitionRole(ctx context.Context, req *par
 		Succeeded: true,
 	}, nil
 }
+
+

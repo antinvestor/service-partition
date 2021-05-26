@@ -132,12 +132,7 @@ func (pb *partitionBusiness) CreatePartition(ctx context.Context, request *parti
 		return nil, err
 	}
 
-	partitionAsByte, err := json.Marshal(partition)
-	if err != nil {
-		return nil, err
-	}
-
-	err = pb.service.Publish(ctx, config.QueuePartitionSyncName, partitionAsByte)
+	err = pb.service.Publish(ctx, config.QueuePartitionSyncName, partition)
 	if err != nil {
 		return nil, err
 	}
@@ -246,44 +241,64 @@ func (pb *partitionBusiness) CreatePartitionRole(ctx context.Context, request *p
 	return toApiPartitionRole(partitionRole), nil
 }
 
-func SyncPartitionOnHydra(ctx context.Context, partition *models.Partition) error {
-
-	service := frame.FromContext(ctx)
-	if service == nil {
-		return errors.New("no service was found in the context provided")
+func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
+	ctx := context.Background()
+	partitionRepository := repository.NewPartitionRepository(service)
+	partition, err :=  partitionRepository.GetByID(ctx, "c2f4j7au6s7f91uqnokg")
+	if err != nil {
+		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not get partition because :%v+", err)
+		return
 	}
 
-	hydraUrl := fmt.Sprintf("%s%s", frame.GetEnv("HYDRA_URL", ""), "/clients")
+	err = service.Publish(ctx, config.QueuePartitionSyncName, partition)
+	if err != nil {
+		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not publish because :%v+", err)
+		return
+	}
+}
+
+func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
+
+	hydraUrl := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvHydraServiceAdminUri, ""), "/clients")
+	hydraIDUrl := fmt.Sprintf("%s/%s", hydraUrl, partition.ID)
 
 	if partition.DeletedAt.Valid {
 
 		//	We need to delete this partition on hydra as well
-		_, _, err := service.InvokeRestService(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", hydraUrl, partition.ID), make(map[string]interface{}), nil)
+		_, _, err := service.InvokeRestService(ctx, http.MethodDelete, hydraIDUrl, make(map[string]interface{}), nil)
 		return err
 	}
 
-	status, result, err := service.InvokeRestService(ctx, http.MethodGet, fmt.Sprintf("%s/%s", hydraUrl, partition.ID), make(map[string]interface{}), nil)
+	status, result, err := service.InvokeRestService(ctx, http.MethodGet, hydraIDUrl, make(map[string]interface{}), nil)
 	if err != nil {
 		return err
 	}
 
 	httpMethod := http.MethodPost
-	if status > 299 || status < 200 {
-
+	if status == 200 {
 		//	We need to update this partition on hydra as well as it already exists
 		httpMethod = http.MethodPut
+		hydraUrl = hydraIDUrl
 	}
 
 	logoUri := ""
 	if val, ok := partition.Properties["logo_uri"]; ok {
 		logoUri = val.(string)
 	}
-	redirectUri := ""
+	uriList := make([]interface{}, 0)
 	if val, ok := partition.Properties["request_uris"]; ok {
-		redirectUri = val.(string)
+		redirectUri, ok := val.(string)
+		if ok {
+			uriListS := strings.Split(redirectUri, ",")
 
-		redirectUri = strings.Replace(redirectUri, "[", "", 1)
-		redirectUri = strings.Replace(redirectUri, "]", "", 1)
+			for _, v := range uriListS {
+				uriList = append(uriList, v)
+			}
+
+		}else{
+			uriList = val.([]interface{})
+		}
+
 	}
 
 	payload := map[string]interface{}{
@@ -293,7 +308,7 @@ func SyncPartitionOnHydra(ctx context.Context, partition *models.Partition) erro
 		"token_endpoint_auth_method": "none",
 		"response_types":             []string{"token", "id_token", "code"},
 		"scope":                      "openid,offline_access,profile,contact",
-		"request_uris":               strings.Split(redirectUri, ","),
+		"request_uris":               uriList,
 		"logo_uri":                   logoUri,
 	}
 

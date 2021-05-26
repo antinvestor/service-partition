@@ -5,6 +5,7 @@ import (
 	"fmt"
 	partitionV1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/config"
+	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/handlers"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/queue"
@@ -23,7 +24,7 @@ import (
 func main() {
 
 	serviceName := "Partitions"
-
+	service := frame.NewService(serviceName)
 	ctx := context.Background()
 
 	var err error
@@ -46,7 +47,7 @@ func main() {
 	)
 
 	implementation := &handlers.PartitionServer{
-
+		Service: service,
 	}
 
 	partitionV1.RegisterPartitionServiceServer(grpcServer, implementation)
@@ -56,7 +57,7 @@ func main() {
 
 
 	partitionSyncQueueHandler := queue.PartitionSyncQueueHandler{
-		Service: implementation.Service,
+		Service: service,
 	}
 	partitionSyncQueueUrl := frame.GetEnv(config.EnvQueuePartitionSync, fmt.Sprintf("mem://%s", config.QueuePartitionSyncName))
 	partitionSyncQueue := frame.RegisterSubscriber(config.QueuePartitionSyncName, partitionSyncQueueUrl, 2, &partitionSyncQueueHandler)
@@ -64,7 +65,7 @@ func main() {
 
 	serviceOptions = append(serviceOptions, partitionSyncQueue, partitionSyncQueueP)
 
-	implementation.Service = frame.NewService(serviceName, serviceOptions...)
+	service.Init(serviceOptions...)
 
 	isMigration, err := strconv.ParseBool(frame.GetEnv(config.EnvMigrate, "false"))
 	if err != nil {
@@ -75,7 +76,7 @@ func main() {
 	if (len(stdArgs) > 0 && stdArgs[0] == "migrate") || isMigration {
 
 		migrationPath := frame.GetEnv(config.EnvMigrationPath, "./migrations/0001")
-		err := implementation.Service.MigrateDatastore(ctx, migrationPath,
+		err := service.MigrateDatastore(ctx, migrationPath,
 			models.Tenant{}, models.Partition{}, models.PartitionRole{},
 			models.Access{}, models.AccessRole{}, models.Page{})
 
@@ -86,6 +87,8 @@ func main() {
 	} else {
 
 		serverPort := frame.GetEnv(config.EnvServerPort, "7003")
+
+		service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
 
 		log.Printf(" main -- Initiating server operations on : %s", serverPort)
 		err := implementation.Service.Run(ctx, fmt.Sprintf(":%v", serverPort))
