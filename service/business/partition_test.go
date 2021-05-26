@@ -15,7 +15,7 @@ func TestPartitionBusiness_SyncPartitionOnHydra(t *testing.T) {
 	ctx := context.Background()
 	service := getTestService("Partition Srv", ctx)
 
-	err := os.Setenv(config.EnvHydraServiceUri, "http://localhost:4445")
+	err := os.Setenv(config.EnvHydraServiceAdminUri, "http://localhost:4445")
 	if err != nil{
 		t.Errorf("There was an error setting HYDRA_URL : %v", err)
 		return
