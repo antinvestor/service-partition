@@ -17,7 +17,6 @@ import (
 	"strings"
 )
 
-
 type PartitionBusiness interface {
 	GetPartition(ctx context.Context, request *partitionV1.PartitionGetRequest) (*partitionV1.PartitionObject, error)
 	RemovePartition(ctx context.Context, request *partitionV1.PartitionRoleRemoveRequest) error
@@ -78,7 +77,6 @@ func (pb *partitionBusiness) GetPartition(ctx context.Context, request *partitio
 		return nil, err
 	}
 
-
 	partition, err := pb.partitionRepo.GetByID(ctx, request.GetPartitionId())
 	if err != nil {
 		return nil, err
@@ -93,7 +91,6 @@ func (pb *partitionBusiness) RemovePartition(ctx context.Context, request *parti
 	if err != nil {
 		return err
 	}
-
 
 	err = pb.partitionRepo.Delete(ctx, request.GetPartitionRoleId())
 	if err != nil {
@@ -249,9 +246,6 @@ func (pb *partitionBusiness) CreatePartitionRole(ctx context.Context, request *p
 	return toApiPartitionRole(partitionRole), nil
 }
 
-
-
-
 func SyncPartitionOnHydra(ctx context.Context, partition *models.Partition) error {
 
 	service := frame.FromContext(ctx)
@@ -261,6 +255,25 @@ func SyncPartitionOnHydra(ctx context.Context, partition *models.Partition) erro
 
 	hydraUrl := fmt.Sprintf("%s%s", frame.GetEnv("HYDRA_URL", ""), "/clients")
 
+	if partition.DeletedAt.Valid {
+
+		//	We need to delete this partition on hydra as well
+		_, _, err := service.InvokeRestService(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", hydraUrl, partition.ID), make(map[string]interface{}), nil)
+		return err
+	}
+
+	status, result, err := service.InvokeRestService(ctx, http.MethodGet, fmt.Sprintf("%s/%s", hydraUrl, partition.ID), make(map[string]interface{}), nil)
+	if err != nil {
+		return err
+	}
+
+	httpMethod := http.MethodPost
+	if status > 299 || status < 200 {
+
+		//	We need to update this partition on hydra as well as it already exists
+		httpMethod = http.MethodPut
+	}
+
 	logoUri := ""
 	if val, ok := partition.Properties["logo_uri"]; ok {
 		logoUri = val.(string)
@@ -269,24 +282,22 @@ func SyncPartitionOnHydra(ctx context.Context, partition *models.Partition) erro
 	if val, ok := partition.Properties["request_uris"]; ok {
 		redirectUri = val.(string)
 
-		redirectUri = strings.Replace(redirectUri, "[","", 1)
-		redirectUri = strings.Replace(redirectUri, "]","", 1)
+		redirectUri = strings.Replace(redirectUri, "[", "", 1)
+		redirectUri = strings.Replace(redirectUri, "]", "", 1)
 	}
-
-
 
 	payload := map[string]interface{}{
-		"client_id": partition.ID,
-		"client_name":    partition.Name,
-		"grant_types":  []string{"authorization_code", "refresh_token"},
-		"token_endpoint_auth_method":   "none",
-		"response_types": []string{"token", "id_token", "code"},
-		"scope": "openid,offline_access,profile,contact",
-		"request_uris": strings.Split(redirectUri, ","),
-		"logo_uri": logoUri,
+		"client_id":                  partition.ID,
+		"client_name":                partition.Name,
+		"grant_types":                []string{"authorization_code", "refresh_token"},
+		"token_endpoint_auth_method": "none",
+		"response_types":             []string{"token", "id_token", "code"},
+		"scope":                      "openid,offline_access,profile,contact",
+		"request_uris":               strings.Split(redirectUri, ","),
+		"logo_uri":                   logoUri,
 	}
 
-	status, result, err := service.InvokeRestService(ctx, http.MethodPost, hydraUrl, payload, nil)
+	status, result, err = service.InvokeRestService(ctx, httpMethod, hydraUrl, payload, nil)
 	if err != nil {
 		return err
 	}
@@ -303,7 +314,7 @@ func SyncPartitionOnHydra(ctx context.Context, partition *models.Partition) erro
 
 	log.Printf("Returned response is : %v", response)
 
-	if partition.Properties == nil{
+	if partition.Properties == nil {
 		partition.Properties = make(datatypes.JSONMap)
 	}
 	for k, v := range response {
