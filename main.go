@@ -41,9 +41,8 @@ func main() {
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpcctxtags.UnaryServerInterceptor(),
 			grpcrecovery.UnaryServerInterceptor(),
-
+			frame.UnaryAuthInterceptor,
 		)),
-		grpc.UnaryInterceptor(frame.UnaryAuthInterceptor),
 	)
 
 	implementation := &handlers.PartitionServer{
