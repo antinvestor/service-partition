@@ -28,13 +28,8 @@ jobs:
       - name: Check logs
         run: docker-compose -f ./tests_runner/docker-compose.yml logs
 
-      - name: Test With Coverage
-        run: go test -v  -json ./... > test.json
-
-      - name: Annotate tests
-        uses: guyarb/golang-test-annotations@v0.3.0
-        with:
-          test-results: test.json
+      - name: Test partition service
+        run: go test -v   ./...
 
       - name: Run Vet & Lint
         run: |
