@@ -11,13 +11,13 @@ import (
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"google.golang.org/grpc"
+	"log"
 	"os"
 	"strconv"
 
 	"github.com/pitabwire/frame"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware"
-	log "github.com/sirupsen/logrus"
 )
 
 func main() {
