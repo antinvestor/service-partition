@@ -7,6 +7,7 @@ import (
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/handlers"
 	"github.com/antinvestor/service-partition/service/models"
+	"github.com/antinvestor/service-partition/service/queue"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"google.golang.org/grpc"
@@ -51,6 +52,16 @@ func main() {
 
 	grpcServerOpt := frame.GrpcServer(grpcServer)
 	serviceOptions = append(serviceOptions, grpcServerOpt)
+
+
+	partitionSyncQueueHandler := queue.PartitionSyncQueueHandler{
+		Service: implementation.Service,
+	}
+	partitionSyncQueueUrl := frame.GetEnv(config.EnvQueuePartitionSync, fmt.Sprintf("mem://%s", config.QueuePartitionSyncName))
+	partitionSyncQueue := frame.RegisterSubscriber(config.QueuePartitionSyncName, partitionSyncQueueUrl, 2, &partitionSyncQueueHandler)
+	partitionSyncQueueP := frame.RegisterPublisher(config.QueuePartitionSyncName, partitionSyncQueueUrl)
+
+	serviceOptions = append(serviceOptions, partitionSyncQueue, partitionSyncQueueP)
 
 	implementation.Service = frame.NewService(serviceName, serviceOptions...)
 

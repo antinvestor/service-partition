@@ -8,14 +8,14 @@ import (
 	"testing"
 )
 
-func GetTestService(name string, ctx context.Context) *frame.Service {
-	mainDb := frame.Datastore(ctx, "postgres://partition:secret@localhost:5423/partitiondatabase?sslmode=disable", false)
+func getTestService(name string, ctx context.Context) *frame.Service {
+	mainDb := frame.Datastore(ctx, "postgres://partition:secret@localhost:5422/partitiondatabase?sslmode=disable", false)
 	return frame.NewService(name, mainDb)
 }
 
 func TestTenantRepository_GetByID(t *testing.T) {
 	ctx := context.Background()
-	srv := GetTestService("Tenant Srv", ctx)
+	srv := getTestService("Tenant Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 
@@ -43,7 +43,7 @@ func TestTenantRepository_GetByID(t *testing.T) {
 func TestTenantRepository_Save(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Tenant Srv", ctx)
+	srv := getTestService("Tenant Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 
@@ -62,7 +62,7 @@ func TestTenantRepository_Save(t *testing.T) {
 func TestTenantRepository_Delete(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Tenant Srv", ctx)
+	srv := getTestService("Tenant Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 

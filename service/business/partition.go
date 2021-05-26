@@ -2,13 +2,21 @@ package business
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/antinvestor/apis/common"
 	partitionV1 "github.com/antinvestor/service-partition-api"
+	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
 	"gorm.io/datatypes"
+	"log"
+	"net/http"
+	"strings"
 )
+
 
 type PartitionBusiness interface {
 	GetPartition(ctx context.Context, request *partitionV1.PartitionGetRequest) (*partitionV1.PartitionObject, error)
@@ -127,6 +135,16 @@ func (pb *partitionBusiness) CreatePartition(ctx context.Context, request *parti
 		return nil, err
 	}
 
+	partitionAsByte, err := json.Marshal(partition)
+	if err != nil {
+		return nil, err
+	}
+
+	err = pb.service.Publish(ctx, config.QueuePartitionSyncName, partitionAsByte)
+	if err != nil {
+		return nil, err
+	}
+
 	return toApiPartition(partition), nil
 }
 
@@ -229,4 +247,74 @@ func (pb *partitionBusiness) CreatePartitionRole(ctx context.Context, request *p
 	}
 
 	return toApiPartitionRole(partitionRole), nil
+}
+
+
+
+
+func SyncPartitionOnHydra(ctx context.Context, partition *models.Partition) error {
+
+	service := frame.FromContext(ctx)
+	if service == nil {
+		return errors.New("no service was found in the context provided")
+	}
+
+	hydraUrl := fmt.Sprintf("%s%s", frame.GetEnv("HYDRA_URL", ""), "/clients")
+
+	logoUri := ""
+	if val, ok := partition.Properties["logo_uri"]; ok {
+		logoUri = val.(string)
+	}
+	redirectUri := ""
+	if val, ok := partition.Properties["request_uris"]; ok {
+		redirectUri = val.(string)
+
+		redirectUri = strings.Replace(redirectUri, "[","", 1)
+		redirectUri = strings.Replace(redirectUri, "]","", 1)
+	}
+
+
+
+	payload := map[string]interface{}{
+		"client_id": partition.ID,
+		"client_name":    partition.Name,
+		"grant_types":  []string{"authorization_code", "refresh_token"},
+		"token_endpoint_auth_method":   "none",
+		"response_types": []string{"token", "id_token", "code"},
+		"scope": "openid,offline_access,profile,contact",
+		"request_uris": strings.Split(redirectUri, ","),
+		"logo_uri": logoUri,
+	}
+
+	status, result, err := service.InvokeRestService(ctx, http.MethodPost, hydraUrl, payload, nil)
+	if err != nil {
+		return err
+	}
+
+	if status > 299 || status < 200 {
+		return errors.New(fmt.Sprintf(" invalid response status %d had message %s", status, string(result)))
+	}
+
+	var response map[string]interface{}
+	err = json.Unmarshal(result, &response)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Returned response is : %v", response)
+
+	if partition.Properties == nil{
+		partition.Properties = make(datatypes.JSONMap)
+	}
+	for k, v := range response {
+		partition.Properties[k] = v
+	}
+
+	partitionRepository := repository.NewPartitionRepository(service)
+	err = partitionRepository.Save(ctx, partition)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -11,7 +11,7 @@ import (
 func TestAccessRepository_Save(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Access Srv", ctx)
+	srv := getTestService("Access Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -72,7 +72,7 @@ func TestAccessRepository_Save(t *testing.T) {
 func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Access Srv", ctx)
+	srv := getTestService("Access Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -132,7 +132,7 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 func TestAccessRepository_SaveRole(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Access Srv", ctx)
+	srv := getTestService("Access Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -229,7 +229,7 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 func TestAccessRepository_RemoveRole(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Access Srv", ctx)
+	srv := getTestService("Access Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{

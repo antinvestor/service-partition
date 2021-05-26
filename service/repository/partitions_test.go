@@ -10,7 +10,7 @@ import (
 func TestPartitionRepository_GetByID(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Partition Srv", ctx)
+	srv := getTestService("Partition Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -56,7 +56,7 @@ func TestPartitionRepository_GetByID(t *testing.T) {
 func TestPartitionRepository_GetChildren(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Partition Srv", ctx)
+	srv := getTestService("Partition Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -123,7 +123,7 @@ func TestPartitionRepository_GetChildren(t *testing.T) {
 func TestPartitionRepository_SaveRole(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Partition Srv", ctx)
+	srv := getTestService("Partition Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -189,7 +189,7 @@ func TestPartitionRepository_RemoveRole(t *testing.T) {
 
 
 	ctx := context.Background()
-	srv := GetTestService("Partition Srv", ctx)
+	srv := getTestService("Partition Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{

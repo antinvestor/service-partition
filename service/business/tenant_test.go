@@ -11,33 +11,9 @@ import (
 	"testing"
 )
 
-
-
-
-func TestNewTenantBusiness(t *testing.T) {
-	ctx := context.Background()
-	type args struct {
-		ctx     context.Context
-		service *frame.Service
-	}
-	tests := []struct {
-		name string
-		args args
-		want TenantBusiness
-	}{
-		{name: "Only tenant business",
-			args: {ctx: ctx, service: GetTestService()},
-		},
-
-
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewTenantBusiness(tt.args.ctx, tt.args.service); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewTenantBusiness() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func getTestService(name string, ctx context.Context) *frame.Service {
+	mainDb := frame.Datastore(ctx, "postgres://partition:secret@localhost:5422/partitiondatabase?sslmode=disable", false)
+	return frame.NewService(name, mainDb)
 }
 
 func Test_extractProperties(t *testing.T) {
@@ -67,9 +43,7 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 	}
 	type args struct {
 		ctx         context.Context
-		name        string
-		description string
-		properties  map[string]string
+		request     *partitionV1.TenantRequest
 	}
 	tests := []struct {
 		name    string
@@ -86,7 +60,7 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 				service:    tt.fields.service,
 				tenantRepo: tt.fields.tenantRepo,
 			}
-			got, err := t.CreateTenant(tt.args.ctx, tt.args.name, tt.args.description, tt.args.properties)
+			got, err := t.CreateTenant(tt.args.ctx, tt.args.request)
 			if (err != nil) != tt.wantErr {
 				t1.Errorf("CreateTenant() error = %v, wantErr %v", err, tt.wantErr)
 				return

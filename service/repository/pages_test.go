@@ -12,7 +12,7 @@ import (
 func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Page Srv", ctx)
+	srv := getTestService("Page Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -73,7 +73,7 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 
 func TestPageRepository_Save(t *testing.T) {
 	ctx := context.Background()
-	srv := GetTestService("Page Srv", ctx)
+	srv := getTestService("Page Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
@@ -135,7 +135,7 @@ func TestPageRepository_Save(t *testing.T) {
 func TestPageRepository_Delete(t *testing.T) {
 
 	ctx := context.Background()
-	srv := GetTestService("Page Srv", ctx)
+	srv := getTestService("Page Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
