@@ -61,9 +61,9 @@ func main() {
 	partitionSyncQueueHandler := queue.PartitionSyncQueueHandler{
 		Service: service,
 	}
-	partitionSyncQueueUrl := frame.GetEnv(config.EnvQueuePartitionSync, fmt.Sprintf("mem://%s", config.QueuePartitionSyncName))
-	partitionSyncQueue := frame.RegisterSubscriber(config.QueuePartitionSyncName, partitionSyncQueueUrl, 2, &partitionSyncQueueHandler)
-	partitionSyncQueueP := frame.RegisterPublisher(config.QueuePartitionSyncName, partitionSyncQueueUrl)
+	partitionSyncQueueURL := frame.GetEnv(config.EnvQueuePartitionSync, fmt.Sprintf("mem://%s", config.QueuePartitionSyncName))
+	partitionSyncQueue := frame.RegisterSubscriber(config.QueuePartitionSyncName, partitionSyncQueueURL, 2, &partitionSyncQueueHandler)
+	partitionSyncQueueP := frame.RegisterPublisher(config.QueuePartitionSyncName, partitionSyncQueueURL)
 
 	serviceOptions = append(serviceOptions, partitionSyncQueue, partitionSyncQueueP)
 
