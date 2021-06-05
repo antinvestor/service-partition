@@ -5,6 +5,7 @@ services:
   partition_db:
     container_name: service_partition_postgres
     image: postgres:13
+    restart: always
     environment:
       - POSTGRES_USER=partition
       - POSTGRES_PASSWORD=secret

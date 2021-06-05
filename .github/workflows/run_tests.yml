@@ -21,11 +21,13 @@ jobs:
 
       - name: Build the docker-compose stack
         run: docker-compose -f tests_runner/docker-compose.yml up -d
-      - name: Wait for afew seconds
-        run: sleep 5
-      - name: Check running containers
-        run: docker ps -a
-      - name: Check logs
+
+      - name: Sleep
+        uses: jakejarvis/wait-action@master
+        with:
+        time: '60s'
+
+      - name: Print out logs to help with debugging
         run: docker-compose -f ./tests_runner/docker-compose.yml logs
 
       - name: Test partition service
