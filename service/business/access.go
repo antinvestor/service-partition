@@ -2,10 +2,12 @@ package business
 
 import (
 	"context"
+	"errors"
 	partitionV1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
+	"log"
 	"strings"
 )
 
@@ -36,13 +38,19 @@ type accessBusiness struct {
 	partitionRepo repository.PartitionRepository
 }
 
-func toApiAccess(accessModel *models.Access) *partitionV1.AccessObject {
+func toApiAccess(accessModel *models.Access) (*partitionV1.AccessObject, error) {
+
+	if accessModel.Partition == nil {
+		return nil, errors.New("no partition exists for this access")
+	}
+
+	partitionObject := toApiPartition(accessModel.Partition)
 
 	return &partitionV1.AccessObject{
-		AccessId:    accessModel.GetID(),
-		PartitionId: accessModel.PartitionID,
-		ProfileId:   accessModel.ProfileID,
-	}
+		AccessId:  accessModel.GetID(),
+		ProfileId: accessModel.ProfileID,
+		Partition: partitionObject,
+	}, nil
 }
 
 func toApiAccessRole(accessRoleModel *models.AccessRole) *partitionV1.AccessRoleObject {
@@ -50,7 +58,7 @@ func toApiAccessRole(accessRoleModel *models.AccessRole) *partitionV1.AccessRole
 	return &partitionV1.AccessRoleObject{
 		AccessRoleId: accessRoleModel.GetID(),
 		AccessId:     accessRoleModel.AccessID,
-		Role:         toApiPartitionRole(&accessRoleModel.PartitionRole),
+		Role:         toApiPartitionRole(accessRoleModel.PartitionRole),
 	}
 }
 
@@ -61,12 +69,21 @@ func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.Ac
 		return nil, err
 	}
 
-	access, err := ab.accessRepo.GetByID(ctx, request.GetAccessId())
+	var access *models.Access
+	if request.GetAccessId() != "" {
+		access, err = ab.accessRepo.GetByID(ctx, request.GetAccessId())
+		if err != nil {
+			return nil, err
+		}
+		return toApiAccess(access)
+	}
+
+	access, err = ab.accessRepo.GetByPartitionAndProfile(ctx, request.GetPartitionId(), request.GetProfileId())
 	if err != nil {
 		return nil, err
 	}
 
-	return toApiAccess(access), nil
+	return toApiAccess(access)
 }
 
 func (ab *accessBusiness) RemoveAccess(ctx context.Context, request *partitionV1.AccessRemoveRequest) error {
@@ -91,22 +108,26 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 		return nil, err
 	}
 
+	log.Printf(" CreateAccess -- supplied request %+v", request)
+
 	partition, err := ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
 	if err != nil {
 		return nil, err
 	}
 
 	access, err := ab.accessRepo.GetByPartitionAndProfile(ctx, request.GetPartitionId(), request.GetProfileId())
-	if err != nil && !strings.Contains(err.Error(), "record not found") {
-		return nil, err
-	}
+	if err != nil {
 
-	if access != nil {
-		return toApiAccess(access), nil
+		if !strings.Contains(err.Error(), "record not found") {
+			return nil, err
+		}
+	} else {
+		return toApiAccess(access)
 	}
 
 	access = &models.Access{
 		ProfileID: request.GetProfileId(),
+		Partition: partition,
 		BaseModel: frame.BaseModel{
 			TenantID:    partition.TenantID,
 			PartitionID: partition.GetID(),
@@ -118,7 +139,9 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 		return nil, err
 	}
 
-	return toApiAccess(access), nil
+	log.Printf(" CreateAccess -- final access created is  %+v", access)
+
+	return toApiAccess(access)
 }
 
 func (ab *accessBusiness) ListAccessRoles(ctx context.Context, request *partitionV1.AccessRoleListRequest) (*partitionV1.AccessRoleListResponse, error) {
@@ -148,7 +171,7 @@ func (ab *accessBusiness) RemoveAccessRole(ctx context.Context, request *partiti
 
 	err := request.Validate()
 	if err != nil {
-		return  err
+		return err
 	}
 
 	err = ab.accessRepo.RemoveRole(ctx, request.GetAccessRoleId())
@@ -165,7 +188,6 @@ func (ab *accessBusiness) CreateAccessRole(ctx context.Context, request *partiti
 	if err != nil {
 		return nil, err
 	}
-
 
 	access, err := ab.accessRepo.GetByID(ctx, request.GetAccessId())
 	if err != nil {

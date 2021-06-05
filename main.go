@@ -23,7 +23,7 @@ import (
 
 func main() {
 
-	serviceName := "Partitions"
+	serviceName := "service.partition"
 	service := frame.NewService(serviceName)
 	ctx := context.Background()
 
@@ -38,11 +38,14 @@ func main() {
 	readDb := frame.Datastore(ctx, readOnlydatasource, true)
 	serviceOptions = append(serviceOptions, readDb)
 
+	jwtAudience := frame.GetEnv(config.EnvOauth2JwtVerifyAudience, serviceName)
+	jwtIssuer := frame.GetEnv(config.EnvOauth2JwtVerifyIssuer, "")
+
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpcctxtags.UnaryServerInterceptor(),
 			grpcrecovery.UnaryServerInterceptor(),
-			frame.UnaryAuthInterceptor,
+			frame.UnaryAuthInterceptor(jwtAudience, jwtIssuer),
 		)),
 	)
 
@@ -54,7 +57,6 @@ func main() {
 
 	grpcServerOpt := frame.GrpcServer(grpcServer)
 	serviceOptions = append(serviceOptions, grpcServerOpt)
-
 
 	partitionSyncQueueHandler := queue.PartitionSyncQueueHandler{
 		Service: service,

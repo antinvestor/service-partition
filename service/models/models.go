@@ -24,7 +24,7 @@ type Partition struct {
 type PartitionRole struct {
 	frame.BaseModel
 	Name       string `gorm:"type:varchar(100);"`
-	Partition  Partition
+	Partition  *Partition
 	Properties datatypes.JSONMap
 }
 
@@ -32,21 +32,21 @@ type Page struct {
 	frame.BaseModel
 	Name      string `gorm:"type:varchar(50);"`
 	Html      string `gorm:"type:text;"`
-	Partition Partition
+	Partition *Partition
 	State     int32
 }
 
 type Access struct {
 	frame.BaseModel
 	ProfileID string `gorm:"type:varchar(50);"`
-	Partition Partition
+	Partition *Partition
 	State     int32
 }
 
 type AccessRole struct {
 	frame.BaseModel
-	Access          Access
+	Access          *Access
 	AccessID        string `gorm:"type:varchar(50);"`
-	PartitionRole   PartitionRole
-	PartitionRoleID string
+	PartitionRole   *PartitionRole
+	PartitionRoleID string `gorm:"type:varchar(50);"`
 }

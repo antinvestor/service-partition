@@ -15,7 +15,7 @@ func TestAccessRepository_Save(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -27,7 +27,7 @@ func TestAccessRepository_Save(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -44,7 +44,7 @@ func TestAccessRepository_Save(t *testing.T) {
 	access := models.Access{
 		ProfileID: "profile",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -54,7 +54,6 @@ func TestAccessRepository_Save(t *testing.T) {
 		t.Errorf("There was an error saving access : %v", err)
 		return
 	}
-
 
 	savedAccess, err := accessRepo.GetByID(ctx, access.GetID())
 	if err != nil {
@@ -67,6 +66,16 @@ func TestAccessRepository_Save(t *testing.T) {
 		return
 	}
 
+	if savedAccess.Partition == nil {
+		t.Errorf("Embedded Access partition should not be nil")
+		return
+	}
+
+	if savedAccess.Partition.ID != savedAccess.PartitionID {
+		t.Errorf("Access partition id: %v should match embedded partition id: %v", savedAccess.PartitionID, savedAccess.Partition.PartitionID)
+		return
+	}
+
 }
 
 func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
@@ -76,7 +85,7 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -88,8 +97,8 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
-		Description: "",
+		Name:        "Partition",
+		Description: "Partition details",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
 		},
@@ -105,7 +114,7 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 	access := models.Access{
 		ProfileID: "profile_j",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -115,7 +124,6 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 		t.Errorf("There was an error saving access : %v", err)
 		return
 	}
-
 
 	savedAccess, err := accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), "profile_j")
 	if err != nil {
@@ -127,6 +135,16 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 		t.Errorf("Access partition id: %v should match parent partition id: %v", savedAccess.PartitionID, partition.GetID())
 		return
 	}
+
+	if savedAccess.Partition == nil {
+		t.Errorf("Embedded Access partition should not be nil")
+		return
+	}
+
+	if savedAccess.Partition.ID != savedAccess.PartitionID {
+		t.Errorf("Access partition id: %v should match embedded partition id: %v", savedAccess.PartitionID, savedAccess.Partition.PartitionID)
+		return
+	}
 }
 
 func TestAccessRepository_SaveRole(t *testing.T) {
@@ -136,7 +154,7 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -148,7 +166,7 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -164,7 +182,7 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 	partitionRole := models.PartitionRole{
 		Name: "",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -175,12 +193,11 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 		return
 	}
 
-
 	accessRepo := NewAccessRepository(srv)
 	access := models.Access{
 		ProfileID: "profile_j",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -192,10 +209,10 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 	}
 
 	accessRole := models.AccessRole{
-		AccessID: access.GetID(),
+		AccessID:        access.GetID(),
 		PartitionRoleID: partitionRole.GetID(),
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -217,9 +234,7 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 		return
 	}
 
-
-
-	if savedAccessRoles[0].PartitionID != partition.GetID() || savedAccessRoles[0].AccessID != access.GetID(){
+	if savedAccessRoles[0].PartitionID != partition.GetID() || savedAccessRoles[0].AccessID != access.GetID() {
 		t.Errorf("Partition role partition id: %v should match parent partition id: %v", savedAccessRoles[0].PartitionID, partition.GetID())
 		return
 	}
@@ -233,7 +248,7 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -245,7 +260,7 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -261,7 +276,7 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 	partitionRole := models.PartitionRole{
 		Name: "",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -272,12 +287,11 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 		return
 	}
 
-
 	accessRepo := NewAccessRepository(srv)
 	access := models.Access{
 		ProfileID: "profile_j",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -289,7 +303,7 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 	}
 
 	accessRole := models.AccessRole{
-		AccessID: access.GetID(),
+		AccessID:        access.GetID(),
 		PartitionRoleID: partitionRole.GetID(),
 	}
 
@@ -305,9 +319,8 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 		return
 	}
 
-
 	deletedAccessRoles, err := accessRepo.GetRoles(ctx, access.GetID())
-	if err != nil && !strings.Contains(err.Error(), "record not found"){
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
 		t.Errorf("There was an error getting saved access : %v", err)
 		return
 	}
@@ -318,8 +331,3 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 	}
 
 }
-
-
-
-
-

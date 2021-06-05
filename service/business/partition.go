@@ -47,9 +47,10 @@ type partitionBusiness struct {
 
 func toApiPartition(partitionModel *models.Partition) *partitionV1.PartitionObject {
 
-	properties := extractProperties(partitionModel.Properties)
+	properties := frame.PropertiesToMap(partitionModel.Properties)
 
 	return &partitionV1.PartitionObject{
+		PartitionId: partitionModel.ID,
 		TenantId:    partitionModel.TenantID,
 		ParentId:    partitionModel.ParentID,
 		Name:        partitionModel.Name,
@@ -61,7 +62,7 @@ func toApiPartition(partitionModel *models.Partition) *partitionV1.PartitionObje
 
 func toApiPartitionRole(partitionModel *models.PartitionRole) *partitionV1.PartitionRoleObject {
 
-	properties := extractProperties(partitionModel.Properties)
+	properties := frame.PropertiesToMap(partitionModel.Properties)
 
 	return &partitionV1.PartitionRoleObject{
 		PartitionId: partitionModel.PartitionID,
@@ -112,16 +113,12 @@ func (pb *partitionBusiness) CreatePartition(ctx context.Context, request *parti
 		return nil, err
 	}
 
-	jsonMap := make(datatypes.JSONMap)
-	for k, v := range request.GetProperties() {
-		jsonMap[k] = v
-	}
 
 	partition := &models.Partition{
 		ParentID:    request.GetParentId(),
 		Name:        request.GetName(),
 		Description: request.GetDescription(),
-		Properties:  jsonMap,
+		Properties:  frame.PropertiesFromMap(request.GetProperties()),
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
 		},
@@ -244,7 +241,7 @@ func (pb *partitionBusiness) CreatePartitionRole(ctx context.Context, request *p
 func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 	ctx := context.Background()
 	partitionRepository := repository.NewPartitionRepository(service)
-	partition, err :=  partitionRepository.GetByID(ctx, "c2f4j7au6s7f91uqnokg")
+	partition, err := partitionRepository.GetByID(ctx, "c2f4j7au6s7f91uqnokg")
 	if err != nil {
 		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not get partition because :%v+", err)
 		return
@@ -259,7 +256,7 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
 
-	hydraUrl := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvHydraServiceAdminUri, ""), "/clients")
+	hydraUrl := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvOauth2ServiceAdminUri, ""), "/clients")
 	hydraIDUrl := fmt.Sprintf("%s/%s", hydraUrl, partition.ID)
 
 	if partition.DeletedAt.Valid {
@@ -285,31 +282,50 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 	if val, ok := partition.Properties["logo_uri"]; ok {
 		logoUri = val.(string)
 	}
-	uriList := make([]interface{}, 0)
-	if val, ok := partition.Properties["request_uris"]; ok {
+
+	var audienceList []string
+	if val, ok := partition.Properties["audience"]; ok {
+		audIfc := val.([]interface{})
+		for _, v := range audIfc {
+			aud := v.(string)
+			audienceList = append(audienceList, aud)
+		}
+	} else {
+		audienceList = []string{}
+	}
+
+	var uriList []string
+	if val, ok := partition.Properties["redirect_uris"]; ok {
 		redirectUri, ok := val.(string)
 		if ok {
-			uriListS := strings.Split(redirectUri, ",")
+			uriList = strings.Split(redirectUri, ",")
 
-			for _, v := range uriListS {
-				uriList = append(uriList, v)
+		} else {
+
+			redirectUris, ok := val.([]interface{})
+			if ok {
+				for _, v := range redirectUris {
+					uriList = append(uriList, fmt.Sprintf("%v", v))
+				}
+			} else {
+				log.Printf(" SyncPartitionOnHydra -- The required redirect uri list is invalid %v", val)
 			}
-
-		}else{
-			uriList = val.([]interface{})
 		}
-
 	}
 
 	payload := map[string]interface{}{
-		"client_id":                  partition.ID,
 		"client_name":                partition.Name,
 		"grant_types":                []string{"authorization_code", "refresh_token"},
-		"token_endpoint_auth_method": "none",
 		"response_types":             []string{"token", "id_token", "code"},
-		"scope":                      "openid,offline_access,profile,contact",
-		"request_uris":               uriList,
+		"scope":                      "openid offline offline_access profile contact",
+		"redirect_uris":              uriList,
 		"logo_uri":                   logoUri,
+		"audience":                   audienceList,
+		"token_endpoint_auth_method": "none",
+	}
+
+	if httpMethod == http.MethodPost {
+		payload["client_id"] = partition.ID
 	}
 
 	status, result, err = service.InvokeRestService(ctx, httpMethod, hydraUrl, payload, nil)
