@@ -22,13 +22,17 @@ jobs:
       - name: Build the docker-compose stack
         run: docker-compose -f tests_runner/docker-compose.yml up -d
 
-      - name: Sleep for a minute
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '60s'
+      - name: Wait for postgresql to come up
+        run: while ! nc -z localhost 5432; do sleep 1; echo "waiting for postgresql" done;
 
-      - name: Check running containers
-        run: docker ps -a
+      - name: Wait for keto to come up
+        run: while ! nc -z localhost 4467; do sleep 1; echo "waiting for keto" done;
+
+      - name: Wait for hydra to come up
+        run: while ! nc -z localhost 4445; do sleep 1; echo "waiting for hydra" done;
+
+      - name: Allow 10 seconds for migrations to complete if any
+        run: sleep 10s
 
       - name: Print out logs to help with debugging
         run: docker-compose -f ./tests_runner/docker-compose.yml logs
