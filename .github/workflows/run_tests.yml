@@ -22,10 +22,10 @@ jobs:
       - name: Build the docker-compose stack
         run: docker-compose -f tests_runner/docker-compose.yml up -d
 
-      - name: Sleep
+      - name: Sleep for a minute
         uses: jakejarvis/wait-action@master
         with:
-        time: '60s'
+          time: '60s'
 
       - name: Check running containers
         run: docker ps -a
