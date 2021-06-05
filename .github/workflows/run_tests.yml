@@ -29,7 +29,7 @@ jobs:
         run: docker-compose -f ./tests_runner/docker-compose.yml logs
 
       - name: Test partition service
-        run: go test -v   ./...
+        run: go test  ./...
 
       - name: Run Vet & Lint
         run: |
