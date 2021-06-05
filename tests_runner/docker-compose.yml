@@ -1,8 +1,7 @@
-version: '3.7'
+version: '3.9'
 
 services:
-
-  partition_db:
+  postgresd:
     container_name: service_partition_postgres
     image: postgres:13
     restart: always
@@ -11,18 +10,16 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=partitiondatabase
     ports:
-      - 5432:5432
+      - 5423:5432
 
   keto-migrate:
     container_name: service_partition_keto_migration
     image: oryd/keto:v0.6.0
-    links:
-      - partition_db:partition_db
     depends_on:
-      - partition_db
+      - postgresd
     environment:
       - LOG_LEVEL=debug
-      - DSN=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
+      - DSN=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
     command:
       migrate up --yes --all-namespaces
     restart: on-failure
@@ -32,14 +29,12 @@ services:
   keto:
     container_name: service_partition_keto
     image: oryd/keto:v0.6.0
-    links:
-      - partition_db:partition_db
     environment:
       - LOG_LEVEL=debug
-      - DSN=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
+      - DSN=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
     depends_on:
       - keto-migrate
-      - partition_db
+      - postgresd
     volumes:
       - ./keto.yaml:/home/ory/keto.yml
     ports:
@@ -50,29 +45,27 @@ services:
   hydra-migrate:
     container_name: service_partition_hydra_migration
     image: oryd/hydra:v1
-    links:
-      - partition_db:partition_db
     depends_on:
-      - partition_db
+      - postgresd
     environment:
       - LOG_LEVEL=debug
-      - DSN=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
+      - DSN=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
     command:
-      migrate sql -e --yes
+      migrate -c /etc/config/hydra.yml sql -e --yes
     restart: on-failure
+    volumes:
+      - ./hydra.yaml:/etc/config/hydra.yml
 
   hydra:
     container_name: service_partition_hydra
     image: oryd/hydra:v1
-    links:
-      - partition_db:partition_db
     depends_on:
-      - partition_db
+      - postgresd
       - hydra-migrate
     command:
       serve -c /etc/config/hydra.yml all --dangerous-force-http
     environment:
-      - DSN=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
+      - DSN=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
     volumes:
       - ./hydra.yaml:/etc/config/hydra.yml
     ports:
@@ -81,12 +74,10 @@ services:
 
   partition_migration:
     build: ../
-    links:
-      - partition_db:partition_db
     depends_on:
-      - partition_db
+      - postgresd
     environment:
       - LOG_LEVEL=debug
       - DO_MIGRATION=true
-      - DATABASE_URL=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
+      - DATABASE_URL=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
     restart: on-failure

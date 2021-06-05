@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-const testDatastoreConnection = "postgres://partition:secret@localhost:5432/partitiondatabase?sslmode=disable"
+const testDatastoreConnection = "postgres://partition:secret@localhost:5423/partitiondatabase?sslmode=disable"
 
 func getTestService(name string, ctx context.Context) *frame.Service {
 	mainDb := frame.Datastore(ctx, testDatastoreConnection, false)

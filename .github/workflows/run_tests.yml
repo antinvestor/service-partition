@@ -40,3 +40,12 @@ jobs:
         run: |
           go vet .
           golint -set_exit_status=1 .
+
+      - name: Build dockerimage and push to ghcr
+        uses: docker/build-push-action@v1
+        with:
+          registry: ghcr.io
+          username: antinvestor
+          password: ${{ secrets.PAT }}
+          repository: antinvestor/service-partition
+          tags: latest
