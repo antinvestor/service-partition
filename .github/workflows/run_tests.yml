@@ -23,13 +23,13 @@ jobs:
         run: docker-compose -f tests_runner/docker-compose.yml up -d
 
       - name: Wait for postgresql to come up
-        run: while ! nc -z localhost 5432; do sleep 1; echo "waiting for postgresql" done;
+        run: while ! nc -z localhost 5432; do sleep 1; echo "waiting for postgresql"; done;
 
       - name: Wait for keto to come up
-        run: while ! nc -z localhost 4467; do sleep 1; echo "waiting for keto" done;
+        run: while ! nc -z localhost 4467; do sleep 1; echo "waiting for keto"; done;
 
       - name: Wait for hydra to come up
-        run: while ! nc -z localhost 4445; do sleep 1; echo "waiting for hydra" done;
+        run: while ! nc -z localhost 4445; do sleep 1; echo "waiting for hydra"; done;
 
       - name: Allow 10 seconds for migrations to complete if any
         run: sleep 10s
