@@ -23,7 +23,7 @@ jobs:
         run: docker-compose -f tests_runner/docker-compose.yml up -d
 
       - name: Wait for postgresql to come up
-        run: while ! nc -z localhost 5432; do sleep 1; echo "waiting for postgresql"; done;
+        run: while ! nc -z localhost 5423; do sleep 1; echo "waiting for postgresql"; done;
 
       - name: Wait for keto to come up
         run: while ! nc -z localhost 4467; do sleep 1; echo "waiting for keto"; done;
