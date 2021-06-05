@@ -8,6 +8,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
+#    # Service containers to run with `container-job`
+#    services:
+#      # Label used to access the service container
+#      postgresd:
+#        image: postgres
+#        env:
+#          POSTGRES_USER: partition
+#          POSTGRES_PASSWORD: secret
+#          POSTGRES_DB: partitiondatabase
+#        options: >-
+#          --health-cmd pg_isready
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5
+#
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -20,7 +36,7 @@ jobs:
           go get -u golang.org/x/lint/golint
 
       - name: Build the docker-compose stack
-        run: docker-compose -f tests_runner/docker-compose.yml up -d
+        run: docker-compose -f "tests_runner/docker-compose.yml" up -d --build
 
       - name: Wait for postgresql to come up
         run: count=180; while ! nc -z localhost 5423 && [[ count -ge 0 ]]; (( count -= 1 )); do sleep 1; echo "waiting for postgresql"; done;
@@ -45,6 +61,8 @@ jobs:
           go vet .
           golint -set_exit_status=1 .
 
+      - name: Stop containers
+        run: docker-compose -f "tests_runner/docker-compose.yml" down
 
       # Setting up Docker Builder
       - name: Set up Docker Builder
