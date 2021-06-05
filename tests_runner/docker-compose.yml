@@ -48,7 +48,7 @@ services:
     depends_on:
       - postgresd
     environment:
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
       - DSN=postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
     command:
       migrate -c /etc/config/hydra.yml sql -e --yes
