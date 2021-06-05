@@ -12,7 +12,7 @@ import (
 )
 
 func getTestService(name string, ctx context.Context) *frame.Service {
-	mainDb := frame.Datastore(ctx, "postgres://partition:secret@localhost:5422/partitiondatabase?sslmode=disable", false)
+	mainDb := frame.Datastore(ctx, "postgres://partition:secret@localhost:5432/partitiondatabase?sslmode=disable", false)
 	return frame.NewService(name, mainDb)
 }
 

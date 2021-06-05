@@ -11,7 +11,7 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=partitiondatabase
     ports:
-      - 5422:5432
+      - 5432:5432
 
   keto-migrate:
     container_name: service_partition_keto_migration
