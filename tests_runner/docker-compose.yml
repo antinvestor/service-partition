@@ -76,6 +76,8 @@ services:
     build: ../
     depends_on:
       - postgresd
+      - hydra-migrate
+      - keto-migrate
     environment:
       - LOG_LEVEL=debug
       - DO_MIGRATION=true
