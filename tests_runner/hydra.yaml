@@ -16,12 +16,9 @@ secrets:
 oidc:
   subject_identifiers:
     supported_types:
-      - pairwise
       - public
-    pairwise:
-      salt: youReallyNeedToChangeThis
 
 strategies:
   access_token: jwt
 
-dsn: 'postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable'
+dsn: 'postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable'

@@ -250,17 +250,5 @@ namespaces:
   - id: 0
     name: c2f4j7au6s7f91uqnojg
 
-## The Keto version this config is written for. ##
-#
-# SemVer according to https://semver.org/ prefixed with `v` as in our releases.
-#
-# Set this value using environment variables on
-# - Linux/macOS:
-#    $ export VERSION=<value>
-# - Windows Command Line (CMD):
-#    > set VERSION=<value>
-#
-version: v0.6.0
-
-dsn: postgres://partition:secret@postgresd:5432/partitiondatabase?sslmode=disable
+dsn: postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
 
