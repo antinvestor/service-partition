@@ -27,6 +27,9 @@ jobs:
         with:
         time: '60s'
 
+      - name: Check running containers
+        run: docker ps -a
+
       - name: Print out logs to help with debugging
         run: docker-compose -f ./tests_runner/docker-compose.yml logs
 
