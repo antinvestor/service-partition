@@ -3,6 +3,7 @@ version: '3.9'
 services:
   partition_db:
     image: postgres:13
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=partition
       - POSTGRES_PASSWORD=secret
@@ -25,6 +26,7 @@ services:
 
   partition_keto:
     image: oryd/keto:v0.6.0
+    restart: unless-stopped
     environment:
       - LOG_LEVEL=debug
       - DSN=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
@@ -53,6 +55,7 @@ services:
 
   partition_hydra:
     image: oryd/hydra:v1
+    restart: unless-stopped
     depends_on:
       - partition_db
       - partition_hydra-migrate
