@@ -1,7 +1,7 @@
 serve:
-  write:
+  admin:
     host: 0.0.0.0
-  read:
+  public:
     host: 0.0.0.0
   cookies:
     same_site_mode: Lax
