@@ -2,7 +2,7 @@ name: Release a new docker image from build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     tags:
       - v*
 jobs:
