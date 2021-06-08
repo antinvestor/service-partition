@@ -1,4 +1,3 @@
-
 package repository
 
 import (
@@ -13,19 +12,31 @@ type accessRepository struct {
 
 func (ar *accessRepository) GetByID(ctx context.Context, id string) (*models.Access, error) {
 	access := &models.Access{}
-	err := ar.service.DB(ctx, true).Joins("Partition").First(access, "accesses.id = ?", id).Error
-	if err != nil{
+	err := ar.service.DB(ctx, true).First(access, " accesses.id = ?", id).Error
+	if err != nil {
 		return nil, err
 	}
+
+	err = ar.service.DB(ctx, true).First(access.Partition, " id = ?", access.PartitionID).Error
+	if err != nil {
+		return nil, err
+	}
+
 	return access, nil
 }
 
 func (ar *accessRepository) GetByPartitionAndProfile(ctx context.Context, partitionId string, profileId string) (*models.Access, error) {
 	access := &models.Access{}
-	err := ar.service.DB(ctx, true).Joins("Partition").First(access, "accesses.partition_id = ? AND profile_id = ?", partitionId, profileId).Error
-	if err != nil{
+	err := ar.service.DB(ctx, true).First(access, " partition_id = ? AND profile_id = ?", partitionId, profileId).Error
+	if err != nil {
 		return nil, err
 	}
+
+	err = ar.service.DB(ctx, true).First(access.Partition, " id = ?", partitionId).Error
+	if err != nil {
+		return nil, err
+	}
+
 	return access, nil
 }
 
@@ -45,7 +56,11 @@ func (ar *accessRepository) Delete(ctx context.Context, id string) error {
 
 func (ar *accessRepository) GetRoles(ctx context.Context, accessId string) ([]*models.AccessRole, error) {
 	accessRoles := make([]*models.AccessRole, 0)
-	err := ar.service.DB(ctx, true).Joins("Access").Joins("PartitionRole").Find(&accessRoles, "access_id = ?", accessId).Error
+	err := ar.service.DB(ctx, true).
+		Joins("Access").
+		Joins("PartitionRole").
+		Find(&accessRoles, " access_id = ?", accessId).Error
+
 	return accessRoles, err
 }
 
@@ -54,7 +69,7 @@ func (ar *accessRepository) SaveRole(ctx context.Context, role *models.AccessRol
 }
 
 func (ar *accessRepository) RemoveRole(ctx context.Context, accessRoleId string) error {
-	return ar.service.DB(ctx, false).Where("id = ?", accessRoleId).Delete(&models.AccessRole{}).Error
+	return ar.service.DB(ctx, false).Where(" id = ?", accessRoleId).Delete(&models.AccessRole{}).Error
 }
 
 func NewAccessRepository(service *frame.Service) AccessRepository {
@@ -63,4 +78,3 @@ func NewAccessRepository(service *frame.Service) AccessRepository {
 	}
 	return &partitionRepository
 }
-
