@@ -23,7 +23,7 @@ import (
 
 func main() {
 
-	serviceName := "service.partition"
+	serviceName := "service_partition"
 	service := frame.NewService(serviceName)
 	ctx := context.Background()
 
