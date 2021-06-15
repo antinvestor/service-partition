@@ -57,7 +57,7 @@ func TestAccessRepository_Save(t *testing.T) {
 
 	savedAccess, err := accessRepo.GetByID(ctx, access.GetID())
 	if err != nil {
-		t.Errorf("There was an error getting saved access : %v", err)
+		t.Errorf("There was an error getting saved access : %+v", err)
 		return
 	}
 
@@ -127,7 +127,7 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
 	savedAccess, err := accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), "profile_j")
 	if err != nil {
-		t.Errorf("There was an error getting saved access : %v", err)
+		t.Errorf("There was an error getting saved access : %+v", err)
 		return
 	}
 

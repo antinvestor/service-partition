@@ -12,27 +12,24 @@ type accessRepository struct {
 
 func (ar *accessRepository) GetByID(ctx context.Context, id string) (*models.Access, error) {
 	access := &models.Access{}
-	err := ar.service.DB(ctx, true).First(access, " accesses.id = ?", id).Error
+	err := ar.service.DB(ctx, true).Debug().Preload("Partition").First(access, " accesses.id = ?", id).Error
+
 	if err != nil {
 		return nil, err
 	}
 
-	err = ar.service.DB(ctx, true).First(access.Partition, " id = ?", access.PartitionID).Error
-	if err != nil {
-		return nil, err
-	}
+	//
+	//err = ar.service.DB(ctx, true).First(access.Partition, " id = ?", access.PartitionID).Error
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return access, nil
 }
 
 func (ar *accessRepository) GetByPartitionAndProfile(ctx context.Context, partitionId string, profileId string) (*models.Access, error) {
 	access := &models.Access{}
-	err := ar.service.DB(ctx, true).First(access, " partition_id = ? AND profile_id = ?", partitionId, profileId).Error
-	if err != nil {
-		return nil, err
-	}
-
-	err = ar.service.DB(ctx, true).First(access.Partition, " id = ?", partitionId).Error
+	err := ar.service.DB(ctx, true).Preload("Partition").First(access, " partition_id = ? AND profile_id = ?", partitionId, profileId).Error
 	if err != nil {
 		return nil, err
 	}

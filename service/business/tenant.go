@@ -31,7 +31,7 @@ type tenantBusiness struct {
 
 func toApiTenant(tenantModel *models.Tenant) *partitionV1.TenantObject {
 
-	properties := frame.PropertiesToMap(tenantModel.Properties)
+	properties := frame.DBPropertiesToMap(tenantModel.Properties)
 
 	return &partitionV1.TenantObject{
 		TenantId:    tenantModel.ID,
@@ -44,7 +44,7 @@ func toModelTenant(tenantApi *partitionV1.TenantObject) *models.Tenant {
 
 	return &models.Tenant{
 		Description: tenantApi.GetDescription(),
-		Properties:  frame.PropertiesFromMap(tenantApi.GetProperties()),
+		Properties:  frame.DBPropertiesFromMap(tenantApi.GetProperties()),
 	}
 }
 

@@ -29,7 +29,7 @@ func Test_extractProperties(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := frame.PropertiesToMap(tt.args.props); !reflect.DeepEqual(got, tt.want) {
+			if got := frame.DBPropertiesToMap(tt.args.props); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("extractProperties() = %v, want %v", got, tt.want)
 			}
 		})

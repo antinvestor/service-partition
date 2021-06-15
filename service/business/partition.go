@@ -47,7 +47,7 @@ type partitionBusiness struct {
 
 func toApiPartition(partitionModel *models.Partition) *partitionV1.PartitionObject {
 
-	properties := frame.PropertiesToMap(partitionModel.Properties)
+	properties := frame.DBPropertiesToMap(partitionModel.Properties)
 
 	return &partitionV1.PartitionObject{
 		PartitionId: partitionModel.ID,
@@ -62,7 +62,7 @@ func toApiPartition(partitionModel *models.Partition) *partitionV1.PartitionObje
 
 func toApiPartitionRole(partitionModel *models.PartitionRole) *partitionV1.PartitionRoleObject {
 
-	properties := frame.PropertiesToMap(partitionModel.Properties)
+	properties := frame.DBPropertiesToMap(partitionModel.Properties)
 
 	return &partitionV1.PartitionRoleObject{
 		PartitionId: partitionModel.PartitionID,
@@ -118,7 +118,7 @@ func (pb *partitionBusiness) CreatePartition(ctx context.Context, request *parti
 		ParentID:    request.GetParentId(),
 		Name:        request.GetName(),
 		Description: request.GetDescription(),
-		Properties:  frame.PropertiesFromMap(request.GetProperties()),
+		Properties:  frame.DBPropertiesFromMap(request.GetProperties()),
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
 		},
