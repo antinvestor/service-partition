@@ -243,7 +243,19 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 	partitionRepository := repository.NewPartitionRepository(service)
 	partition, err := partitionRepository.GetByID(ctx, "c2f4j7au6s7f91uqnokg")
 	if err != nil {
-		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not get partition because :%v+", err)
+		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not get default system partition because :%v+", err)
+		return
+	}
+
+	err = service.Publish(ctx, config.QueuePartitionSyncName, partition)
+	if err != nil {
+		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not publish because :%v+", err)
+		return
+	}
+
+	partition, err = partitionRepository.GetByID(ctx, "9bsv0s3pbdv002o80qhg")
+	if err != nil {
+		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not get test partition because :%v+", err)
 		return
 	}
 
