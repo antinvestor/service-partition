@@ -24,19 +24,37 @@ import (
 func main() {
 
 	serviceName := "service_partition"
-	service := frame.NewService(serviceName)
 	ctx := context.Background()
-
-	var err error
-	var serviceOptions []frame.Option
 
 	datasource := frame.GetEnv(config.EnvDatabaseUrl, "postgres://ant:@nt@localhost/service_partition")
 	mainDb := frame.Datastore(ctx, datasource, false)
-	serviceOptions = append(serviceOptions, mainDb)
 
 	readOnlydatasource := frame.GetEnv(config.EnvReplicaDatabaseUrl, datasource)
 	readDb := frame.Datastore(ctx, readOnlydatasource, true)
-	serviceOptions = append(serviceOptions, readDb)
+
+	service := frame.NewService(serviceName, mainDb, readDb)
+
+	isMigration, err := strconv.ParseBool(frame.GetEnv(config.EnvMigrate, "false"))
+	if err != nil {
+		isMigration = false
+	}
+
+	stdArgs := os.Args[1:]
+	if (len(stdArgs) > 0 && stdArgs[0] == "migrate") || isMigration {
+
+		migrationPath := frame.GetEnv(config.EnvMigrationPath, "./migrations/0001")
+		err := service.MigrateDatastore(ctx, migrationPath,
+			models.Tenant{}, models.Partition{}, models.PartitionRole{},
+			models.Access{}, models.AccessRole{}, models.Page{})
+
+		if err != nil {
+			log.Fatalf("main -- Could not migrate successfully because : %v", err)
+		}
+		return
+
+	}
+
+	var serviceOptions []frame.Option
 
 	jwtAudience := frame.GetEnv(config.EnvOauth2JwtVerifyAudience, serviceName)
 	jwtIssuer := frame.GetEnv(config.EnvOauth2JwtVerifyIssuer, "")
@@ -69,35 +87,14 @@ func main() {
 
 	service.Init(serviceOptions...)
 
-	isMigration, err := strconv.ParseBool(frame.GetEnv(config.EnvMigrate, "false"))
+	serverPort := frame.GetEnv(config.EnvServerPort, "7003")
+
+	service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
+
+	log.Printf(" main -- Initiating server operations on : %s", serverPort)
+	err = implementation.Service.Run(ctx, fmt.Sprintf(":%v", serverPort))
 	if err != nil {
-		isMigration = false
-	}
-
-	stdArgs := os.Args[1:]
-	if (len(stdArgs) > 0 && stdArgs[0] == "migrate") || isMigration {
-
-		migrationPath := frame.GetEnv(config.EnvMigrationPath, "./migrations/0001")
-		err := service.MigrateDatastore(ctx, migrationPath,
-			models.Tenant{}, models.Partition{}, models.PartitionRole{},
-			models.Access{}, models.AccessRole{}, models.Page{})
-
-		if err != nil {
-			log.Printf("main -- Could not migrate successfully because : %v", err)
-		}
-
-	} else {
-
-		serverPort := frame.GetEnv(config.EnvServerPort, "7003")
-
-		service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
-
-		log.Printf(" main -- Initiating server operations on : %s", serverPort)
-		err := implementation.Service.Run(ctx, fmt.Sprintf(":%v", serverPort))
-		if err != nil {
-			log.Printf("main -- Could not run Server : %v", err)
-		}
-
+		log.Fatalf("main -- Could not run Server : %v", err)
 	}
 
 }
