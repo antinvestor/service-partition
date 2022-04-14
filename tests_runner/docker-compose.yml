@@ -1,8 +1,7 @@
-version: '3.9'
 
 services:
   partition_db:
-    image: postgres:13
+    image: postgres:14
     restart: unless-stopped
     environment:
       - POSTGRES_USER=partition
@@ -12,7 +11,7 @@ services:
       - 5423:5432
 
   partition_keto-migrate:
-    image: oryd/keto:v0.6.0
+    image: oryd/keto:latest
     depends_on:
       - partition_db
     environment:
@@ -25,7 +24,7 @@ services:
       - ./keto.yaml:/home/ory/keto.yml
 
   partition_keto:
-    image: oryd/keto:v0.6.0
+    image: oryd/keto:latest
     restart: unless-stopped
     environment:
       - LOG_LEVEL=debug
@@ -41,7 +40,7 @@ services:
 
 
   partition_hydra-migrate:
-    image: oryd/hydra:v1
+    image: oryd/hydra:latest
     depends_on:
       - partition_db
     environment:
