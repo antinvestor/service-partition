@@ -15,6 +15,16 @@ type PartitionServer struct {
 	partitionV1.UnimplementedPartitionServiceServer
 }
 
+func (prtSrv *PartitionServer) ListPartition(req *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListPartitionServer) error {
+	partitionBusiness := business.NewPartitionBusiness(stream.Context(), prtSrv.Service)
+	err := partitionBusiness.ListPartition(stream.Context(), req, stream)
+	if err != nil {
+		log.Printf(" ListPartition -- could not list partition %+v", err)
+		return status.Errorf(codes.Internal, err.Error())
+	}
+	return nil
+}
+
 func (prtSrv *PartitionServer) CreatePartition(ctx context.Context, req *partitionV1.PartitionCreateRequest) (*partitionV1.PartitionObject, error) {
 	partitionBusiness := business.NewPartitionBusiness(ctx, prtSrv.Service)
 	partition, err := partitionBusiness.CreatePartition(ctx, req)
@@ -74,5 +84,3 @@ func (prtSrv *PartitionServer) RemovePartitionRole(ctx context.Context, req *par
 		Succeeded: true,
 	}, nil
 }
-
-

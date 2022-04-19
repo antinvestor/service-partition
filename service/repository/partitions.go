@@ -16,6 +16,15 @@ func (pr *partitionRepository) GetByID(ctx context.Context, id string) (*models.
 	return partition, err
 }
 
+func (pr *partitionRepository) GetByQuery(ctx context.Context, query string, count uint32, page uint32) ([]*models.Partition, error) {
+	partitionList := make([]*models.Partition, 0)
+	query = "%" + query + "%"
+	err := pr.service.DB(ctx, true).Find(&partitionList,
+		"id iLike ? OR parent_id iLike ?  OR name iLike ? OR description iLike ? ",
+		query, query, query, query).Offset(int(page * count)).Limit(int(count)).Error
+	return partitionList, err
+}
+
 func (pr *partitionRepository) GetChildren(ctx context.Context, id string) ([]*models.Partition, error) {
 	childPartition := make([]*models.Partition, 0)
 	err := pr.service.DB(ctx, true).Find(&childPartition, "parent_id = ?", id).Error

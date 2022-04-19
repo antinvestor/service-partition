@@ -3,10 +3,10 @@ module github.com/antinvestor/service-partition
 go 1.17
 
 require (
-	github.com/antinvestor/apis v1.1.0
-	github.com/antinvestor/service-partition-api v1.0.4
+	github.com/antinvestor/apis v1.1.1
+	github.com/antinvestor/service-partition-api v1.0.10
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
-	github.com/pitabwire/frame v1.6.1
+	github.com/pitabwire/frame v1.7.6
 	google.golang.org/grpc v1.40.0
 	gorm.io/datatypes v1.0.1
 )
@@ -18,6 +18,7 @@ require (
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/google/wire v0.5.0 // indirect

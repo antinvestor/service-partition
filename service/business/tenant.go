@@ -12,6 +12,7 @@ import (
 type TenantBusiness interface {
 	GetTenant(ctx context.Context, tenantId string) (*partitionV1.TenantObject, error)
 	CreateTenant(ctx context.Context, request *partitionV1.TenantRequest) (*partitionV1.TenantObject, error)
+	ListTenant(ctx context.Context, request *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListTenantServer) error
 }
 
 func NewTenantBusiness(ctx context.Context, service *frame.Service) TenantBusiness {
@@ -26,8 +27,6 @@ type tenantBusiness struct {
 	service    *frame.Service
 	tenantRepo repository.TenantRepository
 }
-
-
 
 func toApiTenant(tenantModel *models.Tenant) *partitionV1.TenantObject {
 
@@ -55,7 +54,6 @@ func (t *tenantBusiness) GetTenant(ctx context.Context, tenantId string) (*parti
 	//	return nil, err
 	//}
 
-
 	tenant, err := t.tenantRepo.GetByID(ctx, tenantId)
 	if err != nil {
 		return nil, err
@@ -70,7 +68,6 @@ func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionV1.
 	if err != nil {
 		return nil, err
 	}
-
 
 	jsonMap := make(datatypes.JSONMap)
 	for k, v := range request.GetProperties() {
@@ -89,4 +86,28 @@ func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionV1.
 	}
 
 	return toApiTenant(tenantModel), nil
+}
+
+func (t *tenantBusiness) ListTenant(ctx context.Context, request *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListTenantServer) error {
+
+	err := request.Validate()
+	if err != nil {
+		return err
+	}
+
+	tenantList, err := t.tenantRepo.GetByQuery(ctx, request.GetQuery(), request.GetCount(), request.GetPage())
+	if err != nil {
+		return err
+	}
+
+	for _, tenant := range tenantList {
+
+		err = stream.Send(toApiTenant(tenant))
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
 }
