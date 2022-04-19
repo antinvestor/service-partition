@@ -19,6 +19,7 @@ type Partition struct {
 	ParentID    string `gorm:"type:varchar(50);"`
 	Properties  datatypes.JSONMap
 	State       int32
+	Accesses    []Access `gorm:"foreignKey:PartitionID;"`
 }
 
 type PartitionRole struct {
@@ -39,7 +40,6 @@ type Page struct {
 type Access struct {
 	frame.BaseModel
 	ProfileID string `gorm:"type:varchar(50);"`
-	Partition *Partition
 	State     int32
 }
 

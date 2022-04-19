@@ -38,13 +38,11 @@ type accessBusiness struct {
 	partitionRepo repository.PartitionRepository
 }
 
-func toApiAccess(accessModel *models.Access) (*partitionV1.AccessObject, error) {
+func toApiAccess(partitionObject *partitionV1.PartitionObject, accessModel *models.Access) (*partitionV1.AccessObject, error) {
 
-	if accessModel.Partition == nil {
+	if partitionObject == nil {
 		return nil, errors.New("no partition exists for this access")
 	}
-
-	partitionObject := toApiPartition(accessModel.Partition)
 
 	return &partitionV1.AccessObject{
 		AccessId:  accessModel.GetID(),
@@ -75,7 +73,15 @@ func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.Ac
 		if err != nil {
 			return nil, err
 		}
-		return toApiAccess(access)
+
+		partition, err := ab.partitionRepo.GetByID(ctx, access.PartitionID)
+		if err != nil {
+			return nil, err
+		}
+
+		partitionObject := toApiPartition(partition)
+
+		return toApiAccess(partitionObject, access)
 	}
 
 	access, err = ab.accessRepo.GetByPartitionAndProfile(ctx, request.GetPartitionId(), request.GetProfileId())
@@ -83,7 +89,14 @@ func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.Ac
 		return nil, err
 	}
 
-	return toApiAccess(access)
+	partition, err := ab.partitionRepo.GetByID(ctx, access.PartitionID)
+	if err != nil {
+		return nil, err
+	}
+
+	partitionObject := toApiPartition(partition)
+
+	return toApiAccess(partitionObject, access)
 }
 
 func (ab *accessBusiness) RemoveAccess(ctx context.Context, request *partitionV1.AccessRemoveRequest) error {
@@ -122,12 +135,13 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 			return nil, err
 		}
 	} else {
-		return toApiAccess(access)
+		partitionObject := toApiPartition(partition)
+
+		return toApiAccess(partitionObject, access)
 	}
 
 	access = &models.Access{
 		ProfileID: request.GetProfileId(),
-		Partition: partition,
 		BaseModel: frame.BaseModel{
 			TenantID:    partition.TenantID,
 			PartitionID: partition.GetID(),
@@ -140,8 +154,9 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 	}
 
 	log.Printf(" CreateAccess -- final access created is  %+v", access)
+	partitionObject := toApiPartition(partition)
 
-	return toApiAccess(access)
+	return toApiAccess(partitionObject, access)
 }
 
 func (ab *accessBusiness) ListAccessRoles(ctx context.Context, request *partitionV1.AccessRoleListRequest) (*partitionV1.AccessRoleListResponse, error) {

@@ -65,17 +65,6 @@ func TestAccessRepository_Save(t *testing.T) {
 		t.Errorf("Access partition id: %v should match parent partition id: %v", savedAccess.PartitionID, partition.GetID())
 		return
 	}
-
-	if savedAccess.Partition == nil {
-		t.Errorf("Embedded Access partition should not be nil")
-		return
-	}
-
-	if savedAccess.Partition.ID != savedAccess.PartitionID {
-		t.Errorf("Access partition id: %v should match embedded partition id: %v", savedAccess.PartitionID, savedAccess.Partition.PartitionID)
-		return
-	}
-
 }
 
 func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
@@ -133,16 +122,6 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
 	if savedAccess.PartitionID != partition.GetID() {
 		t.Errorf("Access partition id: %v should match parent partition id: %v", savedAccess.PartitionID, partition.GetID())
-		return
-	}
-
-	if savedAccess.Partition == nil {
-		t.Errorf("Embedded Access partition should not be nil")
-		return
-	}
-
-	if savedAccess.Partition.ID != savedAccess.PartitionID {
-		t.Errorf("Access partition id: %v should match embedded partition id: %v", savedAccess.PartitionID, savedAccess.Partition.PartitionID)
 		return
 	}
 }
