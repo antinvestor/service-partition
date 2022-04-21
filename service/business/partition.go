@@ -319,7 +319,12 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		return err
 	}
 
-	status, result, err := service.InvokeRestService(ctx, http.MethodGet, hydraIDUrl, make(map[string]interface{}), nil)
+	status, _, err := service.InvokeRestService(
+		ctx,
+		http.MethodGet,
+		hydraIDUrl,
+		make(map[string]interface{}),
+		nil)
 	if err != nil {
 		return err
 	}
@@ -380,7 +385,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		payload["client_id"] = partition.ID
 	}
 
-	status, result, err = service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)
+	status, result, err := service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)
 	if err != nil {
 		return err
 	}
