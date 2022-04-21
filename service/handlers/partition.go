@@ -15,7 +15,9 @@ type PartitionServer struct {
 	partitionV1.UnimplementedPartitionServiceServer
 }
 
-func (prtSrv *PartitionServer) ListPartition(req *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListPartitionServer) error {
+func (prtSrv *PartitionServer) ListPartition(
+	req *partitionV1.SearchRequest,
+	stream partitionV1.PartitionService_ListPartitionServer) error {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	err := partitionBusiness.ListPartition(stream.Context(), req, stream)
 	if err != nil {
@@ -25,7 +27,9 @@ func (prtSrv *PartitionServer) ListPartition(req *partitionV1.SearchRequest, str
 	return nil
 }
 
-func (prtSrv *PartitionServer) CreatePartition(ctx context.Context, req *partitionV1.PartitionCreateRequest) (*partitionV1.PartitionObject, error) {
+func (prtSrv *PartitionServer) CreatePartition(
+	ctx context.Context,
+	req *partitionV1.PartitionCreateRequest) (*partitionV1.PartitionObject, error) {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.CreatePartition(ctx, req)
 	if err != nil {
@@ -35,7 +39,9 @@ func (prtSrv *PartitionServer) CreatePartition(ctx context.Context, req *partiti
 	return partition, nil
 }
 
-func (prtSrv *PartitionServer) GetPartition(ctx context.Context, req *partitionV1.PartitionGetRequest) (*partitionV1.PartitionObject, error) {
+func (prtSrv *PartitionServer) GetPartition(
+	ctx context.Context,
+	req *partitionV1.PartitionGetRequest) (*partitionV1.PartitionObject, error) {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.GetPartition(ctx, req)
 	if err != nil {
@@ -44,7 +50,9 @@ func (prtSrv *PartitionServer) GetPartition(ctx context.Context, req *partitionV
 	}
 	return partition, nil
 }
-func (prtSrv *PartitionServer) UpdatePartition(ctx context.Context, req *partitionV1.PartitionUpdateRequest) (*partitionV1.PartitionObject, error) {
+func (prtSrv *PartitionServer) UpdatePartition(
+	ctx context.Context,
+	req *partitionV1.PartitionUpdateRequest) (*partitionV1.PartitionObject, error) {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.UpdatePartition(ctx, req)
 	if err != nil {
@@ -53,7 +61,9 @@ func (prtSrv *PartitionServer) UpdatePartition(ctx context.Context, req *partiti
 	}
 	return partition, nil
 }
-func (prtSrv *PartitionServer) CreatePartitionRole(ctx context.Context, req *partitionV1.PartitionRoleCreateRequest) (*partitionV1.PartitionRoleObject, error) {
+func (prtSrv *PartitionServer) CreatePartitionRole(
+	ctx context.Context,
+	req *partitionV1.PartitionRoleCreateRequest) (*partitionV1.PartitionRoleObject, error) {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.CreatePartitionRole(ctx, req)
 	if err != nil {
@@ -62,7 +72,9 @@ func (prtSrv *PartitionServer) CreatePartitionRole(ctx context.Context, req *par
 	}
 	return partition, nil
 }
-func (prtSrv *PartitionServer) ListPartitionRoles(ctx context.Context, req *partitionV1.PartitionRoleListRequest) (*partitionV1.PartitionRoleListResponse, error) {
+func (prtSrv *PartitionServer) ListPartitionRoles(
+	ctx context.Context,
+	req *partitionV1.PartitionRoleListRequest) (*partitionV1.PartitionRoleListResponse, error) {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.ListPartitionRoles(ctx, req)
 	if err != nil {
@@ -71,7 +83,9 @@ func (prtSrv *PartitionServer) ListPartitionRoles(ctx context.Context, req *part
 	}
 	return partition, nil
 }
-func (prtSrv *PartitionServer) RemovePartitionRole(ctx context.Context, req *partitionV1.PartitionRoleRemoveRequest) (*partitionV1.RemoveResponse, error) {
+func (prtSrv *PartitionServer) RemovePartitionRole(
+	ctx context.Context,
+	req *partitionV1.PartitionRoleRemoveRequest) (*partitionV1.RemoveResponse, error) {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	err := partitionBusiness.RemovePartition(ctx, req)
 	if err != nil {
