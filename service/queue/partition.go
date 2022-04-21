@@ -9,8 +9,7 @@ import (
 )
 
 type PartitionSyncQueueHandler struct {
-	Service    *frame.Service
-
+	Service *frame.Service
 }
 
 func (psq *PartitionSyncQueueHandler) Handle(ctx context.Context, payload []byte) error {

@@ -42,8 +42,8 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 		tenantRepo repository.TenantRepository
 	}
 	type args struct {
-		ctx         context.Context
-		request     *partitionV1.TenantRequest
+		ctx     context.Context
+		request *partitionV1.TenantRequest
 	}
 	tests := []struct {
 		name    string

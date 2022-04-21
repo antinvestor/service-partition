@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 
 	ctx := context.Background()
@@ -16,7 +15,7 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -28,7 +27,7 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -46,7 +45,7 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 		Name: "test",
 		Html: "<div></div>",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -57,14 +56,13 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 		return
 	}
 
-
 	savedPage, err := pageRepo.GetByPartitionAndName(ctx, partition.GetID(), page.Name)
 	if err != nil {
 		t.Errorf("There was an error getting saved page : %v", err)
 		return
 	}
 
-	if savedPage.PartitionID != partition.GetID() ||  savedPage.GetID() != page.GetID(){
+	if savedPage.PartitionID != partition.GetID() || savedPage.GetID() != page.GetID() {
 		t.Errorf("Page role partition id: %v should match parent partition id: %v", savedPage.PartitionID, partition.GetID())
 		return
 	}
@@ -77,7 +75,7 @@ func TestPageRepository_Save(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -89,7 +87,7 @@ func TestPageRepository_Save(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -107,7 +105,7 @@ func TestPageRepository_Save(t *testing.T) {
 		Name: "test",
 		Html: "<div></div>",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -117,7 +115,6 @@ func TestPageRepository_Save(t *testing.T) {
 		t.Errorf("There was an error saving page role : %v", err)
 		return
 	}
-
 
 	savedPage, err := pageRepo.GetByID(ctx, page.GetID())
 	if err != nil {
@@ -139,7 +136,7 @@ func TestPageRepository_Delete(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -151,7 +148,7 @@ func TestPageRepository_Delete(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -169,7 +166,7 @@ func TestPageRepository_Delete(t *testing.T) {
 		Name: "test",
 		Html: "<div></div>",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -179,7 +176,6 @@ func TestPageRepository_Delete(t *testing.T) {
 		t.Errorf("There was an error saving page role : %v", err)
 		return
 	}
-
 
 	err = pageRepo.Delete(ctx, page.GetID())
 	if err != nil {
@@ -194,10 +190,9 @@ func TestPageRepository_Delete(t *testing.T) {
 		return
 	}
 
-	if deletedPage != nil && deletedPage.ID != ""{
+	if deletedPage != nil && deletedPage.ID != "" {
 		t.Errorf("Page : %v is supposed to be nil but somehow it exists  ", deletedPage)
 		return
 	}
 
 }
-

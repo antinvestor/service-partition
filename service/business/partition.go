@@ -333,9 +333,9 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		hydraUrl = hydraIDUrl
 	}
 
-	logoUri := ""
+	logoURI := ""
 	if val, ok := partition.Properties["logo_uri"]; ok {
-		logoUri = val.(string)
+		logoURI = val.(string)
 	}
 
 	var audienceList []string
@@ -374,7 +374,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		"response_types":             []string{"token", "id_token", "code"},
 		"scope":                      "openid offline offline_access profile contact",
 		"redirect_uris":              uriList,
-		"logo_uri":                   logoUri,
+		"logo_uri":                   logoURI,
 		"audience":                   audienceList,
 		"token_endpoint_auth_method": "none",
 	}

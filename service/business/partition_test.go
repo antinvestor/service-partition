@@ -16,14 +16,14 @@ func TestPartitionBusiness_SyncPartitionOnHydra(t *testing.T) {
 	service := getTestService("Partition Srv", ctx)
 
 	err := os.Setenv(config.EnvOauth2ServiceAdminUri, "http://localhost:4445")
-	if err != nil{
+	if err != nil {
 		t.Errorf("There was an error setting HYDRA_URL : %v", err)
 		return
 	}
 
 	tenantRepo := repository.NewTenantRepository(service)
 	tenant := models.Tenant{
-		Name: "default",
+		Name:        "default",
 		Description: "Test",
 	}
 
@@ -33,10 +33,9 @@ func TestPartitionBusiness_SyncPartitionOnHydra(t *testing.T) {
 		return
 	}
 
-
 	partitionRepo := repository.NewPartitionRepository(service)
 	partition := &models.Partition{
-		Name: "test partition",
+		Name:        "test partition",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),

@@ -42,5 +42,3 @@ func (prtSrv *PartitionServer) RemovePage(ctx context.Context, req *partitionV1.
 		Succeeded: true,
 	}, nil
 }
-
-

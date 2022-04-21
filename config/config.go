@@ -19,4 +19,3 @@ const EnvKetoServiceAdminUri = "KETO_SERVICE_ADMIN_URI"
 const EnvQueuePartitionSync = "QUEUE_PARTITION_SYNC"
 
 const QueuePartitionSyncName = "partition_sync_hydra"
-

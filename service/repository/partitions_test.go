@@ -14,7 +14,7 @@ func TestPartitionRepository_GetByID(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -24,10 +24,9 @@ func TestPartitionRepository_GetByID(t *testing.T) {
 		return
 	}
 
-
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -46,7 +45,7 @@ func TestPartitionRepository_GetByID(t *testing.T) {
 		return
 	}
 
-	if partition.GetID() != savedPartition.GetID(){
+	if partition.GetID() != savedPartition.GetID() {
 		t.Errorf("The obtained partition doesn't match what was saved")
 		return
 	}
@@ -60,7 +59,7 @@ func TestPartitionRepository_GetChildren(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -70,10 +69,9 @@ func TestPartitionRepository_GetChildren(t *testing.T) {
 		return
 	}
 
-
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.ID,
@@ -87,7 +85,7 @@ func TestPartitionRepository_GetChildren(t *testing.T) {
 	}
 
 	childPartition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.ID,
@@ -100,7 +98,6 @@ func TestPartitionRepository_GetChildren(t *testing.T) {
 		t.Errorf("There was an error saving child partition : %v", err)
 		return
 	}
-
 
 	childrentPartitions, err := partitionRepo.GetChildren(ctx, partition.GetID())
 	if err != nil {
@@ -127,7 +124,7 @@ func TestPartitionRepository_SaveRole(t *testing.T) {
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -139,7 +136,7 @@ func TestPartitionRepository_SaveRole(t *testing.T) {
 
 	partitionRepo := NewPartitionRepository(srv)
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -155,7 +152,7 @@ func TestPartitionRepository_SaveRole(t *testing.T) {
 	partitionRole := models.PartitionRole{
 		Name: "",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -165,7 +162,6 @@ func TestPartitionRepository_SaveRole(t *testing.T) {
 		t.Errorf("There was an error saving partition role : %v", err)
 		return
 	}
-
 
 	partitionRoles, err := partitionRepo.GetRoles(ctx, partition.GetID())
 	if err != nil {
@@ -187,13 +183,12 @@ func TestPartitionRepository_SaveRole(t *testing.T) {
 
 func TestPartitionRepository_RemoveRole(t *testing.T) {
 
-
 	ctx := context.Background()
 	srv := getTestService("Partition Srv", ctx)
 
 	tenantRepo := NewTenantRepository(srv)
 	tenant := models.Tenant{
-		Name: "Save T",
+		Name:        "Save T",
 		Description: "Test",
 	}
 
@@ -203,11 +198,10 @@ func TestPartitionRepository_RemoveRole(t *testing.T) {
 		return
 	}
 
-
 	partitionRepo := NewPartitionRepository(srv)
 
 	partition := models.Partition{
-		Name: "",
+		Name:        "",
 		Description: "",
 		BaseModel: frame.BaseModel{
 			TenantID: tenant.GetID(),
@@ -223,7 +217,7 @@ func TestPartitionRepository_RemoveRole(t *testing.T) {
 	partitionRole := models.PartitionRole{
 		Name: "",
 		BaseModel: frame.BaseModel{
-			TenantID: tenant.GetID(),
+			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
 		},
 	}
@@ -233,7 +227,6 @@ func TestPartitionRepository_RemoveRole(t *testing.T) {
 		t.Errorf("There was an error saving partition role : %v", err)
 		return
 	}
-
 
 	partitionRoles, err := partitionRepo.GetRoles(ctx, partition.GetID())
 	if err != nil {
@@ -262,6 +255,5 @@ func TestPartitionRepository_RemoveRole(t *testing.T) {
 		t.Errorf("There should be no partition role now")
 		return
 	}
-
 
 }
