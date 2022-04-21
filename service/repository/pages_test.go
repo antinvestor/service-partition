@@ -43,7 +43,7 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 	pageRepo := NewPageRepository(srv)
 	page := models.Page{
 		Name: "test",
-		Html: "<div></div>",
+		HTML: "<div></div>",
 		BaseModel: frame.BaseModel{
 			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
@@ -103,7 +103,7 @@ func TestPageRepository_Save(t *testing.T) {
 	pageRepo := NewPageRepository(srv)
 	page := models.Page{
 		Name: "test",
-		Html: "<div></div>",
+		HTML: "<div></div>",
 		BaseModel: frame.BaseModel{
 			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),
@@ -164,7 +164,7 @@ func TestPageRepository_Delete(t *testing.T) {
 	pageRepo := NewPageRepository(srv)
 	page := models.Page{
 		Name: "test",
-		Html: "<div></div>",
+		HTML: "<div></div>",
 		BaseModel: frame.BaseModel{
 			TenantID:    tenant.GetID(),
 			PartitionID: partition.GetID(),

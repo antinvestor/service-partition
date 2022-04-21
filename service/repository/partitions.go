@@ -50,6 +50,12 @@ func (pr *partitionRepository) GetRoles(ctx context.Context, partitionId string)
 	return partitionRoles, err
 }
 
+func (pr *partitionRepository) GetRolesByID(ctx context.Context, idList ...string) ([]*models.PartitionRole, error) {
+	partitionRoles := make([]*models.PartitionRole, 0)
+	err := pr.service.DB(ctx, true).Find(&partitionRoles, "id IN ?", idList).Error
+	return partitionRoles, err
+}
+
 func (pr *partitionRepository) SaveRole(ctx context.Context, role *models.PartitionRole) error {
 	return pr.service.DB(ctx, false).Save(role).Error
 }

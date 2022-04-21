@@ -16,7 +16,7 @@ type PartitionServer struct {
 }
 
 func (prtSrv *PartitionServer) ListPartition(req *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListPartitionServer) error {
-	partitionBusiness := business.NewPartitionBusiness(stream.Context(), prtSrv.Service)
+	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	err := partitionBusiness.ListPartition(stream.Context(), req, stream)
 	if err != nil {
 		log.Printf(" ListPartition -- could not list partition %+v", err)
@@ -26,7 +26,7 @@ func (prtSrv *PartitionServer) ListPartition(req *partitionV1.SearchRequest, str
 }
 
 func (prtSrv *PartitionServer) CreatePartition(ctx context.Context, req *partitionV1.PartitionCreateRequest) (*partitionV1.PartitionObject, error) {
-	partitionBusiness := business.NewPartitionBusiness(ctx, prtSrv.Service)
+	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.CreatePartition(ctx, req)
 	if err != nil {
 		log.Printf(" CreatePartition -- could not create a new partition %+v", err)
@@ -36,7 +36,7 @@ func (prtSrv *PartitionServer) CreatePartition(ctx context.Context, req *partiti
 }
 
 func (prtSrv *PartitionServer) GetPartition(ctx context.Context, req *partitionV1.PartitionGetRequest) (*partitionV1.PartitionObject, error) {
-	partitionBusiness := business.NewPartitionBusiness(ctx, prtSrv.Service)
+	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.GetPartition(ctx, req)
 	if err != nil {
 		log.Printf(" GetPartition -- could not obtain the specified partition %+v", err)
@@ -45,7 +45,7 @@ func (prtSrv *PartitionServer) GetPartition(ctx context.Context, req *partitionV
 	return partition, nil
 }
 func (prtSrv *PartitionServer) UpdatePartition(ctx context.Context, req *partitionV1.PartitionUpdateRequest) (*partitionV1.PartitionObject, error) {
-	partitionBusiness := business.NewPartitionBusiness(ctx, prtSrv.Service)
+	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.UpdatePartition(ctx, req)
 	if err != nil {
 		log.Printf(" UpdatePartition -- could not update existing partition %+v", err)
@@ -54,7 +54,7 @@ func (prtSrv *PartitionServer) UpdatePartition(ctx context.Context, req *partiti
 	return partition, nil
 }
 func (prtSrv *PartitionServer) CreatePartitionRole(ctx context.Context, req *partitionV1.PartitionRoleCreateRequest) (*partitionV1.PartitionRoleObject, error) {
-	partitionBusiness := business.NewPartitionBusiness(ctx, prtSrv.Service)
+	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.CreatePartitionRole(ctx, req)
 	if err != nil {
 		log.Printf(" CreatePartitionRole -- could not create a new partition role %+v", err)
@@ -63,7 +63,7 @@ func (prtSrv *PartitionServer) CreatePartitionRole(ctx context.Context, req *par
 	return partition, nil
 }
 func (prtSrv *PartitionServer) ListPartitionRoles(ctx context.Context, req *partitionV1.PartitionRoleListRequest) (*partitionV1.PartitionRoleListResponse, error) {
-	partitionBusiness := business.NewPartitionBusiness(ctx, prtSrv.Service)
+	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.ListPartitionRoles(ctx, req)
 	if err != nil {
 		log.Printf(" ListPartitionRoles -- could not obtain the list of partition roles %+v", err)
@@ -72,7 +72,7 @@ func (prtSrv *PartitionServer) ListPartitionRoles(ctx context.Context, req *part
 	return partition, nil
 }
 func (prtSrv *PartitionServer) RemovePartitionRole(ctx context.Context, req *partitionV1.PartitionRoleRemoveRequest) (*partitionV1.RemoveResponse, error) {
-	partitionBusiness := business.NewPartitionBusiness(ctx, prtSrv.Service)
+	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	err := partitionBusiness.RemovePartition(ctx, req)
 	if err != nil {
 		log.Printf(" RemovePartitionRole -- could not remove the specified partition role %+v", err)

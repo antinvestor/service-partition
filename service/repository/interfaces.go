@@ -19,25 +19,26 @@ type PartitionRepository interface {
 	Save(ctx context.Context, partition *models.Partition) error
 	Delete(ctx context.Context, id string) error
 
-	GetRoles(ctx context.Context, id string) ([]*models.PartitionRole, error)
+	GetRoles(ctx context.Context, partitionID string) ([]*models.PartitionRole, error)
+	GetRolesByID(ctx context.Context, id ...string) ([]*models.PartitionRole, error)
 	SaveRole(ctx context.Context, role *models.PartitionRole) error
-	RemoveRole(ctx context.Context, partitionRoleId string) error
+	RemoveRole(ctx context.Context, partitionRoleID string) error
 }
 
 type PageRepository interface {
 	GetByID(ctx context.Context, id string) (*models.Page, error)
-	GetByPartitionAndName(ctx context.Context, partitionId string, name string) (*models.Page, error)
+	GetByPartitionAndName(ctx context.Context, partitionID string, name string) (*models.Page, error)
 	Save(ctx context.Context, partition *models.Page) error
 	Delete(ctx context.Context, id string) error
 }
 
 type AccessRepository interface {
 	GetByID(ctx context.Context, id string) (*models.Access, error)
-	GetByPartitionAndProfile(ctx context.Context, partitionId string, profile string) (*models.Access, error)
+	GetByPartitionAndProfile(ctx context.Context, partitionID string, profile string) (*models.Access, error)
 	Save(ctx context.Context, access *models.Access) error
 	Delete(ctx context.Context, id string) error
 
-	GetRoles(ctx context.Context, accessId string) ([]*models.AccessRole, error)
+	GetRoles(ctx context.Context, accessID string) ([]*models.AccessRole, error)
 	SaveRole(ctx context.Context, role *models.AccessRole) error
-	RemoveRole(ctx context.Context, accessRoleId string) error
+	RemoveRole(ctx context.Context, accessRoleID string) error
 }

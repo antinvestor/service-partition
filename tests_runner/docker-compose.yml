@@ -10,6 +10,36 @@ services:
     ports:
       - 5423:5432
 
+
+  partition_hydra-migrate:
+    image: oryd/hydra:latest
+    depends_on:
+      - partition_db
+    environment:
+      - LOG_LEVEL=info
+      - DSN=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
+    command:
+      migrate -c /etc/config/hydra.yml sql -e --yes
+    restart: on-failure
+    volumes:
+      - ./hydra.yaml:/etc/config/hydra.yml
+
+  partition_hydra:
+    image: oryd/hydra:v1
+    restart: unless-stopped
+    depends_on:
+      - partition_db
+      - partition_hydra-migrate
+    command:
+      serve -c /etc/config/hydra.yml all --dangerous-force-http
+    environment:
+      - DSN=postgres://partition:secret@partition_db:5432/partitiondatabase?sslmode=disable
+    volumes:
+      - ./hydra.yaml:/etc/config/hydra.yml
+    ports:
+      - 4444:4444
+      - 4445:4445
+
   partition_migration:
     build: ../
     depends_on:

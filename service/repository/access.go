@@ -48,8 +48,6 @@ func (ar *accessRepository) Delete(ctx context.Context, id string) error {
 func (ar *accessRepository) GetRoles(ctx context.Context, accessId string) ([]*models.AccessRole, error) {
 	accessRoles := make([]*models.AccessRole, 0)
 	err := ar.service.DB(ctx, true).
-		Joins("Access").
-		Joins("PartitionRole").
 		Find(&accessRoles, " access_id = ?", accessId).Error
 
 	return accessRoles, err

@@ -39,7 +39,7 @@ type PartitionBusiness interface {
 		request *partitionV1.PartitionRoleCreateRequest) (*partitionV1.PartitionRoleObject, error)
 }
 
-func NewPartitionBusiness(ctx context.Context, service *frame.Service) PartitionBusiness {
+func NewPartitionBusiness(service *frame.Service) PartitionBusiness {
 	tenantRepository := repository.NewTenantRepository(service)
 	partitionRepository := repository.NewPartitionRepository(service)
 
@@ -311,12 +311,10 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
 
-	hydraUrl := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvOauth2ServiceAdminUri, ""), "/clients")
-	hydraIDUrl := fmt.Sprintf("%s/%s", hydraUrl, partition.ID)
+	hydraURL := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvOauth2ServiceAdminUri, ""), "/clients")
+	hydraIDUrl := fmt.Sprintf("%s/%s", hydraURL, partition.ID)
 
-	if partition.DeletedAt.Valid {
-
-		//	We need to delete this partition on hydra as well
+	if partition.DeletedAt.Valid { //	We need to delete this partition on hydra as well
 		_, _, err := service.InvokeRestService(ctx, http.MethodDelete, hydraIDUrl, make(map[string]interface{}), nil)
 		return err
 	}
@@ -330,7 +328,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 	if status == 200 {
 		//	We need to update this partition on hydra as well as it already exists
 		httpMethod = http.MethodPut
-		hydraUrl = hydraIDUrl
+		hydraURL = hydraIDUrl
 	}
 
 	logoURI := ""
@@ -351,12 +349,11 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 
 	var uriList []string
 	if val, ok := partition.Properties["redirect_uris"]; ok {
-		redirectUri, ok := val.(string)
+		redirectURI, ok := val.(string)
 		if ok {
-			uriList = strings.Split(redirectUri, ",")
+			uriList = strings.Split(redirectURI, ",")
 
 		} else {
-
 			redirectUris, ok := val.([]interface{})
 			if ok {
 				for _, v := range redirectUris {
@@ -383,7 +380,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		payload["client_id"] = partition.ID
 	}
 
-	status, result, err = service.InvokeRestService(ctx, httpMethod, hydraUrl, payload, nil)
+	status, result, err = service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)
 	if err != nil {
 		return err
 	}

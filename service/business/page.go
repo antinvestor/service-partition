@@ -37,7 +37,7 @@ func toApiPage(pageModel *models.Page) *partitionV1.PageObject {
 	return &partitionV1.PageObject{
 		PageId: pageModel.GetID(),
 		Name:   pageModel.Name,
-		Html:   pageModel.Html,
+		Html:   pageModel.HTML,
 		State:  common.STATE(pageModel.State),
 	}
 }
@@ -86,7 +86,7 @@ func (ab *pageBusiness) CreatePage(ctx context.Context, request *partitionV1.Pag
 
 	page := &models.Page{
 		Name: request.GetName(),
-		Html: request.GetHtml(),
+		HTML: request.GetHtml(),
 		BaseModel: frame.BaseModel{
 			TenantID:    partition.TenantID,
 			PartitionID: partition.GetID(),

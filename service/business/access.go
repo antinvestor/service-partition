@@ -17,8 +17,12 @@ type AccessBusiness interface {
 	CreateAccess(ctx context.Context, request *partitionV1.AccessCreateRequest) (*partitionV1.AccessObject, error)
 
 	RemoveAccessRole(ctx context.Context, request *partitionV1.AccessRoleRemoveRequest) error
-	ListAccessRoles(ctx context.Context, request *partitionV1.AccessRoleListRequest) (*partitionV1.AccessRoleListResponse, error)
-	CreateAccessRole(ctx context.Context, request *partitionV1.AccessRoleCreateRequest) (*partitionV1.AccessRoleObject, error)
+	ListAccessRoles(
+		ctx context.Context,
+		request *partitionV1.AccessRoleListRequest) (*partitionV1.AccessRoleListResponse, error)
+	CreateAccessRole(
+		ctx context.Context,
+		request *partitionV1.AccessRoleCreateRequest) (*partitionV1.AccessRoleObject, error)
 }
 
 func NewAccessBusiness(ctx context.Context, service *frame.Service) AccessBusiness {
@@ -38,7 +42,9 @@ type accessBusiness struct {
 	partitionRepo repository.PartitionRepository
 }
 
-func toApiAccess(partitionObject *partitionV1.PartitionObject, accessModel *models.Access) (*partitionV1.AccessObject, error) {
+func toAPIAccess(
+	partitionObject *partitionV1.PartitionObject,
+	accessModel *models.Access) (*partitionV1.AccessObject, error) {
 
 	if partitionObject == nil {
 		return nil, errors.New("no partition exists for this access")
@@ -51,16 +57,18 @@ func toApiAccess(partitionObject *partitionV1.PartitionObject, accessModel *mode
 	}, nil
 }
 
-func toApiAccessRole(accessRoleModel *models.AccessRole) *partitionV1.AccessRoleObject {
+func toAPIAccessRole(partitionRoleObj *partitionV1.PartitionRoleObject, accessRoleModel *models.AccessRole) *partitionV1.AccessRoleObject {
 
 	return &partitionV1.AccessRoleObject{
 		AccessRoleId: accessRoleModel.GetID(),
 		AccessId:     accessRoleModel.AccessID,
-		Role:         toAPIPartitionRole(accessRoleModel.PartitionRole),
+		Role:         partitionRoleObj,
 	}
 }
 
-func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.AccessGetRequest) (*partitionV1.AccessObject, error) {
+func (ab *accessBusiness) GetAccess(
+	ctx context.Context,
+	request *partitionV1.AccessGetRequest) (*partitionV1.AccessObject, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -81,7 +89,7 @@ func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.Ac
 
 		partitionObject := toAPIPartition(partition)
 
-		return toApiAccess(partitionObject, access)
+		return toAPIAccess(partitionObject, access)
 	}
 
 	access, err = ab.accessRepo.GetByPartitionAndProfile(ctx, request.GetPartitionId(), request.GetProfileId())
@@ -96,10 +104,12 @@ func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.Ac
 
 	partitionObject := toAPIPartition(partition)
 
-	return toApiAccess(partitionObject, access)
+	return toAPIAccess(partitionObject, access)
 }
 
-func (ab *accessBusiness) RemoveAccess(ctx context.Context, request *partitionV1.AccessRemoveRequest) error {
+func (ab *accessBusiness) RemoveAccess(
+	ctx context.Context,
+	request *partitionV1.AccessRemoveRequest) error {
 
 	err := request.Validate()
 	if err != nil {
@@ -114,7 +124,9 @@ func (ab *accessBusiness) RemoveAccess(ctx context.Context, request *partitionV1
 	return nil
 }
 
-func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1.AccessCreateRequest) (*partitionV1.AccessObject, error) {
+func (ab *accessBusiness) CreateAccess(
+	ctx context.Context,
+	request *partitionV1.AccessCreateRequest) (*partitionV1.AccessObject, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -137,7 +149,7 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 	} else {
 		partitionObject := toAPIPartition(partition)
 
-		return toApiAccess(partitionObject, access)
+		return toAPIAccess(partitionObject, access)
 	}
 
 	access = &models.Access{
@@ -156,10 +168,12 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 	log.Printf(" CreateAccess -- final access created is  %+v", access)
 	partitionObject := toAPIPartition(partition)
 
-	return toApiAccess(partitionObject, access)
+	return toAPIAccess(partitionObject, access)
 }
 
-func (ab *accessBusiness) ListAccessRoles(ctx context.Context, request *partitionV1.AccessRoleListRequest) (*partitionV1.AccessRoleListResponse, error) {
+func (ab *accessBusiness) ListAccessRoles(
+	ctx context.Context,
+	request *partitionV1.AccessRoleListRequest) (*partitionV1.AccessRoleListResponse, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -171,10 +185,26 @@ func (ab *accessBusiness) ListAccessRoles(ctx context.Context, request *partitio
 		return nil, err
 	}
 
+	parititionRoleIDs := make([]string, 0)
+
+	for _, accessR := range accessRoleList {
+		parititionRoleIDs = append(parititionRoleIDs, accessR.PartitionRoleID)
+	}
+
+	partitionRoles, err := ab.partitionRepo.GetRolesByID(ctx, parititionRoleIDs...)
+	if err != nil {
+		return nil, err
+	}
+
+	partitionRoleIDMap := make(map[string]*partitionV1.PartitionRoleObject)
+	for _, partitionRole := range partitionRoles {
+		partitionRoleIDMap[partitionRole.ID] = toAPIPartitionRole(partitionRole)
+	}
+
 	response := make([]*partitionV1.AccessRoleObject, 0)
 
 	for _, acc := range accessRoleList {
-		response = append(response, toApiAccessRole(acc))
+		response = append(response, toAPIAccessRole(partitionRoleIDMap[acc.PartitionRoleID], acc))
 	}
 
 	return &partitionV1.AccessRoleListResponse{
@@ -182,8 +212,9 @@ func (ab *accessBusiness) ListAccessRoles(ctx context.Context, request *partitio
 	}, nil
 }
 
-func (ab *accessBusiness) RemoveAccessRole(ctx context.Context, request *partitionV1.AccessRoleRemoveRequest) error {
-
+func (ab *accessBusiness) RemoveAccessRole(
+	ctx context.Context,
+	request *partitionV1.AccessRoleRemoveRequest) error {
 	err := request.Validate()
 	if err != nil {
 		return err
@@ -197,7 +228,9 @@ func (ab *accessBusiness) RemoveAccessRole(ctx context.Context, request *partiti
 	return nil
 }
 
-func (ab *accessBusiness) CreateAccessRole(ctx context.Context, request *partitionV1.AccessRoleCreateRequest) (*partitionV1.AccessRoleObject, error) {
+func (ab *accessBusiness) CreateAccessRole(
+	ctx context.Context,
+	request *partitionV1.AccessRoleCreateRequest) (*partitionV1.AccessRoleObject, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -209,14 +242,14 @@ func (ab *accessBusiness) CreateAccessRole(ctx context.Context, request *partiti
 		return nil, err
 	}
 
-	partitionRole, err := ab.partitionRepo.GetByID(ctx, request.GetPartitionRoleId())
+	partitionRoles, err := ab.partitionRepo.GetRolesByID(ctx, request.GetPartitionRoleId())
 	if err != nil {
 		return nil, err
 	}
 
 	accessRole := &models.AccessRole{
 		AccessID:        access.GetID(),
-		PartitionRoleID: partitionRole.GetID(),
+		PartitionRoleID: partitionRoles[0].GetID(),
 	}
 
 	err = ab.accessRepo.SaveRole(ctx, accessRole)
@@ -224,5 +257,6 @@ func (ab *accessBusiness) CreateAccessRole(ctx context.Context, request *partiti
 		return nil, err
 	}
 
-	return toApiAccessRole(accessRole), nil
+	partitionRoleObj := toAPIPartitionRole(partitionRoles[0])
+	return toAPIAccessRole(partitionRoleObj, accessRole), nil
 }
