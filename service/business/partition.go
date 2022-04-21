@@ -255,7 +255,6 @@ func (pb *partitionBusiness) CreatePartitionRole(
 	ctx context.Context,
 	request *partitionV1.PartitionRoleCreateRequest) (
 	*partitionV1.PartitionRoleObject, error) {
-
 	err := request.Validate()
 	if err != nil {
 		return nil, err
