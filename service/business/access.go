@@ -56,7 +56,7 @@ func toApiAccessRole(accessRoleModel *models.AccessRole) *partitionV1.AccessRole
 	return &partitionV1.AccessRoleObject{
 		AccessRoleId: accessRoleModel.GetID(),
 		AccessId:     accessRoleModel.AccessID,
-		Role:         toApiPartitionRole(accessRoleModel.PartitionRole),
+		Role:         toAPIPartitionRole(accessRoleModel.PartitionRole),
 	}
 }
 
@@ -79,7 +79,7 @@ func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.Ac
 			return nil, err
 		}
 
-		partitionObject := toApiPartition(partition)
+		partitionObject := toAPIPartition(partition)
 
 		return toApiAccess(partitionObject, access)
 	}
@@ -94,7 +94,7 @@ func (ab *accessBusiness) GetAccess(ctx context.Context, request *partitionV1.Ac
 		return nil, err
 	}
 
-	partitionObject := toApiPartition(partition)
+	partitionObject := toAPIPartition(partition)
 
 	return toApiAccess(partitionObject, access)
 }
@@ -135,7 +135,7 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 			return nil, err
 		}
 	} else {
-		partitionObject := toApiPartition(partition)
+		partitionObject := toAPIPartition(partition)
 
 		return toApiAccess(partitionObject, access)
 	}
@@ -154,7 +154,7 @@ func (ab *accessBusiness) CreateAccess(ctx context.Context, request *partitionV1
 	}
 
 	log.Printf(" CreateAccess -- final access created is  %+v", access)
-	partitionObject := toApiPartition(partition)
+	partitionObject := toAPIPartition(partition)
 
 	return toApiAccess(partitionObject, access)
 }
