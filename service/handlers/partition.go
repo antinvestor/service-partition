@@ -50,6 +50,7 @@ func (prtSrv *PartitionServer) GetPartition(
 	}
 	return partition, nil
 }
+
 func (prtSrv *PartitionServer) UpdatePartition(
 	ctx context.Context,
 	req *partitionV1.PartitionUpdateRequest) (*partitionV1.PartitionObject, error) {
@@ -61,6 +62,7 @@ func (prtSrv *PartitionServer) UpdatePartition(
 	}
 	return partition, nil
 }
+
 func (prtSrv *PartitionServer) CreatePartitionRole(
 	ctx context.Context,
 	req *partitionV1.PartitionRoleCreateRequest) (*partitionV1.PartitionRoleObject, error) {
@@ -72,6 +74,7 @@ func (prtSrv *PartitionServer) CreatePartitionRole(
 	}
 	return partition, nil
 }
+
 func (prtSrv *PartitionServer) ListPartitionRoles(
 	ctx context.Context,
 	req *partitionV1.PartitionRoleListRequest) (*partitionV1.PartitionRoleListResponse, error) {
@@ -83,6 +86,7 @@ func (prtSrv *PartitionServer) ListPartitionRoles(
 	}
 	return partition, nil
 }
+
 func (prtSrv *PartitionServer) RemovePartitionRole(
 	ctx context.Context,
 	req *partitionV1.PartitionRoleRemoveRequest) (*partitionV1.RemoveResponse, error) {
