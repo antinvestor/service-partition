@@ -40,7 +40,6 @@ func main() {
 
 	stdArgs := os.Args[1:]
 	if (len(stdArgs) > 0 && stdArgs[0] == "migrate") || isMigration {
-
 		migrationPath := frame.GetEnv(config.EnvMigrationPath, "./migrations/0001")
 		err := service.MigrateDatastore(ctx, migrationPath,
 			models.Tenant{}, models.Partition{}, models.PartitionRole{},
