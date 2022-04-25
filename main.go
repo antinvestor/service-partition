@@ -25,10 +25,10 @@ func main() {
 	serviceName := "service_partition"
 	ctx := context.Background()
 
-	datasource := frame.GetEnv(config.EnvDatabaseUrl, "postgres://ant:@nt@localhost/service_partition")
+	datasource := frame.GetEnv(config.EnvDatabaseURL, "postgres://ant:@nt@localhost/service_partition")
 	mainDb := frame.Datastore(ctx, datasource, false)
 
-	readOnlydatasource := frame.GetEnv(config.EnvReplicaDatabaseUrl, datasource)
+	readOnlydatasource := frame.GetEnv(config.EnvReplicaDatabaseURL, datasource)
 	readDb := frame.Datastore(ctx, readOnlydatasource, true)
 
 	service := frame.NewService(serviceName, mainDb, readDb)

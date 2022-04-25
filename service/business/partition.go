@@ -310,7 +310,7 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
 
-	hydraURL := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvOauth2ServiceAdminUri, ""), "/clients")
+	hydraURL := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvOauth2ServiceAdminURI, ""), "/clients")
 	hydraIDUrl := fmt.Sprintf("%s/%s", hydraURL, partition.ID)
 
 	if partition.DeletedAt.Valid { //	We need to delete this partition on hydra as well
