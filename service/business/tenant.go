@@ -2,7 +2,7 @@ package business
 
 import (
 	"context"
-	partitionV1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
@@ -10,9 +10,9 @@ import (
 )
 
 type TenantBusiness interface {
-	GetTenant(ctx context.Context, tenantId string) (*partitionV1.TenantObject, error)
-	CreateTenant(ctx context.Context, request *partitionV1.TenantRequest) (*partitionV1.TenantObject, error)
-	ListTenant(ctx context.Context, request *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListTenantServer) error
+	GetTenant(ctx context.Context, tenantId string) (*partitionv1.TenantObject, error)
+	CreateTenant(ctx context.Context, request *partitionv1.TenantRequest) (*partitionv1.TenantObject, error)
+	ListTenant(ctx context.Context, request *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListTenantServer) error
 }
 
 func NewTenantBusiness(ctx context.Context, service *frame.Service) TenantBusiness {
@@ -28,18 +28,18 @@ type tenantBusiness struct {
 	tenantRepo repository.TenantRepository
 }
 
-func toApiTenant(tenantModel *models.Tenant) *partitionV1.TenantObject {
+func toApiTenant(tenantModel *models.Tenant) *partitionv1.TenantObject {
 
 	properties := frame.DBPropertiesToMap(tenantModel.Properties)
 
-	return &partitionV1.TenantObject{
+	return &partitionv1.TenantObject{
 		TenantId:    tenantModel.ID,
 		Description: tenantModel.Description,
 		Properties:  properties,
 	}
 }
 
-func toModelTenant(tenantApi *partitionV1.TenantObject) *models.Tenant {
+func toModelTenant(tenantApi *partitionv1.TenantObject) *models.Tenant {
 
 	return &models.Tenant{
 		Description: tenantApi.GetDescription(),
@@ -47,7 +47,7 @@ func toModelTenant(tenantApi *partitionV1.TenantObject) *models.Tenant {
 	}
 }
 
-func (t *tenantBusiness) GetTenant(ctx context.Context, tenantId string) (*partitionV1.TenantObject, error) {
+func (t *tenantBusiness) GetTenant(ctx context.Context, tenantId string) (*partitionv1.TenantObject, error) {
 
 	//err := request.Validate()
 	//if err != nil {
@@ -62,7 +62,7 @@ func (t *tenantBusiness) GetTenant(ctx context.Context, tenantId string) (*parti
 	return toApiTenant(tenant), nil
 }
 
-func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionV1.TenantRequest) (*partitionV1.TenantObject, error) {
+func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionv1.TenantRequest) (*partitionv1.TenantObject, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -88,7 +88,7 @@ func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionV1.
 	return toApiTenant(tenantModel), nil
 }
 
-func (t *tenantBusiness) ListTenant(ctx context.Context, request *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListTenantServer) error {
+func (t *tenantBusiness) ListTenant(ctx context.Context, request *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListTenantServer) error {
 
 	err := request.Validate()
 	if err != nil {

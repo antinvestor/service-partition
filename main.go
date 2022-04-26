@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	partitionV1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/handlers"
 	"github.com/antinvestor/service-partition/service/models"
@@ -49,7 +49,6 @@ func main() {
 			log.Fatalf("main -- Could not migrate successfully because : %v", err)
 		}
 		return
-
 	}
 
 	var serviceOptions []frame.Option
@@ -70,7 +69,7 @@ func main() {
 		Service: service,
 	}
 
-	partitionV1.RegisterPartitionServiceServer(grpcServer, implementation)
+	partitionv1.RegisterPartitionServiceServer(grpcServer, implementation)
 
 	grpcServerOpt := frame.GrpcServer(grpcServer)
 	serviceOptions = append(serviceOptions, grpcServerOpt)

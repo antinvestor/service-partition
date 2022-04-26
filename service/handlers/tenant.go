@@ -2,14 +2,14 @@ package handlers
 
 import (
 	"context"
-	partitionV1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/service/business"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
 )
 
-func (prtSrv *PartitionServer) ListTenant(req *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListTenantServer) error {
+func (prtSrv *PartitionServer) ListTenant(req *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListTenantServer) error {
 	tenantBusiness := business.NewTenantBusiness(stream.Context(), prtSrv.Service)
 	err := tenantBusiness.ListTenant(stream.Context(), req, stream)
 	if err != nil {
@@ -19,7 +19,7 @@ func (prtSrv *PartitionServer) ListTenant(req *partitionV1.SearchRequest, stream
 	return nil
 }
 
-func (prtSrv *PartitionServer) CreateTenant(ctx context.Context, req *partitionV1.TenantRequest) (*partitionV1.TenantObject, error) {
+func (prtSrv *PartitionServer) CreateTenant(ctx context.Context, req *partitionv1.TenantRequest) (*partitionv1.TenantObject, error) {
 
 	tenantBusiness := business.NewTenantBusiness(ctx, prtSrv.Service)
 	tenant, err := tenantBusiness.CreateTenant(ctx, req)

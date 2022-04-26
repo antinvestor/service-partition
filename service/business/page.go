@@ -3,16 +3,16 @@ package business
 import (
 	"context"
 	"github.com/antinvestor/apis/common"
-	partitionV1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
 )
 
 type PageBusiness interface {
-	GetPage(ctx context.Context, request *partitionV1.PageGetRequest) (*partitionV1.PageObject, error)
-	RemovePage(ctx context.Context, request *partitionV1.PageRemoveRequest) error
-	CreatePage(ctx context.Context, request *partitionV1.PageCreateRequest) (*partitionV1.PageObject, error)
+	GetPage(ctx context.Context, request *partitionv1.PageGetRequest) (*partitionv1.PageObject, error)
+	RemovePage(ctx context.Context, request *partitionv1.PageRemoveRequest) error
+	CreatePage(ctx context.Context, request *partitionv1.PageCreateRequest) (*partitionv1.PageObject, error)
 }
 
 func NewPageBusiness(ctx context.Context, service *frame.Service) PageBusiness {
@@ -32,9 +32,9 @@ type pageBusiness struct {
 	partitionRepo repository.PartitionRepository
 }
 
-func toApiPage(pageModel *models.Page) *partitionV1.PageObject {
+func toApiPage(pageModel *models.Page) *partitionv1.PageObject {
 
-	return &partitionV1.PageObject{
+	return &partitionv1.PageObject{
 		PageId: pageModel.GetID(),
 		Name:   pageModel.Name,
 		Html:   pageModel.HTML,
@@ -42,7 +42,7 @@ func toApiPage(pageModel *models.Page) *partitionV1.PageObject {
 	}
 }
 
-func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionV1.PageGetRequest) (*partitionV1.PageObject, error) {
+func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionv1.PageGetRequest) (*partitionv1.PageObject, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -57,7 +57,7 @@ func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionV1.PageGe
 	return toApiPage(access), nil
 }
 
-func (ab *pageBusiness) RemovePage(ctx context.Context, request *partitionV1.PageRemoveRequest) error {
+func (ab *pageBusiness) RemovePage(ctx context.Context, request *partitionv1.PageRemoveRequest) error {
 
 	err := request.Validate()
 	if err != nil {
@@ -72,7 +72,7 @@ func (ab *pageBusiness) RemovePage(ctx context.Context, request *partitionV1.Pag
 	return nil
 }
 
-func (ab *pageBusiness) CreatePage(ctx context.Context, request *partitionV1.PageCreateRequest) (*partitionV1.PageObject, error) {
+func (ab *pageBusiness) CreatePage(ctx context.Context, request *partitionv1.PageCreateRequest) (*partitionv1.PageObject, error) {
 
 	err := request.Validate()
 	if err != nil {

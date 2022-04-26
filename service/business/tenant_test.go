@@ -2,7 +2,7 @@ package business
 
 import (
 	"context"
-	partitionV1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
@@ -43,13 +43,13 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 	}
 	type args struct {
 		ctx     context.Context
-		request *partitionV1.TenantRequest
+		request *partitionv1.TenantRequest
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		args    args
-		want    *partitionV1.TenantObject
+		want    *partitionv1.TenantObject
 		wantErr bool
 	}{
 		// TODO: Add test cases.
@@ -85,7 +85,7 @@ func Test_tenantBusiness_GetTenant(t1 *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *partitionV1.TenantObject
+		want    *partitionv1.TenantObject
 		wantErr bool
 	}{
 		// TODO: Add test cases.
@@ -115,7 +115,7 @@ func Test_toApiTenant(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *partitionV1.TenantObject
+		want *partitionv1.TenantObject
 	}{
 		// TODO: Add test cases.
 	}
@@ -130,7 +130,7 @@ func Test_toApiTenant(t *testing.T) {
 
 func Test_toModelTenant(t *testing.T) {
 	type args struct {
-		tenantApi *partitionV1.TenantObject
+		tenantApi *partitionv1.TenantObject
 	}
 	tests := []struct {
 		name string

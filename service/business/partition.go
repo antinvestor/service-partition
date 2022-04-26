@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/antinvestor/apis/common"
-	partitionV1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
@@ -17,26 +17,26 @@ import (
 )
 
 type PartitionBusiness interface {
-	GetPartition(ctx context.Context, request *partitionV1.PartitionGetRequest) (*partitionV1.PartitionObject, error)
-	RemovePartition(ctx context.Context, request *partitionV1.PartitionRoleRemoveRequest) error
+	GetPartition(ctx context.Context, request *partitionv1.PartitionGetRequest) (*partitionv1.PartitionObject, error)
+	RemovePartition(ctx context.Context, request *partitionv1.PartitionRoleRemoveRequest) error
 	CreatePartition(
 		ctx context.Context,
-		request *partitionV1.PartitionCreateRequest) (*partitionV1.PartitionObject, error)
+		request *partitionv1.PartitionCreateRequest) (*partitionv1.PartitionObject, error)
 	UpdatePartition(
 		ctx context.Context,
-		request *partitionV1.PartitionUpdateRequest) (*partitionV1.PartitionObject, error)
+		request *partitionv1.PartitionUpdateRequest) (*partitionv1.PartitionObject, error)
 	ListPartition(
 		ctx context.Context,
-		request *partitionV1.SearchRequest,
-		stream partitionV1.PartitionService_ListPartitionServer) error
+		request *partitionv1.SearchRequest,
+		stream partitionv1.PartitionService_ListPartitionServer) error
 
-	RemovePartitionRole(ctx context.Context, request *partitionV1.PartitionRoleRemoveRequest) error
+	RemovePartitionRole(ctx context.Context, request *partitionv1.PartitionRoleRemoveRequest) error
 	ListPartitionRoles(
 		ctx context.Context,
-		request *partitionV1.PartitionRoleListRequest) (*partitionV1.PartitionRoleListResponse, error)
+		request *partitionv1.PartitionRoleListRequest) (*partitionv1.PartitionRoleListResponse, error)
 	CreatePartitionRole(
 		ctx context.Context,
-		request *partitionV1.PartitionRoleCreateRequest) (*partitionV1.PartitionRoleObject, error)
+		request *partitionv1.PartitionRoleCreateRequest) (*partitionv1.PartitionRoleObject, error)
 }
 
 func NewPartitionBusiness(service *frame.Service) PartitionBusiness {
@@ -56,11 +56,11 @@ type partitionBusiness struct {
 	partitionRepo repository.PartitionRepository
 }
 
-func toAPIPartition(partitionModel *models.Partition) *partitionV1.PartitionObject {
+func toAPIPartition(partitionModel *models.Partition) *partitionv1.PartitionObject {
 
 	properties := frame.DBPropertiesToMap(partitionModel.Properties)
 
-	return &partitionV1.PartitionObject{
+	return &partitionv1.PartitionObject{
 		PartitionId: partitionModel.ID,
 		TenantId:    partitionModel.TenantID,
 		ParentId:    partitionModel.ParentID,
@@ -71,18 +71,18 @@ func toAPIPartition(partitionModel *models.Partition) *partitionV1.PartitionObje
 	}
 }
 
-func toAPIPartitionRole(partitionModel *models.PartitionRole) *partitionV1.PartitionRoleObject {
+func toAPIPartitionRole(partitionModel *models.PartitionRole) *partitionv1.PartitionRoleObject {
 
 	properties := frame.DBPropertiesToMap(partitionModel.Properties)
 
-	return &partitionV1.PartitionRoleObject{
+	return &partitionv1.PartitionRoleObject{
 		PartitionId: partitionModel.PartitionID,
 		Name:        partitionModel.Name,
 		Properties:  properties,
 	}
 }
 
-func (pb *partitionBusiness) ListPartition(ctx context.Context, request *partitionV1.SearchRequest, stream partitionV1.PartitionService_ListPartitionServer) error {
+func (pb *partitionBusiness) ListPartition(ctx context.Context, request *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListPartitionServer) error {
 
 	err := request.Validate()
 	if err != nil {
@@ -108,7 +108,7 @@ func (pb *partitionBusiness) ListPartition(ctx context.Context, request *partiti
 
 func (pb *partitionBusiness) GetPartition(
 	ctx context.Context,
-	request *partitionV1.PartitionGetRequest) (*partitionV1.PartitionObject, error) {
+	request *partitionv1.PartitionGetRequest) (*partitionv1.PartitionObject, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -125,7 +125,7 @@ func (pb *partitionBusiness) GetPartition(
 
 func (pb *partitionBusiness) RemovePartition(
 	ctx context.Context,
-	request *partitionV1.PartitionRoleRemoveRequest) error {
+	request *partitionv1.PartitionRoleRemoveRequest) error {
 
 	err := request.Validate()
 	if err != nil {
@@ -142,7 +142,7 @@ func (pb *partitionBusiness) RemovePartition(
 
 func (pb *partitionBusiness) CreatePartition(
 	ctx context.Context,
-	request *partitionV1.PartitionCreateRequest) (*partitionV1.PartitionObject, error) {
+	request *partitionv1.PartitionCreateRequest) (*partitionv1.PartitionObject, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -179,7 +179,7 @@ func (pb *partitionBusiness) CreatePartition(
 
 func (pb *partitionBusiness) UpdatePartition(
 	ctx context.Context,
-	request *partitionV1.PartitionUpdateRequest) (*partitionV1.PartitionObject, error) {
+	request *partitionv1.PartitionUpdateRequest) (*partitionv1.PartitionObject, error) {
 	err := request.Validate()
 	if err != nil {
 		return nil, err
@@ -209,8 +209,8 @@ func (pb *partitionBusiness) UpdatePartition(
 
 func (pb *partitionBusiness) ListPartitionRoles(
 	ctx context.Context,
-	request *partitionV1.PartitionRoleListRequest,
-) (*partitionV1.PartitionRoleListResponse, error) {
+	request *partitionv1.PartitionRoleListRequest,
+) (*partitionv1.PartitionRoleListResponse, error) {
 
 	err := request.Validate()
 	if err != nil {
@@ -222,20 +222,20 @@ func (pb *partitionBusiness) ListPartitionRoles(
 		return nil, err
 	}
 
-	response := make([]*partitionV1.PartitionRoleObject, 0)
+	response := make([]*partitionv1.PartitionRoleObject, 0)
 
 	for _, pat := range partitionRoleList {
 		response = append(response, toAPIPartitionRole(pat))
 	}
 
-	return &partitionV1.PartitionRoleListResponse{
+	return &partitionv1.PartitionRoleListResponse{
 		Role: response,
 	}, nil
 }
 
 func (pb *partitionBusiness) RemovePartitionRole(
 	ctx context.Context,
-	request *partitionV1.PartitionRoleRemoveRequest,
+	request *partitionv1.PartitionRoleRemoveRequest,
 ) error {
 
 	err := request.Validate()
@@ -253,8 +253,8 @@ func (pb *partitionBusiness) RemovePartitionRole(
 
 func (pb *partitionBusiness) CreatePartitionRole(
 	ctx context.Context,
-	request *partitionV1.PartitionRoleCreateRequest) (
-	*partitionV1.PartitionRoleObject, error) {
+	request *partitionv1.PartitionRoleCreateRequest) (
+	*partitionv1.PartitionRoleObject, error) {
 	err := request.Validate()
 	if err != nil {
 		return nil, err

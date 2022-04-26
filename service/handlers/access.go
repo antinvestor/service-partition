@@ -2,14 +2,14 @@ package handlers
 
 import (
 	"context"
-	partitionV1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/service/business"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
 )
 
-func (prtSrv *PartitionServer) CreateAccess(ctx context.Context, req *partitionV1.AccessCreateRequest) (*partitionV1.AccessObject, error) {
+func (prtSrv *PartitionServer) CreateAccess(ctx context.Context, req *partitionv1.AccessCreateRequest) (*partitionv1.AccessObject, error) {
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	access, err := accessBusiness.CreateAccess(ctx, req)
 	if err != nil {
@@ -18,7 +18,7 @@ func (prtSrv *PartitionServer) CreateAccess(ctx context.Context, req *partitionV
 	}
 	return access, nil
 }
-func (prtSrv *PartitionServer) GetAccess(ctx context.Context, req *partitionV1.AccessGetRequest) (*partitionV1.AccessObject, error) {
+func (prtSrv *PartitionServer) GetAccess(ctx context.Context, req *partitionv1.AccessGetRequest) (*partitionv1.AccessObject, error) {
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	access, err := accessBusiness.GetAccess(ctx, req)
 	if err != nil {
@@ -27,20 +27,20 @@ func (prtSrv *PartitionServer) GetAccess(ctx context.Context, req *partitionV1.A
 	}
 	return access, nil
 }
-func (prtSrv *PartitionServer) RemoveAccess(ctx context.Context, req *partitionV1.AccessRemoveRequest) (*partitionV1.RemoveResponse, error) {
+func (prtSrv *PartitionServer) RemoveAccess(ctx context.Context, req *partitionv1.AccessRemoveRequest) (*partitionv1.RemoveResponse, error) {
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	err := accessBusiness.RemoveAccess(ctx, req)
 	if err != nil {
 		log.Printf(" RemoveAccess -- could not remove access %+v", err)
-		return &partitionV1.RemoveResponse{
+		return &partitionv1.RemoveResponse{
 			Succeeded: false,
 		}, status.Errorf(codes.Internal, err.Error())
 	}
-	return &partitionV1.RemoveResponse{
+	return &partitionv1.RemoveResponse{
 		Succeeded: true,
 	}, nil
 }
-func (prtSrv *PartitionServer) CreateAccessRole(ctx context.Context, req *partitionV1.AccessRoleCreateRequest) (*partitionV1.AccessRoleObject, error) {
+func (prtSrv *PartitionServer) CreateAccessRole(ctx context.Context, req *partitionv1.AccessRoleCreateRequest) (*partitionv1.AccessRoleObject, error) {
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	accessRole, err := accessBusiness.CreateAccessRole(ctx, req)
 	if err != nil {
@@ -49,7 +49,7 @@ func (prtSrv *PartitionServer) CreateAccessRole(ctx context.Context, req *partit
 	}
 	return accessRole, nil
 }
-func (prtSrv *PartitionServer) ListAccessRoles(ctx context.Context, req *partitionV1.AccessRoleListRequest) (*partitionV1.AccessRoleListResponse, error) {
+func (prtSrv *PartitionServer) ListAccessRoles(ctx context.Context, req *partitionv1.AccessRoleListRequest) (*partitionv1.AccessRoleListResponse, error) {
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	accessRoleList, err := accessBusiness.ListAccessRoles(ctx, req)
 	if err != nil {
@@ -58,16 +58,16 @@ func (prtSrv *PartitionServer) ListAccessRoles(ctx context.Context, req *partiti
 	}
 	return accessRoleList, nil
 }
-func (prtSrv *PartitionServer) RemoveAccessRole(ctx context.Context, req *partitionV1.AccessRoleRemoveRequest) (*partitionV1.RemoveResponse, error) {
+func (prtSrv *PartitionServer) RemoveAccessRole(ctx context.Context, req *partitionv1.AccessRoleRemoveRequest) (*partitionv1.RemoveResponse, error) {
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	err := accessBusiness.RemoveAccessRole(ctx, req)
 	if err != nil {
 		log.Printf(" RemoveAccessRole -- could not remove access role %+v", err)
-		return &partitionV1.RemoveResponse{
+		return &partitionv1.RemoveResponse{
 			Succeeded: false,
 		}, status.Errorf(codes.Internal, err.Error())
 	}
-	return &partitionV1.RemoveResponse{
+	return &partitionv1.RemoveResponse{
 		Succeeded: true,
 	}, nil
 }
