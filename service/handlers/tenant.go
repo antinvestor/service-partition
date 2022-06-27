@@ -9,6 +9,18 @@ import (
 	"log"
 )
 
+func (prtSrv *PartitionServer) GetTenant(
+	ctx context.Context,
+	req *partitionv1.GetRequest) (*partitionv1.TenantObject, error) {
+	tenantBusiness := business.NewTenantBusiness(ctx, prtSrv.Service)
+	tenant, err := tenantBusiness.GetTenant(ctx, req.GetId())
+	if err != nil {
+		log.Printf(" GetTenant -- could not obtain the specified tenant %+v", err)
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return tenant, nil
+}
+
 func (prtSrv *PartitionServer) ListTenant(req *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListTenantServer) error {
 	tenantBusiness := business.NewTenantBusiness(stream.Context(), prtSrv.Service)
 	err := tenantBusiness.ListTenant(stream.Context(), req, stream)

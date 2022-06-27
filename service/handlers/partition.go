@@ -41,7 +41,7 @@ func (prtSrv *PartitionServer) CreatePartition(
 
 func (prtSrv *PartitionServer) GetPartition(
 	ctx context.Context,
-	req *partitionv1.PartitionGetRequest) (*partitionv1.PartitionObject, error) {
+	req *partitionv1.GetRequest) (*partitionv1.PartitionObject, error) {
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.GetPartition(ctx, req)
 	if err != nil {

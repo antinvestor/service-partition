@@ -17,7 +17,7 @@ import (
 )
 
 type PartitionBusiness interface {
-	GetPartition(ctx context.Context, request *partitionv1.PartitionGetRequest) (*partitionv1.PartitionObject, error)
+	GetPartition(ctx context.Context, request *partitionv1.GetRequest) (*partitionv1.PartitionObject, error)
 	RemovePartition(ctx context.Context, request *partitionv1.PartitionRoleRemoveRequest) error
 	CreatePartition(
 		ctx context.Context,
@@ -57,7 +57,6 @@ type partitionBusiness struct {
 }
 
 func toAPIPartition(partitionModel *models.Partition) *partitionv1.PartitionObject {
-
 	properties := frame.DBPropertiesToMap(partitionModel.Properties)
 
 	return &partitionv1.PartitionObject{
@@ -72,7 +71,6 @@ func toAPIPartition(partitionModel *models.Partition) *partitionv1.PartitionObje
 }
 
 func toAPIPartitionRole(partitionModel *models.PartitionRole) *partitionv1.PartitionRoleObject {
-
 	properties := frame.DBPropertiesToMap(partitionModel.Properties)
 
 	return &partitionv1.PartitionRoleObject{
@@ -83,7 +81,6 @@ func toAPIPartitionRole(partitionModel *models.PartitionRole) *partitionv1.Parti
 }
 
 func (pb *partitionBusiness) ListPartition(ctx context.Context, request *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListPartitionServer) error {
-
 	err := request.Validate()
 	if err != nil {
 		return err
@@ -108,14 +105,12 @@ func (pb *partitionBusiness) ListPartition(ctx context.Context, request *partiti
 
 func (pb *partitionBusiness) GetPartition(
 	ctx context.Context,
-	request *partitionv1.PartitionGetRequest) (*partitionv1.PartitionObject, error) {
-
-	err := request.Validate()
-	if err != nil {
+	request *partitionv1.GetRequest) (*partitionv1.PartitionObject, error) {
+	if err := request.Validate(); err != nil {
 		return nil, err
 	}
 
-	partition, err := pb.partitionRepo.GetByID(ctx, request.GetPartitionId())
+	partition, err := pb.partitionRepo.GetByID(ctx, request.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +121,6 @@ func (pb *partitionBusiness) GetPartition(
 func (pb *partitionBusiness) RemovePartition(
 	ctx context.Context,
 	request *partitionv1.PartitionRoleRemoveRequest) error {
-
 	err := request.Validate()
 	if err != nil {
 		return err
