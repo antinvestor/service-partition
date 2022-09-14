@@ -25,7 +25,7 @@ services:
       - ./hydra.yaml:/etc/config/hydra.yml
 
   partition_hydra:
-    image: oryd/hydra:v1
+    image: oryd/hydra:v2
     restart: unless-stopped
     depends_on:
       - partition_db
