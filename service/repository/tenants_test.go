@@ -1,32 +1,29 @@
-package repository
+package repository_test
 
 import (
 	"context"
 	"github.com/antinvestor/service-partition/service/models"
-	"github.com/pitabwire/frame"
+	"github.com/antinvestor/service-partition/service/repository"
+	"github.com/antinvestor/service-partition/testsutil"
 	"strings"
 	"testing"
 )
 
-const testDatastoreConnection = "postgres://partition:secret@localhost:5423/partitiondatabase?sslmode=disable"
-
-func getTestService(name string, ctx context.Context) *frame.Service {
-	mainDb := frame.Datastore(ctx, testDatastoreConnection, false)
-	return frame.NewService(name, mainDb)
-}
-
 func TestTenantRepository_GetByID(t *testing.T) {
 	ctx := context.Background()
-	srv := getTestService("Tenant Srv", ctx)
-
-	tenantRepo := NewTenantRepository(srv)
+	srv, err := testsutil.GetTestService("Tenant Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
+	tenantRepo := repository.NewTenantRepository(srv)
 
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 	}
@@ -45,16 +42,20 @@ func TestTenantRepository_GetByID(t *testing.T) {
 func TestTenantRepository_Save(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Tenant Srv", ctx)
+	srv, err := testsutil.GetTestService("Tenant Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 	}
@@ -64,16 +65,20 @@ func TestTenantRepository_Save(t *testing.T) {
 func TestTenantRepository_Delete(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Tenant Srv", ctx)
+	srv, err := testsutil.GetTestService("Tenant Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 	}

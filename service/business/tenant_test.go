@@ -1,8 +1,9 @@
-package business
+package business_test
 
 import (
 	"context"
 	partitionv1 "github.com/antinvestor/service-partition-api"
+	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
@@ -10,11 +11,6 @@ import (
 	"reflect"
 	"testing"
 )
-
-func getTestService(name string, ctx context.Context) *frame.Service {
-	mainDb := frame.Datastore(ctx, "postgres://partition:secret@localhost:5423/partitiondatabase?sslmode=disable", false)
-	return frame.NewService(name, mainDb)
-}
 
 func Test_extractProperties(t *testing.T) {
 	type args struct {
@@ -37,6 +33,9 @@ func Test_extractProperties(t *testing.T) {
 }
 
 func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
+
+	ctx := context.Background()
+
 	type fields struct {
 		service    *frame.Service
 		tenantRepo repository.TenantRepository
@@ -56,10 +55,7 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
-			t := &tenantBusiness{
-				service:    tt.fields.service,
-				tenantRepo: tt.fields.tenantRepo,
-			}
+			t := business.NewTenantBusinessWithRepo(ctx, tt.fields.service, tt.fields.tenantRepo)
 			got, err := t.CreateTenant(tt.args.ctx, tt.args.request)
 			if (err != nil) != tt.wantErr {
 				t1.Errorf("CreateTenant() error = %v, wantErr %v", err, tt.wantErr)
@@ -73,6 +69,8 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 }
 
 func Test_tenantBusiness_GetTenant(t1 *testing.T) {
+
+	ctx := context.Background()
 	type fields struct {
 		service    *frame.Service
 		tenantRepo repository.TenantRepository
@@ -92,10 +90,7 @@ func Test_tenantBusiness_GetTenant(t1 *testing.T) {
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
-			t := &tenantBusiness{
-				service:    tt.fields.service,
-				tenantRepo: tt.fields.tenantRepo,
-			}
+			t := business.NewTenantBusinessWithRepo(ctx, tt.fields.service, tt.fields.tenantRepo)
 			got, err := t.GetTenant(tt.args.ctx, tt.args.tenantId)
 			if (err != nil) != tt.wantErr {
 				t1.Errorf("GetTenant() error = %v, wantErr %v", err, tt.wantErr)
@@ -121,8 +116,8 @@ func Test_toApiTenant(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := toApiTenant(tt.args.tenantModel); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("toApiTenant() = %v, want %v", got, tt.want)
+			if got := business.ToApiTenant(tt.args.tenantModel); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ToApiTenant() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -141,8 +136,8 @@ func Test_toModelTenant(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := toModelTenant(tt.args.tenantApi); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("toModelTenant() = %v, want %v", got, tt.want)
+			if got := business.ToModelTenant(tt.args.tenantApi); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ToModelTenant() = %v, want %v", got, tt.want)
 			}
 		})
 	}

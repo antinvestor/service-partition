@@ -1,8 +1,10 @@
-package repository
+package repository_test
 
 import (
 	"context"
 	"github.com/antinvestor/service-partition/service/models"
+	"github.com/antinvestor/service-partition/service/repository"
+	"github.com/antinvestor/service-partition/testsutil"
 	"github.com/pitabwire/frame"
 	"testing"
 )
@@ -10,21 +12,25 @@ import (
 func TestPartitionRepository_GetByID(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Partition Srv", ctx)
+	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -55,21 +61,25 @@ func TestPartitionRepository_GetByID(t *testing.T) {
 func TestPartitionRepository_GetChildren(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Partition Srv", ctx)
+	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -120,21 +130,25 @@ func TestPartitionRepository_GetChildren(t *testing.T) {
 func TestPartitionRepository_SaveRole(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Partition Srv", ctx)
+	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -184,21 +198,25 @@ func TestPartitionRepository_SaveRole(t *testing.T) {
 func TestPartitionRepository_RemoveRole(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Partition Srv", ctx)
+	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 
 	partition := models.Partition{
 		Name:        "",

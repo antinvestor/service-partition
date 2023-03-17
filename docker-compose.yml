@@ -1,0 +1,51 @@
+version: '3'
+services:
+  partition_database:
+    image: postgres:15.2
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=ant
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=service_partition
+    ports:
+      - 5423:5432
+
+
+  partition_hydra-migrate:
+    image: oryd/hydra:v2.0.3
+    depends_on:
+      - partition_database
+    environment:
+      - LOG_LEVEL=info
+      - DSN=postgres://ant:secret@partition_database:5432/service_partition?sslmode=disable
+    command:
+      migrate --config /etc/config/hydra.yml sql -e --yes
+    restart: on-failure
+    volumes:
+      - ./tests_runner/hydra.yaml:/etc/config/hydra.yml
+
+  partition_hydra:
+    image: oryd/hydra:v2.0.3
+    restart: unless-stopped
+    depends_on:
+      - partition_database
+      - partition_hydra-migrate
+    command:
+      serve all --config /etc/config/hydra.yml --dev
+    environment:
+      - DSN=postgres://ant:secret@partition_database:5432/service_partition?sslmode=disable
+    volumes:
+      - ./tests_runner/hydra.yaml:/etc/config/hydra.yml
+    ports:
+      - 4444:4444
+      - 4445:4445
+
+  partition_migration:
+    build: ./
+    depends_on:
+      - partition_database
+    environment:
+      - LOG_LEVEL=debug
+      - DO_MIGRATION=true
+      - DATABASE_URL=postgres://ant:secret@partition_database:5432/service_partition?sslmode=disable
+    restart: on-failure

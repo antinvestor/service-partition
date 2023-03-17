@@ -163,7 +163,9 @@ func (pb *partitionBusiness) CreatePartition(
 		return nil, err
 	}
 
-	err = pb.service.Publish(ctx, config.QueuePartitionSyncName, partition)
+	partitionConfig := pb.service.Config().(*config.PartitionConfig)
+
+	err = pb.service.Publish(ctx, partitionConfig.PartitionSyncName, partition)
 	if err != nil {
 		return nil, err
 	}
@@ -284,6 +286,7 @@ func (pb *partitionBusiness) CreatePartitionRole(
 func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 	ctx := context.Background()
 	partitionRepository := repository.NewPartitionRepository(service)
+	partitionConfig := service.Config().(*config.PartitionConfig)
 
 	partitionList, err := partitionRepository.GetByQuery(ctx, "", 100, 0)
 	if err != nil {
@@ -293,7 +296,7 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 	}
 
 	for _, partition := range partitionList {
-		err = service.Publish(ctx, config.QueuePartitionSyncName, partition)
+		err = service.Publish(ctx, partitionConfig.PartitionSyncName, partition)
 		if err != nil {
 			log.Printf(" ReQueuePrimaryPartitionsForSync -- could not publish because :%v+", err)
 
@@ -304,29 +307,37 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
 
-	hydraURL := fmt.Sprintf("%s%s", frame.GetEnv(config.EnvOauth2ServiceAdminURI, ""), "/clients")
-	hydraIDUrl := fmt.Sprintf("%s/%s", hydraURL, partition.ID)
+	partitionConfig := service.Config().(*config.PartitionConfig)
 
-	if partition.DeletedAt.Valid { //	We need to delete this partition on hydra as well
-		_, _, err := service.InvokeRestService(ctx, http.MethodDelete, hydraIDUrl, make(map[string]interface{}), nil)
-		return err
-	}
-
-	status, _, err := service.InvokeRestService(
-		ctx,
-		http.MethodGet,
-		hydraIDUrl,
-		make(map[string]interface{}),
-		nil)
-	if err != nil {
-		return err
-	}
-
+	hydraURL := fmt.Sprintf("%s%s", partitionConfig.GetOauth2ServiceAdminURI(), "/admin/clients")
 	httpMethod := http.MethodPost
-	if status == 200 {
-		//	We need to update this partition on hydra as well as it already exists
-		httpMethod = http.MethodPut
-		hydraURL = hydraIDUrl
+
+	clientID, ok := partition.Properties["client_id"]
+	if ok {
+
+		hydraIDUrl := fmt.Sprintf("%s/%s", hydraURL, clientID)
+
+		if partition.DeletedAt.Valid { //	We need to delete this partition on hydra as well
+			_, _, err := service.InvokeRestService(ctx, http.MethodDelete, hydraIDUrl, make(map[string]interface{}), nil)
+			return err
+		}
+
+		status, _, err := service.InvokeRestService(
+			ctx,
+			http.MethodGet,
+			hydraIDUrl,
+			make(map[string]interface{}),
+			nil)
+		if err != nil {
+			return err
+		}
+
+		if status == 200 {
+			//	We need to update this partition on hydra as well as it already exists
+			httpMethod = http.MethodPut
+			hydraURL = hydraIDUrl
+		}
+
 	}
 
 	logoURI := ""
@@ -372,10 +383,6 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		"logo_uri":                   logoURI,
 		"audience":                   audienceList,
 		"token_endpoint_auth_method": "none",
-	}
-
-	if httpMethod == http.MethodPost {
-		payload["client_id"] = partition.ID
 	}
 
 	status, result, err := service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)

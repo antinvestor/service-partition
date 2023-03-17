@@ -17,9 +17,14 @@ type TenantBusiness interface {
 
 func NewTenantBusiness(ctx context.Context, service *frame.Service) TenantBusiness {
 	tenantRepo := repository.NewTenantRepository(service)
+
+	return NewTenantBusinessWithRepo(ctx, service, tenantRepo)
+}
+func NewTenantBusinessWithRepo(_ context.Context, service *frame.Service, repo repository.TenantRepository) TenantBusiness {
+
 	return &tenantBusiness{
 		service:    service,
-		tenantRepo: tenantRepo,
+		tenantRepo: repo,
 	}
 }
 
@@ -28,7 +33,7 @@ type tenantBusiness struct {
 	tenantRepo repository.TenantRepository
 }
 
-func toApiTenant(tenantModel *models.Tenant) *partitionv1.TenantObject {
+func ToApiTenant(tenantModel *models.Tenant) *partitionv1.TenantObject {
 
 	properties := frame.DBPropertiesToMap(tenantModel.Properties)
 
@@ -39,7 +44,7 @@ func toApiTenant(tenantModel *models.Tenant) *partitionv1.TenantObject {
 	}
 }
 
-func toModelTenant(tenantApi *partitionv1.TenantObject) *models.Tenant {
+func ToModelTenant(tenantApi *partitionv1.TenantObject) *models.Tenant {
 
 	return &models.Tenant{
 		Description: tenantApi.GetDescription(),
@@ -59,7 +64,7 @@ func (t *tenantBusiness) GetTenant(ctx context.Context, tenantId string) (*parti
 		return nil, err
 	}
 
-	return toApiTenant(tenant), nil
+	return ToApiTenant(tenant), nil
 }
 
 func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionv1.TenantRequest) (*partitionv1.TenantObject, error) {
@@ -85,7 +90,7 @@ func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionv1.
 		return nil, err
 	}
 
-	return toApiTenant(tenantModel), nil
+	return ToApiTenant(tenantModel), nil
 }
 
 func (t *tenantBusiness) ListTenant(ctx context.Context, request *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListTenantServer) error {
@@ -102,7 +107,7 @@ func (t *tenantBusiness) ListTenant(ctx context.Context, request *partitionv1.Se
 
 	for _, tenant := range tenantList {
 
-		err = stream.Send(toApiTenant(tenant))
+		err = stream.Send(ToApiTenant(tenant))
 		if err != nil {
 			return err
 		}

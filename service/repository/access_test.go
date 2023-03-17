@@ -1,8 +1,10 @@
-package repository
+package repository_test
 
 import (
 	"context"
 	"github.com/antinvestor/service-partition/service/models"
+	"github.com/antinvestor/service-partition/service/repository"
+	"github.com/antinvestor/service-partition/testsutil"
 	"github.com/pitabwire/frame"
 	"strings"
 	"testing"
@@ -11,21 +13,24 @@ import (
 func TestAccessRepository_Save(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Access Srv", ctx)
-
-	tenantRepo := NewTenantRepository(srv)
+	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -40,7 +45,7 @@ func TestAccessRepository_Save(t *testing.T) {
 		return
 	}
 
-	accessRepo := NewAccessRepository(srv)
+	accessRepo := repository.NewAccessRepository(srv)
 	access := models.Access{
 		ProfileID: "profile",
 		BaseModel: frame.BaseModel{
@@ -70,21 +75,25 @@ func TestAccessRepository_Save(t *testing.T) {
 func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Access Srv", ctx)
+	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "Partition",
 		Description: "Partition details",
@@ -99,7 +108,7 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 		return
 	}
 
-	accessRepo := NewAccessRepository(srv)
+	accessRepo := repository.NewAccessRepository(srv)
 	access := models.Access{
 		ProfileID: "profile_j",
 		BaseModel: frame.BaseModel{
@@ -129,21 +138,25 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 func TestAccessRepository_SaveRole(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Access Srv", ctx)
+	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -172,7 +185,7 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 		return
 	}
 
-	accessRepo := NewAccessRepository(srv)
+	accessRepo := repository.NewAccessRepository(srv)
 	access := models.Access{
 		ProfileID: "profile_j",
 		BaseModel: frame.BaseModel{
@@ -223,21 +236,25 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 func TestAccessRepository_RemoveRole(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Access Srv", ctx)
+	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -266,7 +283,7 @@ func TestAccessRepository_RemoveRole(t *testing.T) {
 		return
 	}
 
-	accessRepo := NewAccessRepository(srv)
+	accessRepo := repository.NewAccessRepository(srv)
 	access := models.Access{
 		ProfileID: "profile_j",
 		BaseModel: frame.BaseModel{

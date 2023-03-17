@@ -1,8 +1,10 @@
-package repository
+package repository_test
 
 import (
 	"context"
 	"github.com/antinvestor/service-partition/service/models"
+	"github.com/antinvestor/service-partition/service/repository"
+	"github.com/antinvestor/service-partition/testsutil"
 	"github.com/pitabwire/frame"
 	"strings"
 	"testing"
@@ -11,21 +13,25 @@ import (
 func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Page Srv", ctx)
+	srv, err := testsutil.GetTestService("Page Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -40,7 +46,7 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 		return
 	}
 
-	pageRepo := NewPageRepository(srv)
+	pageRepo := repository.NewPageRepository(srv)
 	page := models.Page{
 		Name: "test",
 		HTML: "<div></div>",
@@ -71,21 +77,25 @@ func TestPageRepository_GetByPartitionAndName(t *testing.T) {
 
 func TestPageRepository_Save(t *testing.T) {
 	ctx := context.Background()
-	srv := getTestService("Page Srv", ctx)
+	srv, err := testsutil.GetTestService("Page Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -100,7 +110,7 @@ func TestPageRepository_Save(t *testing.T) {
 		return
 	}
 
-	pageRepo := NewPageRepository(srv)
+	pageRepo := repository.NewPageRepository(srv)
 	page := models.Page{
 		Name: "test",
 		HTML: "<div></div>",
@@ -132,21 +142,25 @@ func TestPageRepository_Save(t *testing.T) {
 func TestPageRepository_Delete(t *testing.T) {
 
 	ctx := context.Background()
-	srv := getTestService("Page Srv", ctx)
+	srv, err := testsutil.GetTestService("Page Srv", ctx)
+	if err != nil {
+		t.Errorf("There was an error getting service : %v", err)
+		return
+	}
 
-	tenantRepo := NewTenantRepository(srv)
+	tenantRepo := repository.NewTenantRepository(srv)
 	tenant := models.Tenant{
 		Name:        "Save T",
 		Description: "Test",
 	}
 
-	err := tenantRepo.Save(ctx, &tenant)
+	err = tenantRepo.Save(ctx, &tenant)
 	if err != nil {
 		t.Errorf("There was an error saving tenant : %v", err)
 		return
 	}
 
-	partitionRepo := NewPartitionRepository(srv)
+	partitionRepo := repository.NewPartitionRepository(srv)
 	partition := models.Partition{
 		Name:        "",
 		Description: "",
@@ -161,7 +175,7 @@ func TestPageRepository_Delete(t *testing.T) {
 		return
 	}
 
-	pageRepo := NewPageRepository(srv)
+	pageRepo := repository.NewPageRepository(srv)
 	page := models.Page{
 		Name: "test",
 		HTML: "<div></div>",

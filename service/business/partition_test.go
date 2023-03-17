@@ -1,21 +1,20 @@
-package business
+package business_test
 
 import (
 	"context"
-	"github.com/antinvestor/service-partition/config"
+	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
+	"github.com/antinvestor/service-partition/testsutil"
 	"github.com/pitabwire/frame"
-	"os"
 	"testing"
 )
 
 func TestPartitionBusiness_SyncPartitionOnHydra(t *testing.T) {
 
 	ctx := context.Background()
-	service := getTestService("Partition Srv", ctx)
 
-	err := os.Setenv(config.EnvOauth2ServiceAdminURI, "http://localhost:4445")
+	service, err := testsutil.GetTestService("Partition Srv", ctx)
 	if err != nil {
 		t.Errorf("There was an error setting HYDRA_URL : %v", err)
 		return
@@ -48,7 +47,7 @@ func TestPartitionBusiness_SyncPartitionOnHydra(t *testing.T) {
 		return
 	}
 
-	err = SyncPartitionOnHydra(ctx, service, partition)
+	err = business.SyncPartitionOnHydra(ctx, service, partition)
 	if err != nil {
 		t.Errorf("Could not sync this partition : %v", err)
 		return

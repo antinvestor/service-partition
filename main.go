@@ -10,12 +10,9 @@ import (
 	"github.com/antinvestor/service-partition/service/queue"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	"google.golang.org/grpc"
-	"log"
-	"os"
-	"strconv"
-
 	"github.com/pitabwire/frame"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 )
@@ -24,24 +21,22 @@ func main() {
 
 	serviceName := "service_partition"
 	ctx := context.Background()
-
-	datasource := frame.GetEnv(config.EnvDatabaseURL, "postgres://ant:@nt@localhost/service_partition")
-	mainDb := frame.Datastore(ctx, datasource, false)
-
-	readOnlydatasource := frame.GetEnv(config.EnvReplicaDatabaseURL, datasource)
-	readDb := frame.Datastore(ctx, readOnlydatasource, true)
-
-	service := frame.NewService(serviceName, mainDb, readDb)
-
-	isMigration, err := strconv.ParseBool(frame.GetEnv(config.EnvMigrate, "false"))
+	var partitionConfig config.PartitionConfig
+	err := frame.ConfigProcess("", &partitionConfig)
 	if err != nil {
-		isMigration = false
+		logrus.WithError(err).Fatal("could not process configs")
+		return
 	}
 
-	stdArgs := os.Args[1:]
-	if (len(stdArgs) > 0 && stdArgs[0] == "migrate") || isMigration {
-		migrationPath := frame.GetEnv(config.EnvMigrationPath, "./migrations/0001")
-		err := service.MigrateDatastore(ctx, migrationPath,
+	service := frame.NewService(serviceName, frame.Config(&partitionConfig), frame.Datastore(ctx))
+	log := service.L()
+
+	var serviceOptions []frame.Option
+
+	if partitionConfig.DoDatabaseMigrate() {
+
+		service.Init(serviceOptions...)
+		err := service.MigrateDatastore(ctx, partitionConfig.GetDatabaseMigrationPath(),
 			models.Tenant{}, models.Partition{}, models.PartitionRole{},
 			models.Access{}, models.AccessRole{}, models.Page{})
 
@@ -51,18 +46,18 @@ func main() {
 		return
 	}
 
-	var serviceOptions []frame.Option
-
-	jwtAudience := frame.GetEnv(config.EnvOauth2JwtVerifyAudience, serviceName)
-	jwtIssuer := frame.GetEnv(config.EnvOauth2JwtVerifyIssuer, "")
+	jwtAudience := partitionConfig.Oauth2JwtVerifyAudience
+	if jwtAudience == "" {
+		jwtAudience = serviceName
+	}
 
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpcctxtags.UnaryServerInterceptor(),
 			grpcrecovery.UnaryServerInterceptor(),
-			frame.UnaryAuthInterceptor(jwtAudience, jwtIssuer),
+			service.UnaryAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer),
 		)),
-		grpc.StreamInterceptor(frame.StreamAuthInterceptor(jwtAudience, jwtIssuer)),
+		grpc.StreamInterceptor(service.StreamAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer)),
 	)
 
 	implementation := &handlers.PartitionServer{
@@ -77,15 +72,18 @@ func main() {
 	partitionSyncQueueHandler := queue.PartitionSyncQueueHandler{
 		Service: service,
 	}
-	partitionSyncQueueURL := frame.GetEnv(config.EnvQueuePartitionSync, fmt.Sprintf("mem://%s", config.QueuePartitionSyncName))
-	partitionSyncQueue := frame.RegisterSubscriber(config.QueuePartitionSyncName, partitionSyncQueueURL, 2, &partitionSyncQueueHandler)
-	partitionSyncQueueP := frame.RegisterPublisher(config.QueuePartitionSyncName, partitionSyncQueueURL)
+	partitionSyncQueueURL := partitionConfig.QueuePartitionSyncURL
+	partitionSyncQueue := frame.RegisterSubscriber(partitionConfig.PartitionSyncName, partitionSyncQueueURL, 2, &partitionSyncQueueHandler)
+	partitionSyncQueueP := frame.RegisterPublisher(partitionConfig.PartitionSyncName, partitionSyncQueueURL)
 
 	serviceOptions = append(serviceOptions, partitionSyncQueue, partitionSyncQueueP)
 
 	service.Init(serviceOptions...)
 
-	serverPort := frame.GetEnv(config.EnvServerPort, "7003")
+	serverPort := partitionConfig.ServerPort
+	if serverPort == "" {
+		serverPort = "7003"
+	}
 
 	//service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
 

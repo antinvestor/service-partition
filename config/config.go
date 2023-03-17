@@ -1,18 +1,11 @@
 package config
 
-const EnvServerPort = "PORT"
+import "github.com/pitabwire/frame"
 
-const EnvDatabaseURL = "DATABASE_URL"
-const EnvReplicaDatabaseURL = "REPLICA_DATABASE_URL"
+type PartitionConfig struct {
+	*frame.ConfigurationDefault
 
-const EnvMigrate = "DO_MIGRATION"
-const EnvMigrationPath = "MIGRATION_PATH"
-
-const EnvOauth2JwtVerifyAudience = "OAUTH2_JWT_VERIFY_AUDIENCE"
-const EnvOauth2JwtVerifyIssuer = "OAUTH2_JWT_VERIFY_ISSUER"
-
-const EnvOauth2ServiceAdminURI = "OAUTH2_SERVICE_ADMIN_URI"
-
-const EnvQueuePartitionSync = "QUEUE_PARTITION_SYNC"
-
-const QueuePartitionSyncName = "partition_sync_hydra"
+	NotificationServiceURI string `default:"127.0.0.1:7020" envconfig:"NOTIFICATION_SERVICE_URI"`
+	QueuePartitionSyncURL  string `default:"mem://partition_sync_hydra" envconfig:"QUEUE_PARTITION_SYNC"`
+	PartitionSyncName      string `default:"partition_sync_hydra" envconfig:"QUEUE_PARTITION_SYNC_NAME"`
+}
