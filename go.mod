@@ -53,7 +53,7 @@ require (
 	google.golang.org/api v0.106.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
-	google.golang.org/protobuf v1.29.0 // indirect
+	google.golang.org/protobuf v1.29.1 // indirect
 	gorm.io/driver/mysql v1.4.7 // indirect
 	gorm.io/driver/postgres v1.4.6 // indirect
 	gorm.io/gorm v1.24.6 // indirect
