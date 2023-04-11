@@ -9,7 +9,7 @@ require (
 	github.com/pitabwire/frame v1.8.13
 	github.com/sirupsen/logrus v1.9.0
 	google.golang.org/grpc v1.54.0
-	gorm.io/datatypes v1.1.1
+	gorm.io/datatypes v1.2.0
 )
 
 require (
