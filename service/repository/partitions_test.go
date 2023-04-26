@@ -1,7 +1,6 @@
 package repository_test
 
 import (
-	"context"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/antinvestor/service-partition/testsutil"
@@ -11,8 +10,7 @@ import (
 
 func TestPartitionRepository_GetByID(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Partition Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -60,8 +58,7 @@ func TestPartitionRepository_GetByID(t *testing.T) {
 
 func TestPartitionRepository_GetChildren(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Partition Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -129,8 +126,7 @@ func TestPartitionRepository_GetChildren(t *testing.T) {
 
 func TestPartitionRepository_SaveRole(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Partition Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -197,8 +193,7 @@ func TestPartitionRepository_SaveRole(t *testing.T) {
 
 func TestPartitionRepository_RemoveRole(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Partition Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Partition Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return

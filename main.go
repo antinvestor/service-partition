@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/config"
@@ -20,7 +19,6 @@ import (
 func main() {
 
 	serviceName := "service_partition"
-	ctx := context.Background()
 	var partitionConfig config.PartitionConfig
 	err := frame.ConfigProcess("", &partitionConfig)
 	if err != nil {
@@ -28,10 +26,10 @@ func main() {
 		return
 	}
 
-	service := frame.NewService(serviceName, frame.Config(&partitionConfig), frame.Datastore(ctx))
-	log := service.L()
+	ctx, service := frame.NewService(serviceName, frame.Config(&partitionConfig))
+	logger := service.L()
 
-	var serviceOptions []frame.Option
+	serviceOptions := []frame.Option{frame.Datastore(ctx)}
 
 	if partitionConfig.DoDatabaseMigrate() {
 
@@ -41,8 +39,14 @@ func main() {
 			models.Access{}, models.AccessRole{}, models.Page{})
 
 		if err != nil {
-			log.Fatalf("main -- Could not migrate successfully because : %v", err)
+			logger.WithError(err).Fatalf("could not migrate successfully")
 		}
+		return
+	}
+
+	err = service.RegisterForJwt(ctx)
+	if err != nil {
+		logger.WithError(err).Fatal("could not register for jwt")
 		return
 	}
 
@@ -87,10 +91,10 @@ func main() {
 
 	//service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
 
-	log.Printf(" main -- Initiating server operations on : %s", serverPort)
+	logger.WithField("server port", serverPort).Info(" Initiating server operations")
 	err = implementation.Service.Run(ctx, fmt.Sprintf(":%v", serverPort))
 	if err != nil {
-		log.Fatalf("main -- Could not run Server : %v", err)
+		logger.WithError(err).Fatal("could not run server")
 	}
 
 }

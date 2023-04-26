@@ -1,7 +1,6 @@
 package repository_test
 
 import (
-	"context"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/antinvestor/service-partition/testsutil"
@@ -12,8 +11,7 @@ import (
 
 func TestAccessRepository_Save(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Access Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -74,8 +72,7 @@ func TestAccessRepository_Save(t *testing.T) {
 
 func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Access Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -137,8 +134,7 @@ func TestAccessRepository_GetByPartitionAndProfile(t *testing.T) {
 
 func TestAccessRepository_SaveRole(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Access Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -235,8 +231,7 @@ func TestAccessRepository_SaveRole(t *testing.T) {
 
 func TestAccessRepository_RemoveRole(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Access Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Access Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return

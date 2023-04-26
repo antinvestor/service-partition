@@ -60,7 +60,13 @@ docker-stop: ## stops all docker containers
 # if it's not specified it will run all tests
 tests: ## runs all system tests
 	$(ENV_LOCAL_TEST) \
-	go test ./...  -count=1 -v -run=$(INTEGRATION_TEST_SUITE_PATH); \
-	 if [ $$? -ne 0 ]; then echo "unit tests failed" && exit 1; fi
+	FILES=$(go list ./...  | grep -v /vendor/);\
+	go test ./... -v -run=$(INTEGRATION_TEST_SUITE_PATH)  -coverprofile=coverage.out;\
+	RETURNCODE=$$?;\
+	if [ "$$RETURNCODE" -ne 0 ]; then\
+		echo "unit tests failed with error code: $$RETURNCODE" >&2;\
+		exit 1;\
+	fi;\
+	go tool cover -html=coverage.out -o coverage.html
 
 build: clean fmt vet docker-setup pg_wait hydra_wait tests docker-stop ## run all preliminary steps and tests the setup

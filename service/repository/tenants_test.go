@@ -1,7 +1,6 @@
 package repository_test
 
 import (
-	"context"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/antinvestor/service-partition/testsutil"
@@ -10,8 +9,7 @@ import (
 )
 
 func TestTenantRepository_GetByID(t *testing.T) {
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Tenant Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Tenant Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -41,8 +39,7 @@ func TestTenantRepository_GetByID(t *testing.T) {
 
 func TestTenantRepository_Save(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Tenant Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Tenant Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return
@@ -64,8 +61,7 @@ func TestTenantRepository_Save(t *testing.T) {
 
 func TestTenantRepository_Delete(t *testing.T) {
 
-	ctx := context.Background()
-	srv, err := testsutil.GetTestService("Tenant Srv", ctx)
+	ctx, srv, err := testsutil.GetTestService("Tenant Srv")
 	if err != nil {
 		t.Errorf("There was an error getting service : %v", err)
 		return

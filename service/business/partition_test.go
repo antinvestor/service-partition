@@ -1,7 +1,6 @@
 package business_test
 
 import (
-	"context"
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
@@ -12,9 +11,7 @@ import (
 
 func TestPartitionBusiness_SyncPartitionOnHydra(t *testing.T) {
 
-	ctx := context.Background()
-
-	service, err := testsutil.GetTestService("Partition Srv", ctx)
+	ctx, service, err := testsutil.GetTestService("Partition Srv")
 	if err != nil {
 		t.Errorf("There was an error setting HYDRA_URL : %v", err)
 		return
