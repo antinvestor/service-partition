@@ -12,7 +12,7 @@ services:
 
 
   partition_hydra-migrate:
-    image: oryd/hydra:v2.1.1
+    image: oryd/hydra:v2.1.2
     depends_on:
       - partition_database
     environment:
@@ -25,7 +25,7 @@ services:
       - ./tests_runner/hydra.yaml:/etc/config/hydra.yml
 
   partition_hydra:
-    image: oryd/hydra:v2.1.1
+    image: oryd/hydra:v2.1.2
     restart: unless-stopped
     depends_on:
       - partition_database
