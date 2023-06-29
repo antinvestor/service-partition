@@ -6,7 +6,7 @@ require (
 	github.com/antinvestor/apis v1.1.16
 	github.com/antinvestor/service-partition-api v1.0.26
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
-	github.com/pitabwire/frame v1.13.6
+	github.com/pitabwire/frame v1.14.2
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.56.1
 	gorm.io/datatypes v1.2.0
@@ -59,7 +59,7 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gorm.io/driver/mysql v1.4.7 // indirect
 	gorm.io/driver/postgres v1.5.2 // indirect
-	gorm.io/gorm v1.25.1 // indirect
+	gorm.io/gorm v1.25.2 // indirect
 	gorm.io/plugin/opentelemetry v0.1.2 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
 )
