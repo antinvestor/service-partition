@@ -4,6 +4,7 @@ import (
 	"fmt"
 	partitionv1 "github.com/antinvestor/service-partition-api"
 	"github.com/antinvestor/service-partition/config"
+	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/handlers"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/queue"
@@ -85,11 +86,10 @@ func main() {
 	service.Init(serviceOptions...)
 
 	serverPort := partitionConfig.ServerPort
-	if serverPort == "" {
-		serverPort = "7003"
-	}
 
-	//service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
+	if partitionConfig.SynchronizePrimaryPartitions {
+		service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
+	}
 
 	logger.WithField("server port", serverPort).Info(" Initiating server operations")
 	err = implementation.Service.Run(ctx, fmt.Sprintf(":%v", serverPort))
