@@ -25,6 +25,8 @@ github.com/alitto/pond v1.8.3 h1:ydIqygCLVPqIX/USe5EaV/aSRXTRXDEI9JwuDdu+/xs=
 github.com/alitto/pond v1.8.3/go.mod h1:CmvIIGd5jKLasGI3D87qDkQxjzChdKMmnXMg3fG6M6Q=
 github.com/antinvestor/apis v1.1.16 h1:BD5cxlwqY7ohRqIkU84rhwGjHtKYbVAA9wALlOVr+S0=
 github.com/antinvestor/apis v1.1.16/go.mod h1:47UeRdm/DNnxuKmsWZJLud/ek9slREuFcTw43u/89No=
+github.com/antinvestor/apis v1.1.18 h1:JXnMxu2qLoKRUDMkqjiHuj+X3EjZ3CT/q+3WkCVR5AU=
+github.com/antinvestor/apis v1.1.18/go.mod h1:h8wL9/XITja/NOMFdu9xAAFMq4LFaTAWrtWJnukx5nw=
 github.com/antinvestor/service-partition-api v1.0.26 h1:VgaLxnqnLhLeqY+IFpI04WGbW7nmVziIYr0Y5TWkcEU=
 github.com/antinvestor/service-partition-api v1.0.26/go.mod h1:IIX2n5FCbtOUMiKw0QPbcRlkLZjq4dknPIjU6vGm8lw=
 github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
@@ -487,6 +489,8 @@ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAG
 golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
 golang.org/x/oauth2 v0.10.0 h1:zHCpF2Khkwy4mMB4bv0U37YtJdTGW8jI0glAApi0Kh8=
 golang.org/x/oauth2 v0.10.0/go.mod h1:kTpgurOux7LqtuxjuyZa4Gj2gdezIt/jQtGnNFfypQI=
+golang.org/x/oauth2 v0.11.0 h1:vPL4xzxBM4niKCW6g9whtaWVXTJf1U5e4aZxxFx/gbU=
+golang.org/x/oauth2 v0.11.0/go.mod h1:LdF7O/8bLR/qWK9DrpXmbHLTouvRHK0SgJl0GmDBchk=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
