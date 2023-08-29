@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/antinvestor/apis v1.1.18
-	github.com/antinvestor/service-partition-api v1.0.26
+	github.com/antinvestor/service-partition-api v1.0.27
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0
 	github.com/pitabwire/frame v1.15.7
