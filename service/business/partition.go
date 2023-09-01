@@ -377,7 +377,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 	payload := map[string]interface{}{
 		"client_name":                partition.Name,
 		"grant_types":                []string{"authorization_code", "refresh_token"},
-		"response_types":             []string{"token", "id_token", "code"},
+		"response_types":             []string{"token", "id_token", "code", "token id_token", "token code id_token"},
 		"scope":                      "openid offline offline_access profile contact",
 		"redirect_uris":              uriList,
 		"logo_uri":                   logoURI,
