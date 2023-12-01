@@ -7,13 +7,12 @@ import (
 	"github.com/antinvestor/service-partition/service/handlers"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/queue"
-	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	grpcctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	"github.com/bufbuild/protovalidate-go"
+	protovalidate_interceptor "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/pitabwire/frame"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-
-	"github.com/grpc-ecosystem/go-grpc-middleware"
 )
 
 func main() {
@@ -55,13 +54,22 @@ func main() {
 		jwtAudience = serviceName
 	}
 
+	validator, err := protovalidate.New()
+	if err != nil {
+		logger.WithError(err).Fatal("could not load validator for proto messages")
+	}
+
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			grpcctxtags.UnaryServerInterceptor(),
-			grpcrecovery.UnaryServerInterceptor(),
+		grpc.ChainUnaryInterceptor(
 			service.UnaryAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer),
-		)),
-		grpc.StreamInterceptor(service.StreamAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer)),
+			recovery.UnaryServerInterceptor(),
+			protovalidate_interceptor.UnaryServerInterceptor(validator),
+		),
+		grpc.ChainStreamInterceptor(
+			service.StreamAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer),
+			recovery.StreamServerInterceptor(),
+			protovalidate_interceptor.StreamServerInterceptor(validator),
+		),
 	)
 
 	implementation := &handlers.PartitionServer{
