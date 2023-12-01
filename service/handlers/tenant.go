@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	partitionv1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/apis/partition/v1"
 	"github.com/antinvestor/service-partition/service/business"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -11,17 +11,17 @@ import (
 
 func (prtSrv *PartitionServer) GetTenant(
 	ctx context.Context,
-	req *partitionv1.GetRequest) (*partitionv1.TenantObject, error) {
+	req *partitionv1.GetTenantRequest) (*partitionv1.GetTenantResponse, error) {
 	tenantBusiness := business.NewTenantBusiness(ctx, prtSrv.Service)
 	tenant, err := tenantBusiness.GetTenant(ctx, req.GetId())
 	if err != nil {
 		log.Printf(" GetTenant -- could not obtain the specified tenant %+v", err)
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return tenant, nil
+	return &partitionv1.GetTenantResponse{Data: tenant}, nil
 }
 
-func (prtSrv *PartitionServer) ListTenant(req *partitionv1.SearchRequest, stream partitionv1.PartitionService_ListTenantServer) error {
+func (prtSrv *PartitionServer) ListTenant(req *partitionv1.ListTenantRequest, stream partitionv1.PartitionService_ListTenantServer) error {
 	tenantBusiness := business.NewTenantBusiness(stream.Context(), prtSrv.Service)
 	err := tenantBusiness.ListTenant(stream.Context(), req, stream)
 	if err != nil {
@@ -31,7 +31,7 @@ func (prtSrv *PartitionServer) ListTenant(req *partitionv1.SearchRequest, stream
 	return nil
 }
 
-func (prtSrv *PartitionServer) CreateTenant(ctx context.Context, req *partitionv1.TenantRequest) (*partitionv1.TenantObject, error) {
+func (prtSrv *PartitionServer) CreateTenant(ctx context.Context, req *partitionv1.CreateTenantRequest) (*partitionv1.CreateTenantResponse, error) {
 
 	tenantBusiness := business.NewTenantBusiness(ctx, prtSrv.Service)
 	tenant, err := tenantBusiness.CreateTenant(ctx, req)
@@ -39,5 +39,5 @@ func (prtSrv *PartitionServer) CreateTenant(ctx context.Context, req *partitionv
 		log.Printf(" CreateTenant -- could not create a new tenant %+v", err)
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return tenant, nil
+	return &partitionv1.CreateTenantResponse{Data: tenant}, nil
 }

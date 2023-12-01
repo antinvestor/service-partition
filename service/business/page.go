@@ -2,20 +2,20 @@ package business
 
 import (
 	"context"
-	"github.com/antinvestor/apis/common"
-	partitionv1 "github.com/antinvestor/service-partition-api"
+	commonv1 "github.com/antinvestor/apis/common/v1"
+	partitionv1 "github.com/antinvestor/apis/partition/v1"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
 )
 
 type PageBusiness interface {
-	GetPage(ctx context.Context, request *partitionv1.PageGetRequest) (*partitionv1.PageObject, error)
-	RemovePage(ctx context.Context, request *partitionv1.PageRemoveRequest) error
-	CreatePage(ctx context.Context, request *partitionv1.PageCreateRequest) (*partitionv1.PageObject, error)
+	GetPage(ctx context.Context, request *partitionv1.GetPageRequest) (*partitionv1.PageObject, error)
+	RemovePage(ctx context.Context, request *partitionv1.RemovePageRequest) error
+	CreatePage(ctx context.Context, request *partitionv1.CreatePageRequest) (*partitionv1.PageObject, error)
 }
 
-func NewPageBusiness(ctx context.Context, service *frame.Service) PageBusiness {
+func NewPageBusiness(_ context.Context, service *frame.Service) PageBusiness {
 	pageRepo := repository.NewPageRepository(service)
 	partitionRepo := repository.NewPartitionRepository(service)
 
@@ -38,16 +38,11 @@ func toApiPage(pageModel *models.Page) *partitionv1.PageObject {
 		PageId: pageModel.GetID(),
 		Name:   pageModel.Name,
 		Html:   pageModel.HTML,
-		State:  common.STATE(pageModel.State),
+		State:  commonv1.STATE(pageModel.State),
 	}
 }
 
-func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionv1.PageGetRequest) (*partitionv1.PageObject, error) {
-
-	err := request.Validate()
-	if err != nil {
-		return nil, err
-	}
+func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionv1.GetPageRequest) (*partitionv1.PageObject, error) {
 
 	access, err := ab.pageRepo.GetByPartitionAndName(ctx, request.GetPartitionId(), request.GetName())
 	if err != nil {
@@ -57,27 +52,13 @@ func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionv1.PageGe
 	return toApiPage(access), nil
 }
 
-func (ab *pageBusiness) RemovePage(ctx context.Context, request *partitionv1.PageRemoveRequest) error {
+func (ab *pageBusiness) RemovePage(ctx context.Context, request *partitionv1.RemovePageRequest) error {
 
-	err := request.Validate()
-	if err != nil {
-		return err
-	}
+	return ab.pageRepo.Delete(ctx, request.GetPageId())
 
-	err = ab.pageRepo.Delete(ctx, request.GetPageId())
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
-func (ab *pageBusiness) CreatePage(ctx context.Context, request *partitionv1.PageCreateRequest) (*partitionv1.PageObject, error) {
-
-	err := request.Validate()
-	if err != nil {
-		return nil, err
-	}
+func (ab *pageBusiness) CreatePage(ctx context.Context, request *partitionv1.CreatePageRequest) (*partitionv1.PageObject, error) {
 
 	partition, err := ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
 	if err != nil {

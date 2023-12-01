@@ -1,7 +1,7 @@
 package main
 
 import (
-	partitionv1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/apis/partition/v1"
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/handlers"

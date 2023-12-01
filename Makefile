@@ -35,7 +35,7 @@ doc:    ## generate godocs and start a local documentation webserver on port 808
 
 # this command will start docker components that we set in docker-compose.yml
 docker-setup: ## sets up docker container images
-	docker-compose up -d --remove-orphans
+	docker compose up -d --remove-orphans
 
 pg_wait:
 	@count=0; \
@@ -53,7 +53,7 @@ hydra_wait:
 
 # shutting down docker components
 docker-stop: ## stops all docker containers
-	docker-compose down
+	docker compose down
 
 # this command will run all tests in the repo
 # INTEGRATION_TEST_SUITE_PATH is used to run specific tests in Golang,

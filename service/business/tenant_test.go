@@ -2,7 +2,7 @@ package business_test
 
 import (
 	"context"
-	partitionv1 "github.com/antinvestor/service-partition-api"
+	partitionv1 "github.com/antinvestor/apis/partition/v1"
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
@@ -42,7 +42,7 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 	}
 	type args struct {
 		ctx     context.Context
-		request *partitionv1.TenantRequest
+		request *partitionv1.CreateTenantRequest
 	}
 	tests := []struct {
 		name    string
