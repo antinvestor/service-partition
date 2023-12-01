@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/antinvestor/apis v1.4.5
-	github.com/antinvestor/apis/partition v0.0.0-20231201165526-6ed4bc27b729
+	github.com/antinvestor/apis/partition v0.0.0-20231201182900-909b2d1c1640
 	github.com/bufbuild/protovalidate-go v0.2.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/pitabwire/frame v1.15.10
@@ -51,6 +51,7 @@ require (
 	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/oauth2 v0.15.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
