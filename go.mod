@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/antinvestor/apis v1.4.5
 	github.com/antinvestor/apis/partition v0.0.0-20231201182900-909b2d1c1640
-	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
+	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/pitabwire/frame v1.15.10
 	github.com/sirupsen/logrus v1.9.3
