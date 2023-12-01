@@ -3,7 +3,7 @@ module github.com/antinvestor/service-partition
 go 1.20
 
 require (
-	github.com/antinvestor/apis v1.1.18
+	github.com/antinvestor/apis v1.4.3
 	github.com/antinvestor/service-partition-api v1.0.27
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/pitabwire/frame v1.15.10
