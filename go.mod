@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/antinvestor/apis v1.4.5
-	github.com/antinvestor/apis/partition v0.0.0-20231201182900-909b2d1c1640
+	github.com/antinvestor/apis/partition v0.0.0-20231202031032-e240a0a6ba31
 	github.com/bufbuild/protovalidate-go v0.2.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/pitabwire/frame v1.15.10
@@ -57,6 +57,7 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.134.0 // indirect
+	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230822172742-b8732ec3820d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231127180814-3a041ad873d4 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
