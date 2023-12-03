@@ -8,7 +8,7 @@ import (
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/queue"
 	"github.com/bufbuild/protovalidate-go"
-	protovalidate_interceptor "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
+	protovalidateinterceptor "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/pitabwire/frame"
 	"github.com/sirupsen/logrus"
@@ -62,13 +62,13 @@ func main() {
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			service.UnaryAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer),
+			protovalidateinterceptor.UnaryServerInterceptor(validator),
 			recovery.UnaryServerInterceptor(),
-			protovalidate_interceptor.UnaryServerInterceptor(validator),
 		),
 		grpc.ChainStreamInterceptor(
 			service.StreamAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer),
+			protovalidateinterceptor.StreamServerInterceptor(validator),
 			recovery.StreamServerInterceptor(),
-			protovalidate_interceptor.StreamServerInterceptor(validator),
 		),
 	)
 
