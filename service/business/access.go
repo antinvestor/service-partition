@@ -134,12 +134,25 @@ func (ab *accessBusiness) CreateAccess(
 
 	log.Printf(" CreateAccess -- supplied request %+v", request)
 
-	partition, err := ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
-	if err != nil {
-		return nil, err
+	var err error
+	var partition *models.Partition
+	if request.GetPartitionId() != "" {
+
+		partition, err = ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+
+		partition, err = ab.partitionRepo.GetByClientID(ctx, request.GetClientId())
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
-	access, err := ab.accessRepo.GetByPartitionAndProfile(ctx, request.GetPartitionId(), request.GetProfileId())
+	access, err := ab.accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), request.GetProfileId())
 	if err != nil {
 
 		if !strings.Contains(err.Error(), "record not found") {
