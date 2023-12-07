@@ -355,6 +355,8 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		return err
 	}
 
+	partition.ClientID = partition.Properties["client_id"].(string)
+
 	if partition.Properties == nil {
 		partition.Properties = make(datatypes.JSONMap)
 	}

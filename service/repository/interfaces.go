@@ -14,6 +14,7 @@ type TenantRepository interface {
 
 type PartitionRepository interface {
 	GetByID(ctx context.Context, id string) (*models.Partition, error)
+	GetByClientID(ctx context.Context, clientId string) (*models.Partition, error)
 	GetByQuery(ctx context.Context, query string, count uint32, page uint32) ([]*models.Partition, error)
 	GetChildren(ctx context.Context, id string) ([]*models.Partition, error)
 	Save(ctx context.Context, partition *models.Partition) error

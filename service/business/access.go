@@ -88,12 +88,24 @@ func (ab *accessBusiness) GetAccess(
 		return toAPIAccess(partitionObject, access)
 	}
 
-	access, err = ab.accessRepo.GetByPartitionAndProfile(ctx, request.GetPartitionId(), request.GetProfileId())
-	if err != nil {
-		return nil, err
+	var partition *models.Partition
+	if request.GetPartitionId() != "" {
+
+		partition, err = ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+
+		partition, err = ab.partitionRepo.GetByClientID(ctx, request.GetClientId())
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
-	partition, err := ab.partitionRepo.GetByID(ctx, access.PartitionID)
+	access, err = ab.accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), request.GetProfileId())
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +113,7 @@ func (ab *accessBusiness) GetAccess(
 	partitionObject := toAPIPartition(partition)
 
 	return toAPIAccess(partitionObject, access)
+
 }
 
 func (ab *accessBusiness) RemoveAccess(
