@@ -2,7 +2,7 @@ package business
 
 import (
 	"context"
-	partitionv1 "github.com/antinvestor/apis/partition/v1"
+	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"

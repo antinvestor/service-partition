@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	partitionv1 "github.com/antinvestor/apis/partition/v1"
+	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/pitabwire/frame"
 	"google.golang.org/grpc/codes"
