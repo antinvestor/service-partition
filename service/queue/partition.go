@@ -12,7 +12,7 @@ type PartitionSyncQueueHandler struct {
 	Service *frame.Service
 }
 
-func (psq *PartitionSyncQueueHandler) Handle(ctx context.Context, payload []byte) error {
+func (psq *PartitionSyncQueueHandler) Handle(ctx context.Context, _ map[string]string, payload []byte) error {
 
 	partition := &models.Partition{}
 	err := json.Unmarshal(payload, partition)
