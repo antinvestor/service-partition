@@ -3,7 +3,7 @@ module github.com/antinvestor/service-partition
 go 1.21
 
 require (
-	github.com/antinvestor/apis/go/common v1.7.13
+	github.com/antinvestor/apis/go/common v1.7.16
 	github.com/antinvestor/apis/go/partition v1.7.13
 	github.com/bufbuild/protovalidate-go v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
