@@ -325,7 +325,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 					uriList = append(uriList, fmt.Sprintf("%v", v))
 				}
 			} else {
-				logger.WithField("uri list", val).Debug(" SyncPartitionOnHydra -- The required redirect uri list is invalid")
+				logger.WithField("uri list", val).Debug("The required redirect uri list is invalid")
 			}
 		}
 	}
