@@ -7,8 +7,6 @@ import (
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
-	"log"
-	"strings"
 )
 
 type AccessBusiness interface {
@@ -132,7 +130,9 @@ func (ab *accessBusiness) CreateAccess(
 	ctx context.Context,
 	request *partitionv1.CreateAccessRequest) (*partitionv1.AccessObject, error) {
 
-	log.Printf(" CreateAccess -- supplied request %+v", request)
+	logger := ab.service.L()
+
+	logger.WithField("request", request).Debug(" supplied request")
 
 	var err error
 	var partition *models.Partition
@@ -155,12 +155,11 @@ func (ab *accessBusiness) CreateAccess(
 	access, err := ab.accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), request.GetProfileId())
 	if err != nil {
 
-		if !strings.Contains(err.Error(), "record not found") {
+		if !frame.DBErrorIsRecordNotFound(err) {
 			return nil, err
 		}
 	} else {
 		partitionObject := toAPIPartition(partition)
-
 		return toAPIAccess(partitionObject, access)
 	}
 
@@ -177,7 +176,7 @@ func (ab *accessBusiness) CreateAccess(
 		return nil, err
 	}
 
-	log.Printf(" CreateAccess -- final access created is  %+v", access)
+	logger.WithField("access", access).Debug(" access created")
 	partitionObject := toAPIPartition(partition)
 
 	return toAPIAccess(partitionObject, access)

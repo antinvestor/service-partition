@@ -11,7 +11,6 @@ import (
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
 	"gorm.io/datatypes"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -239,13 +238,14 @@ func (pb *partitionBusiness) CreatePartitionRole(
 }
 
 func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
+	logger := service.L()
 	ctx := context.Background()
 	partitionRepository := repository.NewPartitionRepository(service)
 	partitionConfig := service.Config().(*config.PartitionConfig)
 
 	partitionList, err := partitionRepository.GetByQuery(ctx, "", 100, 0)
 	if err != nil {
-		log.Printf(" ReQueuePrimaryPartitionsForSync -- could not get default system partition because :%v+", err)
+		logger.WithError(err).Debug(" could not get default system partition")
 
 		return
 	}
@@ -253,7 +253,7 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 	for _, partition := range partitionList {
 		err = service.Publish(ctx, partitionConfig.PartitionSyncName, partition)
 		if err != nil {
-			log.Printf(" ReQueuePrimaryPartitionsForSync -- could not publish because :%v+", err)
+			logger.WithError(err).Debug("could not publish because")
 
 			return
 		}
@@ -262,6 +262,7 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
 
+	logger := service.L()
 	partitionConfig := service.Config().(*config.PartitionConfig)
 
 	hydraURL := fmt.Sprintf("%s%s", partitionConfig.GetOauth2ServiceAdminURI(), "/admin/clients")
@@ -324,7 +325,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 					uriList = append(uriList, fmt.Sprintf("%v", v))
 				}
 			} else {
-				log.Printf(" SyncPartitionOnHydra -- The required redirect uri list is invalid %v", val)
+				logger.WithField("uri list", val).Debug(" SyncPartitionOnHydra -- The required redirect uri list is invalid")
 			}
 		}
 	}
