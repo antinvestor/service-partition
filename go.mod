@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/antinvestor/apis/go/common v1.15.2
 	github.com/antinvestor/apis/go/partition v1.15.2
-	github.com/bufbuild/protovalidate-go v0.6.0
+	github.com/bufbuild/protovalidate-go v0.6.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/pitabwire/frame v1.18.6
 	github.com/sirupsen/logrus v1.9.3
@@ -27,7 +27,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/cel-go v0.20.0 // indirect
+	github.com/google/cel-go v0.20.1 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gorilla/handlers v1.5.2 // indirect
 	github.com/improbable-eng/grpc-web v0.15.0 // indirect
@@ -55,7 +55,7 @@ require (
 	go.uber.org/mock v0.4.0 // indirect
 	gocloud.dev v0.36.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/oauth2 v0.19.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
@@ -64,8 +64,8 @@ require (
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/api v0.151.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240227224415-6ceb2ff114de // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240227224415-6ceb2ff114de // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gorm.io/driver/mysql v1.4.7 // indirect
 	gorm.io/driver/postgres v1.5.6 // indirect
