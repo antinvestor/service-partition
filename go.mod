@@ -3,8 +3,8 @@ module github.com/antinvestor/service-partition
 go 1.21
 
 require (
-	github.com/antinvestor/apis/go/common v1.15.2
-	github.com/antinvestor/apis/go/partition v1.15.2
+	github.com/antinvestor/apis/go/common v1.16.1
+	github.com/antinvestor/apis/go/partition v1.16.1
 	github.com/bufbuild/protovalidate-go v0.6.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/pitabwire/frame v1.19.5
@@ -27,7 +27,6 @@ require (
 	github.com/go-sql-driver/mysql v1.8.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/cel-go v0.20.1 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.2 // indirect
 	github.com/gorilla/handlers v1.5.2 // indirect
@@ -64,7 +63,6 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/api v0.169.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
