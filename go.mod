@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/antinvestor/apis/go/common v1.16.6
-	github.com/antinvestor/apis/go/partition v1.16.1
+	github.com/antinvestor/apis/go/partition v1.16.6
 	github.com/bufbuild/protovalidate-go v0.6.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/pitabwire/frame v1.20.2
