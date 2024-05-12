@@ -3,13 +3,13 @@ module github.com/antinvestor/service-partition
 go 1.21
 
 require (
-	github.com/antinvestor/apis/go/common v1.16.1
-	github.com/antinvestor/apis/go/partition v1.16.1
-	github.com/bufbuild/protovalidate-go v0.6.1
+	github.com/antinvestor/apis/go/common v1.16.6
+	github.com/antinvestor/apis/go/partition v1.16.6
+	github.com/bufbuild/protovalidate-go v0.6.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
-	github.com/pitabwire/frame v1.19.5
+	github.com/pitabwire/frame v1.20.2
 	github.com/sirupsen/logrus v1.9.3
-	google.golang.org/grpc v1.63.0
+	google.golang.org/grpc v1.63.2
 	gorm.io/datatypes v1.2.0
 )
 
@@ -48,18 +48,18 @@ require (
 	github.com/rs/xid v1.5.0 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	go.opentelemetry.io/otel v1.24.0 // indirect
-	go.opentelemetry.io/otel/metric v1.24.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.24.0 // indirect
-	go.opentelemetry.io/otel/trace v1.24.0 // indirect
+	go.opentelemetry.io/otel v1.26.0 // indirect
+	go.opentelemetry.io/otel/metric v1.26.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.26.0 // indirect
+	go.opentelemetry.io/otel/trace v1.26.0 // indirect
 	go.uber.org/mock v0.4.0 // indirect
 	gocloud.dev v0.37.0 // indirect
-	golang.org/x/crypto v0.21.0 // indirect
+	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
-	golang.org/x/net v0.22.0 // indirect
+	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/oauth2 v0.19.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/api v0.169.0 // indirect
@@ -68,6 +68,6 @@ require (
 	google.golang.org/protobuf v1.33.0 // indirect
 	gorm.io/driver/mysql v1.4.7 // indirect
 	gorm.io/driver/postgres v1.5.7 // indirect
-	gorm.io/gorm v1.25.9 // indirect
+	gorm.io/gorm v1.25.10 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
 )
