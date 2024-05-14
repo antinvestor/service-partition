@@ -4,8 +4,6 @@ import (
 	"context"
 	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/service/business"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (prtSrv *PartitionServer) GetTenant(
@@ -16,7 +14,7 @@ func (prtSrv *PartitionServer) GetTenant(
 	tenant, err := tenantBusiness.GetTenant(ctx, req.GetId())
 	if err != nil {
 		logger.Debug("could not obtain the specified tenant")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, prtSrv.toApiError(err)
 	}
 	return &partitionv1.GetTenantResponse{Data: tenant}, nil
 }
@@ -27,7 +25,7 @@ func (prtSrv *PartitionServer) ListTenant(req *partitionv1.ListTenantRequest, st
 	err := tenantBusiness.ListTenant(stream.Context(), req, stream)
 	if err != nil {
 		logger.Debug("could not list tenants")
-		return status.Errorf(codes.Internal, err.Error())
+		return prtSrv.toApiError(err)
 	}
 	return nil
 }
@@ -38,7 +36,7 @@ func (prtSrv *PartitionServer) CreateTenant(ctx context.Context, req *partitionv
 	tenant, err := tenantBusiness.CreateTenant(ctx, req)
 	if err != nil {
 		logger.Debug("could not create a new tenant")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, prtSrv.toApiError(err)
 	}
 	return &partitionv1.CreateTenantResponse{Data: tenant}, nil
 }
