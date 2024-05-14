@@ -4,9 +4,24 @@ import (
 	"context"
 	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/service/business"
+	"github.com/pitabwire/frame"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+func (prtSrv *PartitionServer) toApiError(err error) error {
+	grpcError, ok := status.FromError(err)
+
+	if ok {
+		return grpcError.Err()
+	}
+
+	if frame.DBErrorIsRecordNotFound(err) {
+		return status.Error(codes.NotFound, err.Error())
+	}
+
+	return grpcError.Err()
+}
 
 func (prtSrv *PartitionServer) CreateAccess(ctx context.Context, req *partitionv1.CreateAccessRequest) (*partitionv1.CreateAccessResponse, error) {
 	logger := prtSrv.Service.L()
@@ -14,7 +29,7 @@ func (prtSrv *PartitionServer) CreateAccess(ctx context.Context, req *partitionv
 	access, err := accessBusiness.CreateAccess(ctx, req)
 	if err != nil {
 		logger.WithError(err).Debug(" could not create new access")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, prtSrv.toApiError(err)
 	}
 	return &partitionv1.CreateAccessResponse{Data: access}, nil
 }
@@ -24,7 +39,7 @@ func (prtSrv *PartitionServer) GetAccess(ctx context.Context, req *partitionv1.G
 	access, err := accessBusiness.GetAccess(ctx, req)
 	if err != nil {
 		logger.WithError(err).Debug(" could not get access")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, prtSrv.toApiError(err)
 	}
 	return &partitionv1.GetAccessResponse{Data: access}, nil
 }
@@ -36,7 +51,7 @@ func (prtSrv *PartitionServer) RemoveAccess(ctx context.Context, req *partitionv
 		logger.WithError(err).Debug(" could not remove access")
 		return &partitionv1.RemoveAccessResponse{
 			Succeeded: false,
-		}, status.Errorf(codes.Internal, err.Error())
+		}, prtSrv.toApiError(err)
 	}
 	return &partitionv1.RemoveAccessResponse{
 		Succeeded: true,
@@ -48,7 +63,7 @@ func (prtSrv *PartitionServer) CreateAccessRole(ctx context.Context, req *partit
 	accessRole, err := accessBusiness.CreateAccessRole(ctx, req)
 	if err != nil {
 		logger.WithError(err).Debug(" could not create new access roles")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, prtSrv.toApiError(err)
 	}
 	return &partitionv1.CreateAccessRoleResponse{Data: accessRole}, nil
 }
@@ -58,7 +73,7 @@ func (prtSrv *PartitionServer) ListAccessRoles(ctx context.Context, req *partiti
 	accessRoleList, err := accessBusiness.ListAccessRoles(ctx, req)
 	if err != nil {
 		logger.WithError(err).Debug(" could not get list of access roles")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, prtSrv.toApiError(err)
 	}
 	return accessRoleList, nil
 }
@@ -70,7 +85,7 @@ func (prtSrv *PartitionServer) RemoveAccessRole(ctx context.Context, req *partit
 		logger.WithError(err).Debug(" could not remove access role")
 		return &partitionv1.RemoveAccessRoleResponse{
 			Succeeded: false,
-		}, status.Errorf(codes.Internal, err.Error())
+		}, prtSrv.toApiError(err)
 	}
 	return &partitionv1.RemoveAccessRoleResponse{
 		Succeeded: true,
