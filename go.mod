@@ -1,6 +1,6 @@
 module github.com/antinvestor/service-partition
 
-go 1.21
+go 1.22
 
 require (
 	github.com/antinvestor/apis/go/common v1.16.6
