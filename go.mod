@@ -3,7 +3,7 @@ module github.com/antinvestor/service-partition
 go 1.22
 
 require (
-	github.com/antinvestor/apis/go/common v1.17.3
+	github.com/antinvestor/apis/go/common v1.18.0
 	github.com/antinvestor/apis/go/partition v1.17.4
 	github.com/bufbuild/protovalidate-go v0.6.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
@@ -14,7 +14,7 @@ require (
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240508200655-46a4cf4ba109.1 // indirect
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240508200655-46a4cf4ba109.2 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/alitto/pond v1.8.3 // indirect
@@ -65,7 +65,7 @@ require (
 	google.golang.org/api v0.183.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240415180920-8c6c420018be // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240604185151-ef581f913117 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 	gorm.io/driver/mysql v1.5.6 // indirect
 	gorm.io/driver/postgres v1.5.7 // indirect
 	gorm.io/gorm v1.25.10 // indirect
