@@ -10,7 +10,7 @@ require (
 	github.com/pitabwire/frame v1.23.2
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.66.2
-	gorm.io/datatypes v1.2.1
+	gorm.io/datatypes v1.2.2
 )
 
 require (
