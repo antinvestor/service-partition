@@ -15,7 +15,9 @@ type PartitionServer struct {
 func (prtSrv *PartitionServer) ListPartition(
 	req *partitionv1.ListPartitionRequest,
 	stream partitionv1.PartitionService_ListPartitionServer) error {
-	logger := prtSrv.Service.L()
+
+	ctx := stream.Context()
+	logger := prtSrv.Service.L(ctx)
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	err := partitionBusiness.ListPartition(stream.Context(), req, stream)
 	if err != nil {
@@ -28,7 +30,7 @@ func (prtSrv *PartitionServer) ListPartition(
 func (prtSrv *PartitionServer) CreatePartition(
 	ctx context.Context,
 	req *partitionv1.CreatePartitionRequest) (*partitionv1.CreatePartitionResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.CreatePartition(ctx, req)
 	if err != nil {
@@ -41,7 +43,7 @@ func (prtSrv *PartitionServer) CreatePartition(
 func (prtSrv *PartitionServer) GetPartition(
 	ctx context.Context,
 	req *partitionv1.GetPartitionRequest) (*partitionv1.GetPartitionResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.GetPartition(ctx, req)
 	if err != nil {
@@ -54,7 +56,7 @@ func (prtSrv *PartitionServer) GetPartition(
 func (prtSrv *PartitionServer) UpdatePartition(
 	ctx context.Context,
 	req *partitionv1.UpdatePartitionRequest) (*partitionv1.UpdatePartitionResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.UpdatePartition(ctx, req)
 	if err != nil {
@@ -67,7 +69,7 @@ func (prtSrv *PartitionServer) UpdatePartition(
 func (prtSrv *PartitionServer) CreatePartitionRole(
 	ctx context.Context,
 	req *partitionv1.CreatePartitionRoleRequest) (*partitionv1.CreatePartitionRoleResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.CreatePartitionRole(ctx, req)
 	if err != nil {
@@ -80,7 +82,7 @@ func (prtSrv *PartitionServer) CreatePartitionRole(
 func (prtSrv *PartitionServer) ListPartitionRoles(
 	ctx context.Context,
 	req *partitionv1.ListPartitionRoleRequest) (*partitionv1.ListPartitionRoleResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	partition, err := partitionBusiness.ListPartitionRoles(ctx, req)
 	if err != nil {
@@ -93,7 +95,7 @@ func (prtSrv *PartitionServer) ListPartitionRoles(
 func (prtSrv *PartitionServer) RemovePartitionRole(
 	ctx context.Context,
 	req *partitionv1.RemovePartitionRoleRequest) (*partitionv1.RemovePartitionRoleResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	partitionBusiness := business.NewPartitionBusiness(prtSrv.Service)
 	err := partitionBusiness.RemovePartitionRole(ctx, req)
 	if err != nil {

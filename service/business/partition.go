@@ -149,7 +149,7 @@ func (pb *partitionBusiness) UpdatePartition(
 	ctx context.Context,
 	request *partitionv1.UpdatePartitionRequest) (*partitionv1.PartitionObject, error) {
 
-	partition, err := pb.partitionRepo.GetByID(ctx, request.GetPartitionId())
+	partition, err := pb.partitionRepo.GetByID(ctx, request.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +197,7 @@ func (pb *partitionBusiness) RemovePartitionRole(
 	request *partitionv1.RemovePartitionRoleRequest,
 ) error {
 
-	err := pb.partitionRepo.RemoveRole(ctx, request.GetPartitionRoleId())
+	err := pb.partitionRepo.RemoveRole(ctx, request.GetId())
 	if err != nil {
 		return err
 	}
@@ -238,8 +238,9 @@ func (pb *partitionBusiness) CreatePartitionRole(
 }
 
 func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
-	logger := service.L()
 	ctx := context.Background()
+	logger := service.L(ctx)
+
 	partitionRepository := repository.NewPartitionRepository(service)
 	partitionConfig := service.Config().(*config.PartitionConfig)
 
@@ -262,7 +263,7 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
 
-	logger := service.L()
+	logger := service.L(ctx)
 	partitionConfig := service.Config().(*config.PartitionConfig)
 
 	hydraURL := fmt.Sprintf("%s%s", partitionConfig.GetOauth2ServiceAdminURI(), "/admin/clients")

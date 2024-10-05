@@ -118,7 +118,7 @@ func (ab *accessBusiness) RemoveAccess(
 	ctx context.Context,
 	request *partitionv1.RemoveAccessRequest) error {
 
-	err := ab.accessRepo.Delete(ctx, request.GetAccessId())
+	err := ab.accessRepo.Delete(ctx, request.GetId())
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func (ab *accessBusiness) CreateAccess(
 	ctx context.Context,
 	request *partitionv1.CreateAccessRequest) (*partitionv1.AccessObject, error) {
 
-	logger := ab.service.L()
+	logger := ab.service.L(ctx)
 
 	logger.WithField("request", request).Debug(" supplied request")
 
@@ -222,7 +222,7 @@ func (ab *accessBusiness) RemoveAccessRole(
 	ctx context.Context,
 	request *partitionv1.RemoveAccessRoleRequest) error {
 
-	err := ab.accessRepo.RemoveRole(ctx, request.GetAccessRoleId())
+	err := ab.accessRepo.RemoveRole(ctx, request.GetId())
 	if err != nil {
 		return err
 	}

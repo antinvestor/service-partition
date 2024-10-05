@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/antinvestor/apis/go/common"
 	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/business"
@@ -14,6 +16,7 @@ import (
 	"github.com/pitabwire/frame"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -27,7 +30,7 @@ func main() {
 	}
 
 	ctx, service := frame.NewService(serviceName, frame.Config(&partitionConfig))
-	logger := service.L()
+	logger := service.L(ctx)
 
 	serviceOptions := []frame.Option{frame.Datastore(ctx)}
 
@@ -62,13 +65,13 @@ func main() {
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			logging.UnaryServerInterceptor(frame.LoggingInterceptor(service.L()), frame.GetLoggingOptions()...),
+			logging.UnaryServerInterceptor(frame.LoggingInterceptor(logger), frame.GetLoggingOptions()...),
 			service.UnaryAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer),
 			protovalidateinterceptor.UnaryServerInterceptor(validator),
 			recovery.UnaryServerInterceptor(),
 		),
 		grpc.ChainStreamInterceptor(
-			logging.StreamServerInterceptor(frame.LoggingInterceptor(service.L()), frame.GetLoggingOptions()...),
+			logging.StreamServerInterceptor(frame.LoggingInterceptor(logger), frame.GetLoggingOptions()...),
 			service.StreamAuthInterceptor(jwtAudience, partitionConfig.Oauth2JwtVerifyIssuer),
 			protovalidateinterceptor.StreamServerInterceptor(validator),
 			recovery.StreamServerInterceptor(),
@@ -83,6 +86,20 @@ func main() {
 
 	grpcServerOpt := frame.GrpcServer(grpcServer)
 	serviceOptions = append(serviceOptions, grpcServerOpt)
+
+	proxyOptions := common.ProxyOptions{
+		GrpcServerEndpoint: fmt.Sprintf("localhost:%s", partitionConfig.GrpcServerPort),
+		GrpcServerDialOpts: []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
+	}
+
+	proxyMux, err := partitionv1.CreateProxyHandler(ctx, proxyOptions)
+	if err != nil {
+		logger.WithError(err).Fatal("could not create proxy handler")
+		return
+	}
+
+	proxyServerOpt := frame.HttpHandler(proxyMux)
+	serviceOptions = append(serviceOptions, proxyServerOpt)
 
 	partitionSyncQueueHandler := queue.PartitionSyncQueueHandler{
 		Service: service,

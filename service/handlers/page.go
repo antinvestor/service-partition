@@ -7,7 +7,7 @@ import (
 )
 
 func (prtSrv *PartitionServer) CreatePage(ctx context.Context, req *partitionv1.CreatePageRequest) (*partitionv1.CreatePageResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	pageBusiness := business.NewPageBusiness(ctx, prtSrv.Service)
 	page, err := pageBusiness.CreatePage(ctx, req)
 	if err != nil {
@@ -18,7 +18,7 @@ func (prtSrv *PartitionServer) CreatePage(ctx context.Context, req *partitionv1.
 }
 
 func (prtSrv *PartitionServer) GetPage(ctx context.Context, req *partitionv1.GetPageRequest) (*partitionv1.GetPageResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	pageBusiness := business.NewPageBusiness(ctx, prtSrv.Service)
 	page, err := pageBusiness.GetPage(ctx, req)
 	if err != nil {
@@ -29,7 +29,7 @@ func (prtSrv *PartitionServer) GetPage(ctx context.Context, req *partitionv1.Get
 }
 
 func (prtSrv *PartitionServer) RemovePage(ctx context.Context, req *partitionv1.RemovePageRequest) (*partitionv1.RemovePageResponse, error) {
-	logger := prtSrv.Service.L()
+	logger := prtSrv.Service.L(ctx)
 	pageBusiness := business.NewPageBusiness(ctx, prtSrv.Service)
 	err := pageBusiness.RemovePage(ctx, req)
 	if err != nil {

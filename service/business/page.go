@@ -54,7 +54,7 @@ func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionv1.GetPag
 
 func (ab *pageBusiness) RemovePage(ctx context.Context, request *partitionv1.RemovePageRequest) error {
 
-	return ab.pageRepo.Delete(ctx, request.GetPageId())
+	return ab.pageRepo.Delete(ctx, request.GetId())
 
 }
 
