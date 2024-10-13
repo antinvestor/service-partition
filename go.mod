@@ -7,7 +7,7 @@ require (
 	github.com/antinvestor/apis/go/partition v1.29.1
 	github.com/bufbuild/protovalidate-go v0.7.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
-	github.com/pitabwire/frame v1.25.9
+	github.com/pitabwire/frame v1.25.10
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.67.1
 	gorm.io/datatypes v1.2.3
@@ -50,12 +50,12 @@ require (
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	go.opentelemetry.io/otel v1.30.0 // indirect
-	go.opentelemetry.io/otel/metric v1.30.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.30.0 // indirect
-	go.opentelemetry.io/otel/trace v1.30.0 // indirect
+	go.opentelemetry.io/otel v1.31.0 // indirect
+	go.opentelemetry.io/otel/metric v1.31.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.31.0 // indirect
+	go.opentelemetry.io/otel/trace v1.31.0 // indirect
 	go.uber.org/mock v0.4.0 // indirect
-	gocloud.dev v0.39.0 // indirect
+	gocloud.dev v0.40.0 // indirect
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.30.0 // indirect
