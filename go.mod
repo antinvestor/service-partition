@@ -7,7 +7,7 @@ require (
 	github.com/antinvestor/apis/go/partition v1.29.1
 	github.com/bufbuild/protovalidate-go v0.7.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
-	github.com/pitabwire/frame v1.25.10
+	github.com/pitabwire/frame v1.25.11
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.67.1
 	gorm.io/datatypes v1.2.3
@@ -43,7 +43,7 @@ require (
 	github.com/nats-io/nats.go v1.36.0 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	github.com/nicksnyder/go-i18n/v2 v2.4.0 // indirect
+	github.com/nicksnyder/go-i18n/v2 v2.4.1 // indirect
 	github.com/panjf2000/ants/v2 v2.10.0 // indirect
 	github.com/pitabwire/natspubsub v0.1.7 // indirect
 	github.com/rs/cors v1.8.3 // indirect
