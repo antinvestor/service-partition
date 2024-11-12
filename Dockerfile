@@ -11,8 +11,8 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o partition_binary .
 
-FROM scratch
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+FROM gcr.io/distroless/static:nonroot
+
 COPY --from=builder /partition_binary /partition
 COPY --from=builder /migrations /migrations
 
