@@ -13,13 +13,14 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflag
 
 FROM gcr.io/distroless/static:nonroot
 
-COPY --from=builder /partition_binary /partition
-COPY --from=builder /migrations /migrations
+USER nonroot:nonroot
+EXPOSE 80
+EXPOSE 50051
 
 WORKDIR /
 
+COPY --from=builder /partition_binary /partition
+COPY --from=builder /migrations /migrations
+
 # Run the service command by default when the container starts.
 ENTRYPOINT ["/partition"]
-
-# Document the port that the service listens on by default.
-EXPOSE 7003
