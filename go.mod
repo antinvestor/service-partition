@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/antinvestor/apis/go/common v1.29.14
 	github.com/antinvestor/apis/go/partition v1.29.14
-	github.com/bufbuild/protovalidate-go v0.7.2
+	github.com/bufbuild/protovalidate-go v0.7.3
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/pitabwire/frame v1.25.21
 	github.com/sirupsen/logrus v1.9.3
@@ -15,6 +15,7 @@ require (
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.35.2-20240920164238-5a7b106cbb87.1 // indirect
+	cel.dev/expr v0.18.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
@@ -26,7 +27,7 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/google/cel-go v0.21.0 // indirect
+	github.com/google/cel-go v0.22.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
 	github.com/gorilla/handlers v1.5.2 // indirect
