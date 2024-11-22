@@ -7,7 +7,7 @@ require (
 	github.com/antinvestor/apis/go/partition v1.29.14
 	github.com/bufbuild/protovalidate-go v0.7.3
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
-	github.com/pitabwire/frame v1.25.21
+	github.com/pitabwire/frame v1.25.22
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.68.0
 	gorm.io/datatypes v1.2.4
@@ -70,7 +70,7 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241104194629-dd2ea8efbc28 // indirect
 	google.golang.org/protobuf v1.35.2 // indirect
 	gorm.io/driver/mysql v1.5.6 // indirect
-	gorm.io/driver/postgres v1.5.9 // indirect
+	gorm.io/driver/postgres v1.5.10 // indirect
 	gorm.io/gorm v1.25.12 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
 )
