@@ -9,7 +9,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.2.0
 	github.com/pitabwire/frame v1.25.29
 	github.com/sirupsen/logrus v1.9.3
-	google.golang.org/grpc v1.69.0
+	google.golang.org/grpc v1.69.2
 	gorm.io/datatypes v1.2.5
 )
 
