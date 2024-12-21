@@ -269,8 +269,8 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 	hydraURL := fmt.Sprintf("%s%s", partitionConfig.GetOauth2ServiceAdminURI(), "/admin/clients")
 	httpMethod := http.MethodPost
 
-	clientID, ok := partition.Properties["client_id"]
-	if ok {
+	clientID, clientIDExists := partition.Properties["client_id"]
+	if clientIDExists {
 
 		hydraIDUrl := fmt.Sprintf("%s/%s", hydraURL, clientID)
 
@@ -340,6 +340,11 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 		"logo_uri":                   logoURI,
 		"audience":                   audienceList,
 		"token_endpoint_auth_method": "none",
+	}
+
+	if !clientIDExists && partition.ClientSecret != "" {
+		payload["client_secret"] = partition.ClientSecret
+		payload["token_endpoint_auth_method"] = "client_secret_post"
 	}
 
 	status, result, err := service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)
