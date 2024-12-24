@@ -12,6 +12,7 @@ import (
 	"github.com/pitabwire/frame"
 	"gorm.io/datatypes"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -262,73 +263,70 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 }
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
-
-	logger := service.L(ctx)
 	partitionConfig := service.Config().(*config.PartitionConfig)
 
-	hydraURL := fmt.Sprintf("%s%s", partitionConfig.GetOauth2ServiceAdminURI(), "/admin/clients")
+	hydraBaseURL := partitionConfig.GetOauth2ServiceAdminURI()
+	hydraURL := fmt.Sprintf("%s/admin/clients", hydraBaseURL)
 	httpMethod := http.MethodPost
 
-	clientID, clientIDExists := partition.Properties["client_id"]
+	clientID, clientIDExists := partition.Properties["client_id"].(string)
+
 	if clientIDExists {
+		hydraIDURL := fmt.Sprintf("%s/%s", hydraURL, clientID)
 
-		hydraIDUrl := fmt.Sprintf("%s/%s", hydraURL, clientID)
-
-		if partition.DeletedAt.Valid { //	We need to delete this partition on hydra as well
-			_, _, err := service.InvokeRestService(ctx, http.MethodDelete, hydraIDUrl, make(map[string]interface{}), nil)
-			return err
+		// Handle partition deletion
+		if partition.DeletedAt.Valid {
+			return deletePartitionOnHydra(ctx, service, hydraIDURL)
 		}
 
-		status, _, err := service.InvokeRestService(
-			ctx,
-			http.MethodGet,
-			hydraIDUrl,
-			make(map[string]interface{}),
-			nil)
+		// Check if client exists and update HTTP method/URL accordingly
+		status, _, err := service.InvokeRestService(ctx, http.MethodGet, hydraIDURL, nil, nil)
 		if err != nil {
 			return err
 		}
 
-		if status == 200 {
-			//	We need to update this partition on hydra as well as it already exists
+		if status == http.StatusOK {
 			httpMethod = http.MethodPut
-			hydraURL = hydraIDUrl
+			hydraURL = hydraIDURL
 		}
-
 	}
 
+	// Prepare the payload
+	payload, err := preparePayload(partition)
+	if err != nil {
+		return err
+	}
+
+	// Invoke the Hydra service
+	status, result, err := service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)
+	if err != nil {
+		return err
+	}
+
+	if status < 200 || status > 299 {
+		return fmt.Errorf("invalid response status %d: %s", status, string(result))
+	}
+
+	// Update partition with response data
+	return updatePartitionWithResponse(ctx, service, partition, result)
+
+}
+
+func deletePartitionOnHydra(ctx context.Context, service *frame.Service, hydraIDURL string) error {
+	_, _, err := service.InvokeRestService(ctx, http.MethodDelete, hydraIDURL, nil, nil)
+	return err
+}
+
+func preparePayload(partition *models.Partition) (map[string]interface{}, error) {
 	logoURI := ""
-	if val, ok := partition.Properties["logo_uri"]; ok {
-		logoURI = val.(string)
+	if val, ok := partition.Properties["logo_uri"].(string); ok {
+		logoURI = val
 	}
 
-	var audienceList []string
-	if val, ok := partition.Properties["audience"]; ok {
-		audIfc := val.([]interface{})
-		for _, v := range audIfc {
-			aud := v.(string)
-			audienceList = append(audienceList, aud)
-		}
-	} else {
-		audienceList = []string{}
-	}
-
-	var uriList []string
-	if val, ok := partition.Properties["redirect_uris"]; ok {
-		redirectURI, ok := val.(string)
-		if ok {
-			uriList = strings.Split(redirectURI, ",")
-
-		} else {
-			redirectUris, ok := val.([]interface{})
-			if ok {
-				for _, v := range redirectUris {
-					uriList = append(uriList, fmt.Sprintf("%v", v))
-				}
-			} else {
-				logger.WithField("uri list", val).Debug("The required redirect uri list is invalid")
-			}
-		}
+	audienceList := extractStringList(partition.Properties, "audience")
+	uriList, err := prepareRedirectURIs(partition)
+	if err != nil {
+		return nil, err
 	}
 
 	payload := map[string]interface{}{
@@ -342,47 +340,75 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 	}
 
 	if _, ok := partition.Properties["token_endpoint_auth_method"]; !ok {
-
 		payload["token_endpoint_auth_method"] = "none"
-
-		if !clientIDExists && partition.ClientSecret != "" {
+		if partition.ClientSecret != "" {
 			payload["client_secret"] = partition.ClientSecret
 			payload["token_endpoint_auth_method"] = "client_secret_post"
 		}
 	}
 
-	status, result, err := service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)
-	if err != nil {
-		return err
+	return payload, nil
+}
+
+func extractStringList(properties map[string]interface{}, key string) []string {
+	var list []string
+	if val, ok := properties[key]; ok {
+		for _, v := range val.([]interface{}) {
+			list = append(list, v.(string))
+		}
+	}
+	return list
+}
+
+func prepareRedirectURIs(partition *models.Partition) ([]string, error) {
+	var uriList []string
+	if val, ok := partition.Properties["redirect_uris"]; ok {
+		switch uris := val.(type) {
+		case string:
+			uriList = strings.Split(uris, ",")
+		case []string:
+			uriList = uris
+		default:
+			return nil, fmt.Errorf("invalid redirect_uris format: %v", val)
+		}
 	}
 
-	if status > 299 || status < 200 {
-		return fmt.Errorf(" invalid response status %d had message %s", status, string(result))
+	var finalUriList []string
+	for _, uri := range uriList {
+		parsedURI, err := url.Parse(uri)
+		if err != nil {
+			return nil, err
+		}
+		params := parsedURI.Query()
+		if !params.Has("partition_id") {
+			params.Add("partition_id", partition.ID)
+		}
+		parsedURI.RawQuery = params.Encode()
+		finalUriList = append(finalUriList, parsedURI.String())
 	}
 
+	return finalUriList, nil
+}
+
+func updatePartitionWithResponse(ctx context.Context, service *frame.Service, partition *models.Partition, result []byte) error {
 	var response map[string]interface{}
-	err = json.Unmarshal(result, &response)
-	if err != nil {
+	if err := json.Unmarshal(result, &response); err != nil {
 		return err
 	}
 
-	clientId, ok := partition.Properties["client_id"].(string)
-	if ok {
-		partition.ClientID = clientId
+	if clientID, ok := response["client_id"].(string); ok {
+		partition.ClientID = clientID
 	}
 
 	if partition.Properties == nil {
 		partition.Properties = make(datatypes.JSONMap)
 	}
+
 	for k, v := range response {
 		partition.Properties[k] = v
 	}
 
+	// Save partition
 	partitionRepository := repository.NewPartitionRepository(service)
-	err = partitionRepository.Save(ctx, partition)
-	if err != nil { //nolint:wsl
-		return err
-	}
-
-	return nil
+	return partitionRepository.Save(ctx, partition)
 }
