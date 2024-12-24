@@ -366,8 +366,10 @@ func prepareRedirectURIs(partition *models.Partition) ([]string, error) {
 		switch uris := val.(type) {
 		case string:
 			uriList = strings.Split(uris, ",")
-		case []string:
-			uriList = uris
+		case []any:
+			for _, v := range uris {
+				uriList = append(uriList, v.(string))
+			}
 		default:
 			return nil, fmt.Errorf("invalid redirect_uris format: %v", val)
 		}
