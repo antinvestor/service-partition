@@ -332,19 +332,23 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 	}
 
 	payload := map[string]interface{}{
-		"client_name":                partition.Name,
-		"grant_types":                []string{"authorization_code", "refresh_token"},
-		"response_types":             []string{"token", "id_token", "code", "token id_token", "token code id_token"},
-		"scope":                      "openid offline offline_access profile contact",
-		"redirect_uris":              uriList,
-		"logo_uri":                   logoURI,
-		"audience":                   audienceList,
-		"token_endpoint_auth_method": "none",
+		"client_name":    partition.Name,
+		"grant_types":    []string{"authorization_code", "refresh_token"},
+		"response_types": []string{"token", "id_token", "code", "token id_token", "token code id_token"},
+		"scope":          "openid offline offline_access profile contact",
+		"redirect_uris":  uriList,
+		"logo_uri":       logoURI,
+		"audience":       audienceList,
 	}
 
-	if !clientIDExists && partition.ClientSecret != "" {
-		payload["client_secret"] = partition.ClientSecret
-		payload["token_endpoint_auth_method"] = "client_secret_post"
+	if _, ok := partition.Properties["token_endpoint_auth_method"]; !ok {
+
+		payload["token_endpoint_auth_method"] = "none"
+
+		if !clientIDExists && partition.ClientSecret != "" {
+			payload["client_secret"] = partition.ClientSecret
+			payload["token_endpoint_auth_method"] = "client_secret_post"
+		}
 	}
 
 	status, result, err := service.InvokeRestService(ctx, httpMethod, hydraURL, payload, nil)
