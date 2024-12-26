@@ -346,8 +346,8 @@ github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtP
 github.com/performancecopilot/speed v3.0.0+incompatible/go.mod h1:/CLtqpZ5gBg1M9iaPbIdPPGyKcA8hKdoy6hAWba7Yac=
 github.com/pierrec/lz4 v1.0.2-0.20190131084431-473cd7ce01a1/go.mod h1:3/3N9NVKO0jef7pBehbT1qWhCMrIgbYNnFAZCqQ5LRc=
 github.com/pierrec/lz4 v2.0.5+incompatible/go.mod h1:pdkljMzZIN41W+lC3N2tnIh5sFi+IEE17M5jbnwPHcY=
-github.com/pitabwire/frame v1.25.31 h1:cmLFdEyoXW5GPc/H3e69OLAogF1MQrxIHPzjf2Zjqew=
-github.com/pitabwire/frame v1.25.31/go.mod h1:zKv6AUfcmjbqpGFzWW1VvQuXqMqjImQpUE1A+VdOiLM=
+github.com/pitabwire/frame v1.26.2 h1:Ive9ClkUsBsejHgPHCHbgfLwtSt9v+lpHcFWkzgRlOI=
+github.com/pitabwire/frame v1.26.2/go.mod h1:RfbfqQt8+pE0AbUyui9dNndF2sz9R6Sa7qk+CJMlCWM=
 github.com/pitabwire/natspubsub v0.1.7 h1:Qz7cyuhmGHBopegG1zlB1lqif6sTlwni0uc954FZv30=
 github.com/pitabwire/natspubsub v0.1.7/go.mod h1:i1bCGuooBz8pnT8MZsIgyT2qL6U8i/lq82M93bHyjTc=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
@@ -625,8 +625,8 @@ google.golang.org/grpc v1.32.0/go.mod h1:N36X2cJ7JwdamYAgDz+s+rVMFjt3numwzf/HckM
 google.golang.org/grpc v1.33.2/go.mod h1:JMHMWHQWaTccqQQlmk3MJZS+GWXOdAesneDmEnv2fbc=
 google.golang.org/grpc v1.69.2 h1:U3S9QEtbXC0bYNvRtcoklF3xGtLViumSYxWykJS+7AU=
 google.golang.org/grpc v1.69.2/go.mod h1:vyjdE6jLBI76dgpDojsFGNaHlxdjXN9ghpnd2o7JGZ4=
-google.golang.org/grpc/examples v0.0.0-20241220174925-f32168c23b3f h1:BB98VxbAg3785G4obRaL++FnjZ7b0DBTMzKMA8LEqac=
-google.golang.org/grpc/examples v0.0.0-20241220174925-f32168c23b3f/go.mod h1:iUYUXyn6BoNc+Royf9Rq6zhL10e8fi9gWUwlQneUe6Q=
+google.golang.org/grpc/examples v0.0.0-20241224124116-724f450f77a0 h1:oySzPorhJex9pSNVC4gbvZ4vCnUgpKKdFMaAvsLGIMg=
+google.golang.org/grpc/examples v0.0.0-20241224124116-724f450f77a0/go.mod h1:iUYUXyn6BoNc+Royf9Rq6zhL10e8fi9gWUwlQneUe6Q=
 google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
 google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
 google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
