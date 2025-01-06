@@ -339,7 +339,9 @@ func preparePayload(partition *models.Partition) (map[string]interface{}, error)
 		"audience":       audienceList,
 	}
 
-	if _, ok := partition.Properties["token_endpoint_auth_method"]; !ok {
+	if _, ok := partition.Properties["token_endpoint_auth_method"]; ok {
+		payload["token_endpoint_auth_method"] = partition.Properties["token_endpoint_auth_method"]
+	} else {
 		payload["token_endpoint_auth_method"] = "none"
 		if partition.ClientSecret != "" {
 			payload["client_secret"] = partition.ClientSecret
