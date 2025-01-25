@@ -9,13 +9,13 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.2.0
 	github.com/pitabwire/frame v1.27.0
 	github.com/sirupsen/logrus v1.9.3
-	google.golang.org/grpc v1.69.4
+	google.golang.org/grpc v1.70.0
 	gorm.io/datatypes v1.2.5
 )
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.3-20241127180247-a33202765966.1 // indirect
-	cel.dev/expr v0.18.0 // indirect
+	cel.dev/expr v0.19.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
