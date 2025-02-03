@@ -109,7 +109,21 @@ func (pb *partitionBusiness) GetPartition(
 		return nil, err
 	}
 
-	return toAPIPartition(partition), nil
+	partitionObj := toAPIPartition(partition)
+
+	claims := frame.ClaimsFromContext(ctx)
+
+	if strings.EqualFold(claims.ServiceName(), "service_matrix") {
+
+		cfg := pb.service.Config().(*config.PartitionConfig)
+		discoveryUri := fmt.Sprintf("%s/.well-known/openid-configuration", cfg.GetOauth2ServiceURI())
+
+		partitionObj.GetProperties()["client_secret"] = partition.ClientSecret
+		partitionObj.GetProperties()["client_discovery_uri"] = discoveryUri
+
+	}
+
+	return partitionObj, nil
 }
 
 func (pb *partitionBusiness) CreatePartition(
