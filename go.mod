@@ -7,7 +7,7 @@ require (
 	github.com/antinvestor/apis/go/partition v1.32.0
 	github.com/bufbuild/protovalidate-go v0.8.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.2.0
-	github.com/pitabwire/frame v1.28.2
+	github.com/pitabwire/frame v1.28.3
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.70.0
 	gorm.io/datatypes v1.2.5
@@ -44,7 +44,7 @@ require (
 	github.com/nats-io/nats.go v1.36.0 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	github.com/nicksnyder/go-i18n/v2 v2.5.0 // indirect
+	github.com/nicksnyder/go-i18n/v2 v2.5.1 // indirect
 	github.com/panjf2000/ants/v2 v2.11.0 // indirect
 	github.com/pitabwire/natspubsub v0.1.7 // indirect
 	github.com/rs/cors v1.8.3 // indirect
@@ -62,9 +62,9 @@ require (
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.25.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240716161551-93cc26a95ae9 // indirect
 	google.golang.org/api v0.216.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250115164207-1a7da9e5054f // indirect
