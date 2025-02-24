@@ -7,7 +7,7 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=service_partition
     ports:
-      - 5423:5432
+      - "5423:5432"
 
 
   partition_hydra-migrate:
@@ -40,6 +40,7 @@ services:
       - 4445:4445
 
   partition_migration:
+    container_name: migration
     build: ./
     depends_on:
       - partition_database
