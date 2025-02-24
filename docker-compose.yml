@@ -1,6 +1,6 @@
 services:
   partition_database:
-    image: postgres:17.3
+    image: postgres:17.4
     restart: unless-stopped
     environment:
       - POSTGRES_USER=ant
