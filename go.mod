@@ -7,7 +7,7 @@ require (
 	github.com/antinvestor/apis/go/partition v1.33.0
 	github.com/bufbuild/protovalidate-go v0.9.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.0
-	github.com/pitabwire/frame v1.28.7
+	github.com/pitabwire/frame v1.29.2
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.70.0
 	gorm.io/datatypes v1.2.5
@@ -19,6 +19,7 @@ require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
+	github.com/caarlos0/env/v11 v11.3.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -39,7 +40,6 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/nats-io/nats.go v1.39.0 // indirect
 	github.com/nats-io/nkeys v0.4.9 // indirect

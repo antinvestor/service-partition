@@ -22,8 +22,7 @@ import (
 func main() {
 
 	serviceName := "service_partition"
-	var partitionConfig config.PartitionConfig
-	err := frame.ConfigProcess("", &partitionConfig)
+	partitionConfig, err := frame.ConfigFromEnv[config.PartitionConfig]()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not process configs")
 		return

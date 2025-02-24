@@ -5,8 +5,8 @@ import "github.com/pitabwire/frame"
 type PartitionConfig struct {
 	*frame.ConfigurationDefault
 
-	NotificationServiceURI       string `default:"127.0.0.1:7020" envconfig:"NOTIFICATION_SERVICE_URI"`
-	QueuePartitionSyncURL        string `default:"mem://partition_sync_hydra" envconfig:"QUEUE_PARTITION_SYNC"`
-	PartitionSyncName            string `default:"partition_sync_hydra" envconfig:"QUEUE_PARTITION_SYNC_NAME"`
-	SynchronizePrimaryPartitions bool   `default:"False" envconfig:"SYNCHRONIZE_PRIMARY_PARTITIONS"`
+	NotificationServiceURI       string `envDefault:"127.0.0.1:7020" env:"NOTIFICATION_SERVICE_URI"`
+	QueuePartitionSyncURL        string `envDefault:"mem://partition_sync_hydra" env:"QUEUE_PARTITION_SYNC"`
+	PartitionSyncName            string `envDefault:"partition_sync_hydra" env:"QUEUE_PARTITION_SYNC_NAME"`
+	SynchronizePrimaryPartitions bool   `envDefault:"False" env:"SYNCHRONIZE_PRIMARY_PARTITIONS"`
 }
