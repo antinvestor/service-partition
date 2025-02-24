@@ -285,7 +285,9 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 
 	clientID, clientIDExists := partition.Properties["client_id"].(string)
 
-	if clientIDExists {
+	if !clientIDExists {
+		clientID = partition.GetID()
+	} else {
 		hydraIDURL := fmt.Sprintf("%s/%s", hydraURL, clientID)
 
 		// Handle partition deletion
@@ -306,7 +308,7 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 	}
 
 	// Prepare the payload
-	payload, err := preparePayload(partition)
+	payload, err := preparePayload(clientID, partition)
 	if err != nil {
 		return err
 	}
@@ -331,7 +333,7 @@ func deletePartitionOnHydra(ctx context.Context, service *frame.Service, hydraID
 	return err
 }
 
-func preparePayload(partition *models.Partition) (map[string]interface{}, error) {
+func preparePayload(clientId string, partition *models.Partition) (map[string]interface{}, error) {
 	logoURI := ""
 	if val, ok := partition.Properties["logo_uri"].(string); ok {
 		logoURI = val
@@ -345,6 +347,7 @@ func preparePayload(partition *models.Partition) (map[string]interface{}, error)
 
 	payload := map[string]interface{}{
 		"client_name":    partition.Name,
+		"client_id":      clientId,
 		"grant_types":    []string{"authorization_code", "refresh_token"},
 		"response_types": []string{"token", "id_token", "code", "token id_token", "token code id_token"},
 		"scope":          "openid offline offline_access profile contact",
@@ -412,10 +415,6 @@ func updatePartitionWithResponse(ctx context.Context, service *frame.Service, pa
 	var response map[string]interface{}
 	if err := json.Unmarshal(result, &response); err != nil {
 		return err
-	}
-
-	if clientID, ok := response["client_id"].(string); ok {
-		partition.ClientID = clientID
 	}
 
 	if partition.Properties == nil {
