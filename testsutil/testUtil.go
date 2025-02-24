@@ -13,8 +13,7 @@ func GetTestService(name string) (context.Context, *frame.Service, error) {
 		"postgres://ant:secret@localhost:5423/service_partition?sslmode=disable")
 	mainDB := frame.DatastoreConnection(ctx, dbURL, false)
 
-	var partitionConfig config.PartitionConfig
-	err := frame.ConfigProcess("", &partitionConfig)
+	partitionConfig, err := frame.ConfigFromEnv[config.PartitionConfig]()
 	if err != nil {
 		return nil, nil, err
 	}
