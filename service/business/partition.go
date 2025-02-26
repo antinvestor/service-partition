@@ -104,14 +104,14 @@ func (pb *partitionBusiness) GetPartition(
 	ctx context.Context,
 	request *partitionv1.GetPartitionRequest) (*partitionv1.PartitionObject, error) {
 
+	claims := frame.ClaimsFromContext(ctx)
+
 	partition, err := pb.partitionRepo.GetByID(ctx, request.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	partitionObj := toAPIPartition(partition)
-
-	claims := frame.ClaimsFromContext(ctx)
 
 	if strings.EqualFold(claims.ServiceName(), "service_matrix") {
 

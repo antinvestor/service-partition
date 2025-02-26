@@ -36,8 +36,8 @@ services:
     volumes:
       - ./tests_runner/hydra.yaml:/etc/config/hydra.yml
     ports:
-      - 4444:4444
-      - 4445:4445
+      - "4444:4444"
+      - "4445:4445"
 
   partition_migration:
     container_name: migration
@@ -47,5 +47,15 @@ services:
     environment:
       - LOG_LEVEL=debug
       - DO_MIGRATION=true
+      - DATABASE_URL=postgres://ant:secret@partition_database:5432/service_partition?sslmode=disable
+    restart: on-failure
+
+  partition_service:
+    container_name: partition_service
+    build: ./
+    depends_on:
+      - partition_database
+    environment:
+      - LOG_LEVEL=debug
       - DATABASE_URL=postgres://ant:secret@partition_database:5432/service_partition?sslmode=disable
     restart: on-failure
