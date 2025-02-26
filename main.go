@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/antinvestor/apis/go/common"
 	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
@@ -22,13 +23,15 @@ import (
 func main() {
 
 	serviceName := "service_partition"
-	partitionConfig, err := frame.ConfigFromEnv[config.PartitionConfig]()
+	ctx := context.Background()
+
+	partitionConfig, err := frame.ConfigLoadWithOIDC[config.PartitionConfig](ctx)
 	if err != nil {
 		logrus.WithError(err).Fatal("could not process configs")
 		return
 	}
 
-	ctx, service := frame.NewService(serviceName, frame.Config(&partitionConfig))
+	ctx, service := frame.NewServiceWithContext(ctx, serviceName, frame.Config(&partitionConfig))
 	logger := service.L(ctx)
 
 	serviceOptions := []frame.Option{frame.Datastore(ctx)}
