@@ -113,7 +113,7 @@ func (pb *partitionBusiness) GetPartition(
 
 	partitionObj := toAPIPartition(partition)
 
-	if strings.EqualFold(claims.ServiceName(), "service_matrix") {
+	if strings.EqualFold(claims.GetServiceName(), "service_matrix") {
 
 		cfg := pb.service.Config().(*config.PartitionConfig)
 		props := partitionObj.GetProperties()
