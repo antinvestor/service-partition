@@ -116,11 +116,11 @@ func (pb *partitionBusiness) GetPartition(
 	if strings.EqualFold(claims.ServiceName(), "service_matrix") {
 
 		cfg := pb.service.Config().(*config.PartitionConfig)
-		discoveryUri := fmt.Sprintf("%s/.well-known/openid-configuration", cfg.GetOauth2ServiceURI())
+		props := partitionObj.GetProperties()
 
-		partitionObj.GetProperties()["client_secret"] = partition.ClientSecret
-		partitionObj.GetProperties()["client_discovery_uri"] = discoveryUri
-
+		props["client_secret"] = partition.ClientSecret
+		props["client_discovery_uri"] = cfg.GetOauth2WellKnownOIDC()
+		partitionObj.Properties = props
 	}
 
 	return partitionObj, nil

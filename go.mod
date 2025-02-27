@@ -7,7 +7,7 @@ require (
 	github.com/antinvestor/apis/go/partition v1.33.0
 	github.com/bufbuild/protovalidate-go v0.9.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.0
-	github.com/pitabwire/frame v1.30.2
+	github.com/pitabwire/frame v1.30.3
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.70.0
 	gorm.io/datatypes v1.2.5
