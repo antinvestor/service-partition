@@ -71,8 +71,6 @@ func (ab *accessBusiness) GetAccess(
 	var err error
 	var access *models.Access
 
-	ctx = frame.SkipTenancyChecksOnClaims(ctx)
-
 	if request.GetAccessId() != "" {
 		access, err = ab.accessRepo.GetByID(ctx, request.GetAccessId())
 		if err != nil {
@@ -91,7 +89,7 @@ func (ab *accessBusiness) GetAccess(
 
 	var partition *models.Partition
 	partitionId := request.GetPartitionId()
-	if partitionId != "" {
+	if partitionId == "" {
 		partitionId = request.GetClientId()
 	}
 
@@ -127,8 +125,6 @@ func (ab *accessBusiness) CreateAccess(
 	ctx context.Context,
 	request *partitionv1.CreateAccessRequest) (*partitionv1.AccessObject, error) {
 
-	ctx = frame.SkipTenancyChecksOnClaims(ctx)
-
 	logger := ab.service.L(ctx)
 
 	logger.WithField("request", request).Debug(" supplied request")
@@ -136,7 +132,7 @@ func (ab *accessBusiness) CreateAccess(
 	var err error
 	var partition *models.Partition
 	partitionId := request.GetPartitionId()
-	if partitionId != "" {
+	if partitionId == "" {
 		partitionId = request.GetClientId()
 	}
 
