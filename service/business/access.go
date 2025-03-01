@@ -90,20 +90,14 @@ func (ab *accessBusiness) GetAccess(
 	}
 
 	var partition *models.Partition
-	if request.GetPartitionId() != "" {
+	partitionId := request.GetPartitionId()
+	if partitionId != "" {
+		partitionId = request.GetClientId()
+	}
 
-		partition, err = ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
-		if err != nil {
-			return nil, err
-		}
-
-	} else {
-
-		partition, err = ab.partitionRepo.GetByClientID(ctx, request.GetClientId())
-		if err != nil {
-			return nil, err
-		}
-
+	partition, err = ab.partitionRepo.GetByID(ctx, partitionId)
+	if err != nil {
+		return nil, err
 	}
 
 	access, err = ab.accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), request.GetProfileId())
@@ -141,20 +135,14 @@ func (ab *accessBusiness) CreateAccess(
 
 	var err error
 	var partition *models.Partition
-	if request.GetPartitionId() != "" {
+	partitionId := request.GetPartitionId()
+	if partitionId != "" {
+		partitionId = request.GetClientId()
+	}
 
-		partition, err = ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
-		if err != nil {
-			return nil, err
-		}
-
-	} else {
-
-		partition, err = ab.partitionRepo.GetByClientID(ctx, request.GetClientId())
-		if err != nil {
-			return nil, err
-		}
-
+	partition, err = ab.partitionRepo.GetByID(ctx, partitionId)
+	if err != nil {
+		return nil, err
 	}
 
 	access, err := ab.accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), request.GetProfileId())

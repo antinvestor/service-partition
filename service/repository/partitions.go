@@ -16,12 +16,6 @@ func (pr *partitionRepository) GetByID(ctx context.Context, id string) (*models.
 	return partition, err
 }
 
-func (pr *partitionRepository) GetByClientID(ctx context.Context, clientId string) (*models.Partition, error) {
-	partition := &models.Partition{}
-	err := pr.service.DB(ctx, true).First(partition, "client_id = ?", clientId).Error
-	return partition, err
-}
-
 func (pr *partitionRepository) GetByQuery(ctx context.Context,
 	query string, count uint32, page uint32) ([]*models.Partition, error) {
 	partitionList := make([]*models.Partition, 0)
