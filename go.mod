@@ -6,7 +6,7 @@ require (
 	github.com/antinvestor/apis/go/common v1.35.2
 	github.com/antinvestor/apis/go/partition v1.33.0
 	github.com/bufbuild/protovalidate-go v0.10.0
-	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.1
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2
 	github.com/pitabwire/frame v1.30.8
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.73.0
@@ -15,6 +15,7 @@ require (
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250613105001-9f2d3c737feb.1 // indirect
+	buf.build/go/protovalidate v0.12.0 // indirect
 	cel.dev/expr v0.23.1 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
