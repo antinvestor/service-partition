@@ -9,8 +9,8 @@ import (
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/handlers"
-	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/queue"
+	"github.com/antinvestor/service-partition/service/repository"
 	protovalidateinterceptor "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/pitabwire/frame"
@@ -30,27 +30,19 @@ func main() {
 		return
 	}
 
-	ctx, service := frame.NewServiceWithContext(ctx, serviceName, frame.WithConfig(&cfg))
-	logger := service.Log(ctx)
+	ctx, svc := frame.NewServiceWithContext(ctx, serviceName, frame.WithConfig(&cfg))
+	log := svc.Log(ctx)
 
 	serviceOptions := []frame.Option{frame.WithDatastore()}
 
-	if cfg.DoDatabaseMigrate() {
-
-		service.Init(ctx, serviceOptions...)
-		err = service.MigrateDatastore(ctx, cfg.GetDatabaseMigrationPath(),
-			models.Tenant{}, models.Partition{}, models.PartitionRole{},
-			models.Access{}, models.AccessRole{}, models.Page{})
-
-		if err != nil {
-			logger.WithError(err).Fatal("could not migrate successfully")
-		}
+	// Handle database migration if requested
+	if handleDatabaseMigration(ctx, svc, cfg, log) {
 		return
 	}
 
-	err = service.RegisterForJwt(ctx)
+	err = svc.RegisterForJwt(ctx)
 	if err != nil {
-		logger.WithError(err).Fatal("could not register for jwt")
+		log.WithError(err).Fatal("could not register for jwt")
 		return
 	}
 
@@ -61,24 +53,24 @@ func main() {
 
 	validator, err := protovalidate.New()
 	if err != nil {
-		logger.WithError(err).Fatal("could not load validator for proto messages")
+		log.WithError(err).Fatal("could not load validator for proto messages")
 	}
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			service.UnaryAuthInterceptor(jwtAudience, cfg.Oauth2JwtVerifyIssuer),
+			svc.UnaryAuthInterceptor(jwtAudience, cfg.Oauth2JwtVerifyIssuer),
 			protovalidateinterceptor.UnaryServerInterceptor(validator),
 			recovery.UnaryServerInterceptor(),
 		),
 		grpc.ChainStreamInterceptor(
-			service.StreamAuthInterceptor(jwtAudience, cfg.Oauth2JwtVerifyIssuer),
+			svc.StreamAuthInterceptor(jwtAudience, cfg.Oauth2JwtVerifyIssuer),
 			protovalidateinterceptor.StreamServerInterceptor(validator),
 			recovery.StreamServerInterceptor(),
 		),
 	)
 
 	implementation := &handlers.PartitionServer{
-		Service: service,
+		Service: svc,
 	}
 
 	partitionv1.RegisterPartitionServiceServer(grpcServer, implementation)
@@ -93,7 +85,7 @@ func main() {
 
 	proxyMux, err := partitionv1.CreateProxyHandler(ctx, proxyOptions)
 	if err != nil {
-		logger.WithError(err).Fatal("could not create proxy handler")
+		log.WithError(err).Fatal("could not create proxy handler")
 		return
 	}
 
@@ -101,7 +93,7 @@ func main() {
 	serviceOptions = append(serviceOptions, proxyServerOpt)
 
 	partitionSyncQueueHandler := queue.PartitionSyncQueueHandler{
-		Service: service,
+		Service: svc,
 	}
 	partitionSyncQueueURL := cfg.QueuePartitionSyncURL
 	partitionSyncQueue := frame.WithRegisterSubscriber(cfg.PartitionSyncName, partitionSyncQueueURL,  &partitionSyncQueueHandler)
@@ -109,18 +101,39 @@ func main() {
 
 	serviceOptions = append(serviceOptions, partitionSyncQueue, partitionSyncQueueP)
 
-	service.Init(ctx, serviceOptions...)
+	svc.Init(ctx, serviceOptions...)
 
 	if cfg.SynchronizePrimaryPartitions {
-		service.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
+		svc.AddPreStartMethod(business.ReQueuePrimaryPartitionsForSync)
 	}
 
-	logger.WithField("server http port", cfg.HTTPServerPort).
+	log.WithField("server http port", cfg.HTTPServerPort).
 		WithField("server grpc port", cfg.GrpcServerPort).
 		Info(" Initiating server operations")
 	err = implementation.Service.Run(ctx, "")
 	if err != nil {
-		logger.WithError(err).Fatal("could not run server")
+		log.WithError(err).Fatal("could not run server")
 	}
 
+}
+
+// handleDatabaseMigration performs database migration if configured to do so.
+func handleDatabaseMigration(
+	ctx context.Context,
+	svc *frame.Service,
+	cfg config.PartitionConfig,
+	log *util.LogEntry,
+) bool {
+	serviceOptions := []frame.Option{frame.WithDatastore()}
+
+	if cfg.DoDatabaseMigrate() {
+		svc.Init(ctx, serviceOptions...)
+
+		err := repository.Migrate(ctx, svc, cfg.GetDatabaseMigrationPath())
+		if err != nil {
+			log.WithError(err).Fatal("main -- Could not migrate successfully")
+		}
+		return true
+	}
+	return false
 }

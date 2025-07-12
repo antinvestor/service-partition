@@ -11,7 +11,7 @@ func GetTestService(name string) (context.Context, *frame.Service, error) {
 	ctx := context.Background()
 	dbURL := frame.GetEnv("TEST_DATABASE_URL",
 		"postgres://ant:secret@localhost:5423/service_partition?sslmode=disable")
-	mainDB := frame.DatastoreConnection(ctx, dbURL, false)
+	mainDB := frame.WithDatastoreConnection(dbURL, false)
 
 	partitionConfig, err := frame.ConfigFromEnv[config.PartitionConfig]()
 	if err != nil {
@@ -19,8 +19,8 @@ func GetTestService(name string) (context.Context, *frame.Service, error) {
 	}
 	partitionConfig.Oauth2ServiceAdminURI = "http://localhost:4445"
 
-	ctx, service := frame.NewServiceWithContext(ctx, name, frame.Config(&partitionConfig), mainDB, frame.NoopDriver())
-	service.Init()
+	ctx, service := frame.NewServiceWithContext(ctx, name, frame.WithConfig(&partitionConfig), mainDB, frame.WithNoopDriver())
+	service.Init(ctx)
 
 	return ctx, service, nil
 }
