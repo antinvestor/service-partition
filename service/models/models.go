@@ -2,14 +2,13 @@ package models
 
 import (
 	"github.com/pitabwire/frame"
-	"gorm.io/datatypes"
 )
 
 type Tenant struct {
 	frame.BaseModel
 	Name        string `gorm:"type:varchar(100);"`
 	Description string `gorm:"type:text;"`
-	Properties  datatypes.JSONMap
+	Properties  frame.JSONMap
 }
 
 type Partition struct {
@@ -18,14 +17,14 @@ type Partition struct {
 	Description  string `gorm:"type:text;"`
 	ParentID     string `gorm:"type:varchar(50);"`
 	ClientSecret string `gorm:"type:varchar(250);"`
-	Properties   datatypes.JSONMap
+	Properties   frame.JSONMap
 	State        int32
 }
 
 type PartitionRole struct {
 	frame.BaseModel
 	Name       string `gorm:"type:varchar(100);"`
-	Properties datatypes.JSONMap
+	Properties frame.JSONMap
 }
 
 type Page struct {

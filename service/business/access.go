@@ -125,7 +125,7 @@ func (ab *accessBusiness) CreateAccess(
 	ctx context.Context,
 	request *partitionv1.CreateAccessRequest) (*partitionv1.AccessObject, error) {
 
-	logger := ab.service.L(ctx)
+	logger := ab.service.Log(ctx)
 
 	logger.WithField("request", request).Debug(" supplied request")
 
@@ -144,7 +144,7 @@ func (ab *accessBusiness) CreateAccess(
 	access, err := ab.accessRepo.GetByPartitionAndProfile(ctx, partition.GetID(), request.GetProfileId())
 	if err != nil {
 
-		if !frame.DBErrorIsRecordNotFound(err) {
+		if !frame.ErrorIsNoRows(err) {
 			return nil, err
 		}
 	} else {

@@ -16,7 +16,7 @@ func (prtSrv *PartitionServer) toApiError(err error) error {
 		return grpcError.Err()
 	}
 
-	if frame.DBErrorIsRecordNotFound(err) {
+	if frame.ErrorIsNoRows(err) {
 		return status.Error(codes.NotFound, err.Error())
 	}
 
@@ -24,7 +24,7 @@ func (prtSrv *PartitionServer) toApiError(err error) error {
 }
 
 func (prtSrv *PartitionServer) CreateAccess(ctx context.Context, req *partitionv1.CreateAccessRequest) (*partitionv1.CreateAccessResponse, error) {
-	logger := prtSrv.Service.L(ctx)
+	logger := prtSrv.Service.Log(ctx)
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	access, err := accessBusiness.CreateAccess(ctx, req)
 	if err != nil {
@@ -34,7 +34,7 @@ func (prtSrv *PartitionServer) CreateAccess(ctx context.Context, req *partitionv
 	return &partitionv1.CreateAccessResponse{Data: access}, nil
 }
 func (prtSrv *PartitionServer) GetAccess(ctx context.Context, req *partitionv1.GetAccessRequest) (*partitionv1.GetAccessResponse, error) {
-	logger := prtSrv.Service.L(ctx)
+	logger := prtSrv.Service.Log(ctx)
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	access, err := accessBusiness.GetAccess(ctx, req)
 	if err != nil {
@@ -44,7 +44,7 @@ func (prtSrv *PartitionServer) GetAccess(ctx context.Context, req *partitionv1.G
 	return &partitionv1.GetAccessResponse{Data: access}, nil
 }
 func (prtSrv *PartitionServer) RemoveAccess(ctx context.Context, req *partitionv1.RemoveAccessRequest) (*partitionv1.RemoveAccessResponse, error) {
-	logger := prtSrv.Service.L(ctx)
+	logger := prtSrv.Service.Log(ctx)
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	err := accessBusiness.RemoveAccess(ctx, req)
 	if err != nil {
@@ -58,7 +58,7 @@ func (prtSrv *PartitionServer) RemoveAccess(ctx context.Context, req *partitionv
 	}, nil
 }
 func (prtSrv *PartitionServer) CreateAccessRole(ctx context.Context, req *partitionv1.CreateAccessRoleRequest) (*partitionv1.CreateAccessRoleResponse, error) {
-	logger := prtSrv.Service.L(ctx)
+	logger := prtSrv.Service.Log(ctx)
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	accessRole, err := accessBusiness.CreateAccessRole(ctx, req)
 	if err != nil {
@@ -68,7 +68,7 @@ func (prtSrv *PartitionServer) CreateAccessRole(ctx context.Context, req *partit
 	return &partitionv1.CreateAccessRoleResponse{Data: accessRole}, nil
 }
 func (prtSrv *PartitionServer) ListAccessRoles(ctx context.Context, req *partitionv1.ListAccessRoleRequest) (*partitionv1.ListAccessRoleResponse, error) {
-	logger := prtSrv.Service.L(ctx)
+	logger := prtSrv.Service.Log(ctx)
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	accessRoleList, err := accessBusiness.ListAccessRoles(ctx, req)
 	if err != nil {
@@ -78,7 +78,7 @@ func (prtSrv *PartitionServer) ListAccessRoles(ctx context.Context, req *partiti
 	return accessRoleList, nil
 }
 func (prtSrv *PartitionServer) RemoveAccessRole(ctx context.Context, req *partitionv1.RemoveAccessRoleRequest) (*partitionv1.RemoveAccessRoleResponse, error) {
-	logger := prtSrv.Service.L(ctx)
+	logger := prtSrv.Service.Log(ctx)
 	accessBusiness := business.NewAccessBusiness(ctx, prtSrv.Service)
 	err := accessBusiness.RemoveAccessRole(ctx, req)
 	if err != nil {

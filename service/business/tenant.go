@@ -6,7 +6,6 @@ import (
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
-	"gorm.io/datatypes"
 )
 
 type TenantBusiness interface {
@@ -54,10 +53,10 @@ func ToModelTenant(tenantApi *partitionv1.TenantObject) *models.Tenant {
 
 func (t *tenantBusiness) GetTenant(ctx context.Context, tenantId string) (*partitionv1.TenantObject, error) {
 
-	//err := request.Validate()
-	//if err != nil {
+	// err := request.Validate()
+	// if err != nil {
 	//	return nil, err
-	//}
+	// }
 
 	tenant, err := t.tenantRepo.GetByID(ctx, tenantId)
 	if err != nil {
@@ -69,7 +68,7 @@ func (t *tenantBusiness) GetTenant(ctx context.Context, tenantId string) (*parti
 
 func (t *tenantBusiness) CreateTenant(ctx context.Context, request *partitionv1.CreateTenantRequest) (*partitionv1.TenantObject, error) {
 
-	jsonMap := make(datatypes.JSONMap)
+	jsonMap := make(frame.JSONMap)
 	for k, v := range request.GetProperties() {
 		jsonMap[k] = v
 	}

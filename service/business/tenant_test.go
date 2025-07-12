@@ -7,14 +7,13 @@ import (
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
-	"gorm.io/datatypes"
 	"reflect"
 	"testing"
 )
 
 func Test_extractProperties(t *testing.T) {
 	type args struct {
-		props datatypes.JSONMap
+		props frame.JSONMap
 	}
 	tests := []struct {
 		name string

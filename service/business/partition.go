@@ -10,7 +10,6 @@ import (
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
-	"gorm.io/datatypes"
 	"net/http"
 	"net/url"
 	"strings"
@@ -230,7 +229,7 @@ func (pb *partitionBusiness) CreatePartitionRole(
 		return nil, err
 	}
 
-	jsonMap := make(datatypes.JSONMap)
+	jsonMap := make(frame.JSONMap)
 	for k, v := range request.GetProperties() {
 		jsonMap[k] = v
 	}
@@ -254,7 +253,7 @@ func (pb *partitionBusiness) CreatePartitionRole(
 
 func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 	ctx := context.Background()
-	logger := service.L(ctx)
+	logger := service.Log(ctx)
 
 	partitionRepository := repository.NewPartitionRepository(service)
 	partitionConfig := service.Config().(*config.PartitionConfig)
@@ -418,7 +417,7 @@ func updatePartitionWithResponse(ctx context.Context, service *frame.Service, pa
 	}
 
 	if partition.Properties == nil {
-		partition.Properties = make(datatypes.JSONMap)
+		partition.Properties = make(frame.JSONMap)
 	}
 
 	for k, v := range response {
