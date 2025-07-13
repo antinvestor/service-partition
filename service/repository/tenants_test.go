@@ -1,6 +1,8 @@
 package repository_test
 
 import (
+	"testing"
+
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
@@ -8,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type TenantTestSuite struct {
@@ -34,7 +35,7 @@ func (suite *TenantTestSuite) TestSave() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		tenantRepo := repository.NewTenantRepository(svc)
@@ -77,7 +78,7 @@ func (suite *TenantTestSuite) TestGetByID() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		tenantRepo := repository.NewTenantRepository(svc)
@@ -125,7 +126,7 @@ func (suite *TenantTestSuite) TestDelete() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		tenantRepo := repository.NewTenantRepository(svc)

@@ -1,6 +1,8 @@
 package business_test
 
 import (
+	"testing"
+
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/business"
@@ -12,7 +14,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type PartitionBusinessTestSuite struct {

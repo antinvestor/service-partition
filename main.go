@@ -1,9 +1,10 @@
 package main
 
 import (
-	"buf.build/go/protovalidate"
 	"context"
 	"fmt"
+
+	"buf.build/go/protovalidate"
 	"github.com/antinvestor/apis/go/common"
 	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/config"
@@ -96,7 +97,7 @@ func main() {
 		Service: svc,
 	}
 	partitionSyncQueueURL := cfg.QueuePartitionSyncURL
-	partitionSyncQueue := frame.WithRegisterSubscriber(cfg.PartitionSyncName, partitionSyncQueueURL,  &partitionSyncQueueHandler)
+	partitionSyncQueue := frame.WithRegisterSubscriber(cfg.PartitionSyncName, partitionSyncQueueURL, &partitionSyncQueueHandler)
 	partitionSyncQueueP := frame.WithRegisterPublisher(cfg.PartitionSyncName, partitionSyncQueueURL)
 
 	serviceOptions = append(serviceOptions, partitionSyncQueue, partitionSyncQueueP)

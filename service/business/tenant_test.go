@@ -2,13 +2,14 @@ package business_test
 
 import (
 	"context"
+	"reflect"
+	"testing"
+
 	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
-	"reflect"
-	"testing"
 )
 
 func Test_extractProperties(t *testing.T) {

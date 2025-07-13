@@ -1,6 +1,9 @@
 package repository_test
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
@@ -9,8 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"strings"
-	"testing"
 )
 
 type PageTestSuite struct {
@@ -30,13 +31,13 @@ func (suite *PageTestSuite) TestGetByPartitionAndName() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		pageRepo := repository.NewPageRepository(svc)
 		tenantRepo := repository.NewTenantRepository(svc)
 		partitionRepo := repository.NewPartitionRepository(svc)
-		
+
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				// Setup
@@ -73,7 +74,7 @@ func (suite *PageTestSuite) TestGetByPartitionAndName() {
 
 				// Execute
 				savedPage, err := pageRepo.GetByPartitionAndName(ctx, partition.GetID(), page.Name)
-				
+
 				// Verify
 				if tc.shouldError {
 					assert.Error(t, err)
@@ -102,13 +103,13 @@ func (suite *PageTestSuite) TestSave() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		pageRepo := repository.NewPageRepository(svc)
 		tenantRepo := repository.NewTenantRepository(svc)
 		partitionRepo := repository.NewPartitionRepository(svc)
-		
+
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				// Setup
@@ -142,13 +143,13 @@ func (suite *PageTestSuite) TestSave() {
 
 				// Execute
 				err = pageRepo.Save(ctx, &page)
-				
+
 				// Verify
 				if tc.shouldError {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					
+
 					savedPage, err := pageRepo.GetByID(ctx, page.GetID())
 					assert.NoError(t, err)
 					assert.Equal(t, partition.GetID(), savedPage.PartitionID, "Page partition id should match parent partition id")
@@ -171,13 +172,13 @@ func (suite *PageTestSuite) TestDelete() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		pageRepo := repository.NewPageRepository(svc)
 		tenantRepo := repository.NewTenantRepository(svc)
 		partitionRepo := repository.NewPartitionRepository(svc)
-		
+
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				// Setup
@@ -214,13 +215,13 @@ func (suite *PageTestSuite) TestDelete() {
 
 				// Execute
 				err = pageRepo.Delete(ctx, page.GetID())
-				
+
 				// Verify
 				if tc.shouldError {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					
+
 					deletedPage, err := pageRepo.GetByID(ctx, page.GetID())
 					assert.Error(t, err, "Should get an error when fetching deleted page")
 					assert.True(t, strings.Contains(err.Error(), "record not found"), "Error should mention 'record not found'")

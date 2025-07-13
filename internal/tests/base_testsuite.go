@@ -2,10 +2,10 @@ package tests
 
 import (
 	"context"
-	"github.com/antinvestor/service-partition/config"
-	"github.com/antinvestor/service-partition/service/repository"
 	"testing"
 
+	"github.com/antinvestor/service-partition/config"
+	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
 	"github.com/pitabwire/frame/tests"
 	"github.com/pitabwire/frame/tests/deps/testpostgres"

@@ -1,6 +1,8 @@
 package repository_test
 
 import (
+	"testing"
+
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
@@ -9,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type PartitionTestSuite struct {
@@ -27,7 +28,7 @@ func (suite *PartitionTestSuite) TestGetByID() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		tenantRepo := repository.NewTenantRepository(svc)
@@ -81,7 +82,7 @@ func (suite *PartitionTestSuite) TestGetChildren() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		tenantRepo := repository.NewTenantRepository(svc)
@@ -152,7 +153,7 @@ func (suite *PartitionTestSuite) TestSaveRole() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		tenantRepo := repository.NewTenantRepository(svc)
@@ -200,7 +201,7 @@ func (suite *PartitionTestSuite) TestSaveRole() {
 					// Get roles and find the one with matching name
 					roles, err := partitionRepo.GetRoles(ctx, partition.GetID())
 					assert.NoError(t, err)
-					
+
 					var savedRole *models.PartitionRole
 					for _, role := range roles {
 						if role.Name == partitionRole.Name {
@@ -208,7 +209,7 @@ func (suite *PartitionTestSuite) TestSaveRole() {
 							break
 						}
 					}
-					
+
 					assert.NotNil(t, savedRole, "Should find the saved role")
 					assert.Equal(t, partition.GetID(), savedRole.PartitionID, "Partition role partition id should match parent partition id")
 					assert.Equal(t, partitionRole.GetID(), savedRole.GetID(), "Role ID should match saved role ID")
@@ -231,7 +232,7 @@ func (suite *PartitionTestSuite) TestRemoveRole() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		tenantRepo := repository.NewTenantRepository(svc)

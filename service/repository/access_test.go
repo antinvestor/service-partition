@@ -1,6 +1,8 @@
 package repository_test
 
 import (
+	"testing"
+
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
@@ -9,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type AccessTestSuite struct {
@@ -29,7 +30,7 @@ func (suite *AccessTestSuite) TestSave() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		accessRepo := repository.NewAccessRepository(svc)
@@ -74,7 +75,7 @@ func (suite *AccessTestSuite) TestSave() {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					
+
 					savedAccess, err := accessRepo.GetByID(ctx, access.GetID())
 					assert.NoError(t, err)
 					assert.Equal(t, partition.GetID(), savedAccess.PartitionID, "Access partition id should match parent partition id")
@@ -98,7 +99,7 @@ func (suite *AccessTestSuite) TestGetByPartitionAndProfile() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		accessRepo := repository.NewAccessRepository(svc)
@@ -169,7 +170,7 @@ func (suite *AccessTestSuite) TestSaveRole() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		accessRepo := repository.NewAccessRepository(svc)
@@ -235,7 +236,7 @@ func (suite *AccessTestSuite) TestSaveRole() {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					
+
 					roles, err := accessRepo.GetRoles(ctx, access.GetID())
 					assert.NoError(t, err)
 					assert.Len(t, roles, 1, "There should be one access role")
@@ -261,7 +262,7 @@ func (suite *AccessTestSuite) TestRemoveRole() {
 			shouldError: false,
 		},
 	}
-	
+
 	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
 		svc, ctx := suite.CreateService(t, dep)
 		accessRepo := repository.NewAccessRepository(svc)
@@ -332,7 +333,7 @@ func (suite *AccessTestSuite) TestRemoveRole() {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					
+
 					roles, err := accessRepo.GetRoles(ctx, access.GetID())
 					assert.NoError(t, err)
 					assert.Len(t, roles, 0, "There should be no access roles after deletion")
