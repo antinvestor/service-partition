@@ -3,6 +3,7 @@ package business
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -13,6 +14,7 @@ import (
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
+
 	"github.com/pitabwire/frame"
 )
 
@@ -79,16 +81,23 @@ func toAPIPartitionRole(partitionModel *models.PartitionRole) *partitionv1.Parti
 	}
 }
 
-func (pb *partitionBusiness) ListPartition(ctx context.Context, request *partitionv1.ListPartitionRequest, stream partitionv1.PartitionService_ListPartitionServer) error {
-
-	partitionList, err := pb.partitionRepo.GetByQuery(ctx, request.GetQuery(), uint32(request.GetCount()), uint32(request.GetPage()))
+func (pb *partitionBusiness) ListPartition(
+	ctx context.Context,
+	request *partitionv1.ListPartitionRequest,
+	stream partitionv1.PartitionService_ListPartitionServer,
+) error {
+	partitionList, err := pb.partitionRepo.GetByQuery(
+		ctx,
+		request.GetQuery(),
+		getUint32FromInt32(request.GetCount()),
+		getUint32FromInt64(request.GetPage()),
+	)
 	if err != nil {
 		return err
 	}
 
 	var responseObjects []*partitionv1.PartitionObject
 	for _, partition := range partitionList {
-
 		responseObjects = append(responseObjects, toAPIPartition(partition))
 	}
 
@@ -100,10 +109,26 @@ func (pb *partitionBusiness) ListPartition(ctx context.Context, request *partiti
 	return nil
 }
 
+func getUint32FromInt32(val int32) uint32 {
+	if val < 0 {
+		return 0
+	}
+	return uint32(val)
+}
+
+func getUint32FromInt64(val int64) uint32 {
+	if val < 0 {
+		return 0
+	}
+	if val > 0 {
+		return ^uint32(0) // Max uint32 value
+	}
+	return uint32(val)
+}
+
 func (pb *partitionBusiness) GetPartition(
 	ctx context.Context,
 	request *partitionv1.GetPartitionRequest) (*partitionv1.PartitionObject, error) {
-
 	claims := frame.ClaimsFromContext(ctx)
 
 	partition, err := pb.partitionRepo.GetByID(ctx, request.GetId())
@@ -113,9 +138,14 @@ func (pb *partitionBusiness) GetPartition(
 
 	partitionObj := toAPIPartition(partition)
 
-	if strings.EqualFold(claims.GetServiceName(), "service_matrix") {
+	var cfg *config.PartitionConfig
+	if c, ok := pb.service.Config().(*config.PartitionConfig); ok {
+		cfg = c
+	} else {
+		return nil, errors.New("invalid configuration type")
+	}
 
-		cfg := pb.service.Config().(*config.PartitionConfig)
+	if strings.EqualFold(claims.GetServiceName(), "service_matrix") {
 		props := partitionObj.GetProperties()
 
 		props["client_secret"] = partition.ClientSecret
@@ -129,7 +159,6 @@ func (pb *partitionBusiness) GetPartition(
 func (pb *partitionBusiness) CreatePartition(
 	ctx context.Context,
 	request *partitionv1.CreatePartitionRequest) (*partitionv1.PartitionObject, error) {
-
 	tenant, err := pb.tenantRepo.GetByID(ctx, request.GetTenantId())
 	if err != nil {
 		return nil, err
@@ -150,7 +179,12 @@ func (pb *partitionBusiness) CreatePartition(
 		return nil, err
 	}
 
-	partitionConfig := pb.service.Config().(*config.PartitionConfig)
+	var partitionConfig *config.PartitionConfig
+	if c, ok := pb.service.Config().(*config.PartitionConfig); ok {
+		partitionConfig = c
+	} else {
+		return nil, errors.New("invalid configuration type")
+	}
 
 	err = pb.service.Publish(ctx, partitionConfig.PartitionSyncName, partition)
 	if err != nil {
@@ -163,7 +197,6 @@ func (pb *partitionBusiness) CreatePartition(
 func (pb *partitionBusiness) UpdatePartition(
 	ctx context.Context,
 	request *partitionv1.UpdatePartitionRequest) (*partitionv1.PartitionObject, error) {
-
 	partition, err := pb.partitionRepo.GetByID(ctx, request.GetId())
 	if err != nil {
 		return nil, err
@@ -190,7 +223,6 @@ func (pb *partitionBusiness) ListPartitionRoles(
 	ctx context.Context,
 	request *partitionv1.ListPartitionRoleRequest,
 ) (*partitionv1.ListPartitionRoleResponse, error) {
-
 	partitionRoleList, err := pb.partitionRepo.GetRoles(ctx, request.GetPartitionId())
 	if err != nil {
 		return nil, err
@@ -211,7 +243,6 @@ func (pb *partitionBusiness) RemovePartitionRole(
 	ctx context.Context,
 	request *partitionv1.RemovePartitionRoleRequest,
 ) error {
-
 	err := pb.partitionRepo.RemoveRole(ctx, request.GetId())
 	if err != nil {
 		return err
@@ -224,7 +255,6 @@ func (pb *partitionBusiness) CreatePartitionRole(
 	ctx context.Context,
 	request *partitionv1.CreatePartitionRoleRequest) (
 	*partitionv1.PartitionRoleObject, error) {
-
 	partition, err := pb.partitionRepo.GetByID(ctx, request.GetPartitionId())
 	if err != nil {
 		return nil, err
@@ -257,9 +287,15 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 	logger := service.Log(ctx)
 
 	partitionRepository := repository.NewPartitionRepository(service)
-	partitionConfig := service.Config().(*config.PartitionConfig)
+	var partitionConfig *config.PartitionConfig
+	if c, ok := service.Config().(*config.PartitionConfig); ok {
+		partitionConfig = c
+	} else {
+		return
+	}
 
-	partitionList, err := partitionRepository.GetByQuery(ctx, "", 100, 0)
+	const defaultMaxPartitionsToSync = 100
+	partitionList, err := partitionRepository.GetByQuery(ctx, "", defaultMaxPartitionsToSync, 0)
 	if err != nil {
 		logger.WithError(err).Debug(" could not get default system partition")
 
@@ -277,7 +313,12 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 }
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
-	cfg := service.Config().(*config.PartitionConfig)
+	var cfg *config.PartitionConfig
+	if c, ok := service.Config().(*config.PartitionConfig); ok {
+		cfg = c
+	} else {
+		return errors.New("invalid configuration type")
+	}
 
 	hydraBaseURL := cfg.GetOauth2ServiceAdminURI()
 	hydraURL := fmt.Sprintf("%s/admin/clients", hydraBaseURL)
@@ -325,7 +366,6 @@ func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition
 
 	// Update partition with response data
 	return updatePartitionWithResponse(ctx, service, partition, result)
-
 }
 
 func deletePartitionOnHydra(ctx context.Context, service *frame.Service, hydraIDURL string) error {
@@ -333,7 +373,7 @@ func deletePartitionOnHydra(ctx context.Context, service *frame.Service, hydraID
 	return err
 }
 
-func preparePayload(clientId string, partition *models.Partition) (map[string]interface{}, error) {
+func preparePayload(clientID string, partition *models.Partition) (map[string]interface{}, error) {
 	logoURI := ""
 	if val, ok := partition.Properties["logo_uri"].(string); ok {
 		logoURI = val
@@ -347,7 +387,7 @@ func preparePayload(clientId string, partition *models.Partition) (map[string]in
 
 	payload := map[string]interface{}{
 		"client_name":    partition.Name,
-		"client_id":      clientId,
+		"client_id":      clientID,
 		"grant_types":    []string{"authorization_code", "refresh_token"},
 		"response_types": []string{"token", "id_token", "code", "token id_token", "token code id_token"},
 		"scope":          "openid offline offline_access profile contact",
@@ -372,8 +412,12 @@ func preparePayload(clientId string, partition *models.Partition) (map[string]in
 func extractStringList(properties map[string]interface{}, key string) []string {
 	var list []string
 	if val, ok := properties[key]; ok {
-		for _, v := range val.([]interface{}) {
-			list = append(list, v.(string))
+		if arr, okArr := val.([]interface{}); okArr {
+			for _, v := range arr {
+				if str, okStr := v.(string); okStr {
+					list = append(list, str)
+				}
+			}
 		}
 	}
 	return list
@@ -385,16 +429,18 @@ func prepareRedirectURIs(partition *models.Partition) ([]string, error) {
 		switch uris := val.(type) {
 		case string:
 			uriList = strings.Split(uris, ",")
-		case []any:
+		case []interface{}: // Use interface{} to match JSON unmarshal type
 			for _, v := range uris {
-				uriList = append(uriList, v.(string))
+				if str, okStr := v.(string); okStr {
+					uriList = append(uriList, str)
+				}
 			}
 		default:
 			return nil, fmt.Errorf("invalid redirect_uris format: %v", val)
 		}
 	}
 
-	var finalUriList []string
+	var finalURIList []string
 	for _, uri := range uriList {
 		parsedURI, err := url.Parse(uri)
 		if err != nil {
@@ -405,13 +451,18 @@ func prepareRedirectURIs(partition *models.Partition) ([]string, error) {
 			params.Add("partition_id", partition.ID)
 		}
 		parsedURI.RawQuery = params.Encode()
-		finalUriList = append(finalUriList, parsedURI.String())
+		finalURIList = append(finalURIList, parsedURI.String())
 	}
 
-	return finalUriList, nil
+	return finalURIList, nil
 }
 
-func updatePartitionWithResponse(ctx context.Context, service *frame.Service, partition *models.Partition, result []byte) error {
+func updatePartitionWithResponse(
+	ctx context.Context,
+	service *frame.Service,
+	partition *models.Partition,
+	result []byte,
+) error {
 	var response map[string]interface{}
 	if err := json.Unmarshal(result, &response); err != nil {
 		return err

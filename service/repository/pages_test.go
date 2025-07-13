@@ -1,17 +1,17 @@
 package repository_test
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
-	"github.com/pitabwire/frame"
-	"github.com/pitabwire/frame/tests/testdef"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/pitabwire/frame"
+	"github.com/pitabwire/frame/tests/testdef"
 )
 
 type PageTestSuite struct {
@@ -77,11 +77,11 @@ func (suite *PageTestSuite) TestGetByPartitionAndName() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
-					assert.Equal(t, partition.GetID(), savedPage.PartitionID, "Page partition id should match parent partition id")
-					assert.Equal(t, page.GetID(), savedPage.GetID(), "Page ID should match saved page ID")
+					require.NoError(t, err)
+					require.Equal(t, partition.GetID(), savedPage.PartitionID, "Page partition id should match parent partition id")
+					require.Equal(t, page.GetID(), savedPage.GetID(), "Page ID should match saved page ID")
 				}
 			})
 		}
@@ -146,12 +146,12 @@ func (suite *PageTestSuite) TestSave() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
-					savedPage, err := pageRepo.GetByID(ctx, page.GetID())
-					assert.NoError(t, err)
+					savedPage, fetchErr := pageRepo.GetByID(ctx, page.GetID())
+					require.NoError(t, fetchErr)
 					assert.Equal(t, partition.GetID(), savedPage.PartitionID, "Page partition id should match parent partition id")
 					assert.Equal(t, tc.pageName, savedPage.Name, "Page name should match")
 					assert.Equal(t, tc.html, savedPage.HTML, "Page HTML should match")
@@ -218,13 +218,13 @@ func (suite *PageTestSuite) TestDelete() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
-					deletedPage, err := pageRepo.GetByID(ctx, page.GetID())
-					assert.Error(t, err, "Should get an error when fetching deleted page")
-					assert.True(t, strings.Contains(err.Error(), "record not found"), "Error should mention 'record not found'")
+					deletedPage, fetchErr := pageRepo.GetByID(ctx, page.GetID())
+					require.Error(t, fetchErr, "Should get an error when fetching deleted page")
+					assert.Contains(t, fetchErr.Error(), "record not found", "Error should mention 'record not found'")
 					assert.Empty(t, deletedPage.GetID(), "Deleted page ID should be empty")
 				}
 			})
@@ -232,7 +232,7 @@ func (suite *PageTestSuite) TestDelete() {
 	})
 }
 
-// TestPageRepository runs the page repository test suite
+// TestPageRepository runs the page repository test suite.
 func TestPageRepository(t *testing.T) {
 	suite.Run(t, new(PageTestSuite))
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/antinvestor/service-partition/service/models"
+
 	"github.com/pitabwire/frame"
 )
 
@@ -17,9 +18,13 @@ func (pgr *pageRepository) GetByID(ctx context.Context, id string) (*models.Page
 	return page, err
 }
 
-func (pgr *pageRepository) GetByPartitionAndName(ctx context.Context, partitionId string, name string) (*models.Page, error) {
+func (pgr *pageRepository) GetByPartitionAndName(
+	ctx context.Context,
+	partitionID string,
+	name string,
+) (*models.Page, error) {
 	page := &models.Page{}
-	err := pgr.service.DB(ctx, true).First(page, "partition_id = ? AND name = ?", partitionId, name).Error
+	err := pgr.service.DB(ctx, true).First(page, "partition_id = ? AND name = ?", partitionID, name).Error
 	return page, err
 }
 
@@ -32,8 +37,8 @@ func (pgr *pageRepository) Delete(ctx context.Context, id string) error {
 }
 
 func NewPageRepository(service *frame.Service) PageRepository {
-	tenantRepository := pageRepository{
+	repo := pageRepository{
 		service: service,
 	}
-	return &tenantRepository
+	return &repo
 }

@@ -6,12 +6,13 @@ import (
 
 	"github.com/antinvestor/service-partition/config"
 	"github.com/antinvestor/service-partition/service/repository"
+	"github.com/pitabwire/util"
+	"github.com/stretchr/testify/require"
+
 	"github.com/pitabwire/frame"
 	"github.com/pitabwire/frame/tests"
 	"github.com/pitabwire/frame/tests/deps/testpostgres"
 	"github.com/pitabwire/frame/tests/testdef"
-	"github.com/pitabwire/util"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -60,7 +61,7 @@ func (bs *BaseTestSuite) CreateService(
 		cfg.DatabaseReplicaURL = []string{testDS.String()}
 	}
 
-	ctx, svc := frame.NewServiceWithContext(t.Context(), "profile tests",
+	ctx, svc := frame.NewServiceWithContext(t.Context(), "partition tests",
 		frame.WithConfig(&cfg),
 		frame.WithDatastore(),
 		frame.WithNoopDriver())

@@ -9,6 +9,7 @@ import (
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
+
 	"github.com/pitabwire/frame"
 )
 
@@ -33,7 +34,6 @@ func Test_extractProperties(t *testing.T) {
 }
 
 func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
-
 	ctx := context.Background()
 
 	type fields struct {
@@ -69,7 +69,6 @@ func Test_tenantBusiness_CreateTenant(t1 *testing.T) {
 }
 
 func Test_tenantBusiness_GetTenant(t1 *testing.T) {
-
 	ctx := context.Background()
 	type fields struct {
 		service    *frame.Service
@@ -77,7 +76,7 @@ func Test_tenantBusiness_GetTenant(t1 *testing.T) {
 	}
 	type args struct {
 		ctx      context.Context
-		tenantId string
+		tenantID string
 	}
 	tests := []struct {
 		name    string
@@ -91,7 +90,7 @@ func Test_tenantBusiness_GetTenant(t1 *testing.T) {
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
 			t := business.NewTenantBusinessWithRepo(ctx, tt.fields.service, tt.fields.tenantRepo)
-			got, err := t.GetTenant(tt.args.ctx, tt.args.tenantId)
+			got, err := t.GetTenant(tt.args.ctx, tt.args.tenantID)
 			if (err != nil) != tt.wantErr {
 				t1.Errorf("GetTenant() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -116,7 +115,7 @@ func Test_toApiTenant(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := business.ToApiTenant(tt.args.tenantModel); !reflect.DeepEqual(got, tt.want) {
+			if got := business.ToAPITenant(tt.args.tenantModel); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ToApiTenant() = %v, want %v", got, tt.want)
 			}
 		})
@@ -125,7 +124,7 @@ func Test_toApiTenant(t *testing.T) {
 
 func Test_toModelTenant(t *testing.T) {
 	type args struct {
-		tenantApi *partitionv1.TenantObject
+		tenantAPI *partitionv1.TenantObject
 	}
 	tests := []struct {
 		name string
@@ -136,7 +135,7 @@ func Test_toModelTenant(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := business.ToModelTenant(tt.args.tenantApi); !reflect.DeepEqual(got, tt.want) {
+			if got := business.ToModelTenant(tt.args.tenantAPI); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ToModelTenant() = %v, want %v", got, tt.want)
 			}
 		})

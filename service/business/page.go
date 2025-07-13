@@ -7,6 +7,7 @@ import (
 	partitionv1 "github.com/antinvestor/apis/go/partition/v1"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
+
 	"github.com/pitabwire/frame"
 )
 
@@ -33,8 +34,7 @@ type pageBusiness struct {
 	partitionRepo repository.PartitionRepository
 }
 
-func toApiPage(pageModel *models.Page) *partitionv1.PageObject {
-
+func toAPIPage(pageModel *models.Page) *partitionv1.PageObject {
 	return &partitionv1.PageObject{
 		PageId: pageModel.GetID(),
 		Name:   pageModel.Name,
@@ -43,24 +43,26 @@ func toApiPage(pageModel *models.Page) *partitionv1.PageObject {
 	}
 }
 
-func (ab *pageBusiness) GetPage(ctx context.Context, request *partitionv1.GetPageRequest) (*partitionv1.PageObject, error) {
-
+func (ab *pageBusiness) GetPage(
+	ctx context.Context,
+	request *partitionv1.GetPageRequest,
+) (*partitionv1.PageObject, error) {
 	access, err := ab.pageRepo.GetByPartitionAndName(ctx, request.GetPartitionId(), request.GetName())
 	if err != nil {
 		return nil, err
 	}
 
-	return toApiPage(access), nil
+	return toAPIPage(access), nil
 }
 
 func (ab *pageBusiness) RemovePage(ctx context.Context, request *partitionv1.RemovePageRequest) error {
-
 	return ab.pageRepo.Delete(ctx, request.GetId())
-
 }
 
-func (ab *pageBusiness) CreatePage(ctx context.Context, request *partitionv1.CreatePageRequest) (*partitionv1.PageObject, error) {
-
+func (ab *pageBusiness) CreatePage(
+	ctx context.Context,
+	request *partitionv1.CreatePageRequest,
+) (*partitionv1.PageObject, error) {
 	partition, err := ab.partitionRepo.GetByID(ctx, request.GetPartitionId())
 	if err != nil {
 		return nil, err
@@ -80,5 +82,5 @@ func (ab *pageBusiness) CreatePage(ctx context.Context, request *partitionv1.Cre
 		return nil, err
 	}
 
-	return toApiPage(page), nil
+	return toAPIPage(page), nil
 }

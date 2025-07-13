@@ -13,12 +13,12 @@ type Tenant struct {
 
 type Partition struct {
 	frame.BaseModel
-	Name         string `gorm:"type:varchar(100);"`
-	Description  string `gorm:"type:text;"`
-	ParentID     string `gorm:"type:varchar(50);"`
-	ClientSecret string `gorm:"type:varchar(250);"`
-	Properties   frame.JSONMap
-	State        int32
+	Name         string        `gorm:"type:varchar(100);" json:"name"`
+	Description  string        `gorm:"type:text;"         json:"description"`
+	ParentID     string        `gorm:"type:varchar(50);"  json:"parent_id"`
+	ClientSecret string        `gorm:"type:varchar(250);" json:"client_secret"`
+	Properties   frame.JSONMap `                          json:"properties"`
+	State        int32         `                          json:"state"`
 }
 
 type PartitionRole struct {

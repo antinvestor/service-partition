@@ -6,11 +6,12 @@ import (
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
-	"github.com/pitabwire/frame"
-	"github.com/pitabwire/frame/tests/testdef"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/pitabwire/frame"
+	"github.com/pitabwire/frame/tests/testdef"
 )
 
 type PartitionTestSuite struct {
@@ -61,9 +62,9 @@ func (suite *PartitionTestSuite) TestGetByID() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Equal(t, partition.GetID(), savedPartition.GetID(), "Partition IDs should match")
 				}
 			})
@@ -129,9 +130,9 @@ func (suite *PartitionTestSuite) TestGetChildren() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Len(t, children, 1, "Should have one child partition")
 					assert.Equal(t, childPartition.GetID(), children[0].GetID(), "Child partition ID should match")
 				}
@@ -194,13 +195,13 @@ func (suite *PartitionTestSuite) TestSaveRole() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
 					// Get roles and find the one with matching name
-					roles, err := partitionRepo.GetRoles(ctx, partition.GetID())
-					assert.NoError(t, err)
+					roles, rolesErr := partitionRepo.GetRoles(ctx, partition.GetID())
+					require.NoError(t, rolesErr)
 
 					var savedRole *models.PartitionRole
 					for _, role := range roles {
@@ -278,18 +279,18 @@ func (suite *PartitionTestSuite) TestRemoveRole() {
 				if tc.shouldError {
 					assert.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
-					roles, err := partitionRepo.GetRoles(ctx, partition.GetID())
-					assert.NoError(t, err)
-					assert.Len(t, roles, 0, "Should have no roles after deletion")
+					roles, rolesErr := partitionRepo.GetRoles(ctx, partition.GetID())
+					require.NoError(t, rolesErr)
+					assert.Empty(t, roles, "Should have no roles after deletion")
 				}
 			})
 		}
 	})
 }
 
-// TestPartitionRepository runs the partition repository test suite
+// TestPartitionRepository runs the partition repository test suite.
 func TestPartitionRepository(t *testing.T) {
 	suite.Run(t, new(PartitionTestSuite))
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/antinvestor/service-partition/service/models"
+
 	"github.com/pitabwire/frame"
 )
 
@@ -22,9 +23,13 @@ func (ar *accessRepository) GetByID(ctx context.Context, id string) (*models.Acc
 	return access, nil
 }
 
-func (ar *accessRepository) GetByPartitionAndProfile(ctx context.Context, partitionId string, profileId string) (*models.Access, error) {
+func (ar *accessRepository) GetByPartitionAndProfile(
+	ctx context.Context,
+	partitionID string,
+	profileID string,
+) (*models.Access, error) {
 	access := &models.Access{}
-	err := ar.service.DB(ctx, true).First(access, " partition_id = ? AND profile_id = ?", partitionId, profileId).Error
+	err := ar.service.DB(ctx, true).First(access, " partition_id = ? AND profile_id = ?", partitionID, profileID).Error
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +42,6 @@ func (ar *accessRepository) Save(ctx context.Context, access *models.Access) err
 }
 
 func (ar *accessRepository) Delete(ctx context.Context, id string) error {
-
 	err := ar.service.DB(ctx, false).Where(" access_id = ?", id).Delete(&models.AccessRole{}).Error
 	if err != nil {
 		return err
@@ -46,10 +50,10 @@ func (ar *accessRepository) Delete(ctx context.Context, id string) error {
 	return ar.service.DB(ctx, false).Where(" id = ?", id).Delete(&models.Access{}).Error
 }
 
-func (ar *accessRepository) GetRoles(ctx context.Context, accessId string) ([]*models.AccessRole, error) {
+func (ar *accessRepository) GetRoles(ctx context.Context, accessID string) ([]*models.AccessRole, error) {
 	accessRoles := make([]*models.AccessRole, 0)
 	err := ar.service.DB(ctx, true).
-		Find(&accessRoles, " access_id = ?", accessId).Error
+		Find(&accessRoles, " access_id = ?", accessID).Error
 
 	return accessRoles, err
 }
@@ -58,8 +62,8 @@ func (ar *accessRepository) SaveRole(ctx context.Context, role *models.AccessRol
 	return ar.service.DB(ctx, false).Save(role).Error
 }
 
-func (ar *accessRepository) RemoveRole(ctx context.Context, accessRoleId string) error {
-	return ar.service.DB(ctx, false).Where(" id = ?", accessRoleId).Delete(&models.AccessRole{}).Error
+func (ar *accessRepository) RemoveRole(ctx context.Context, accessRoleID string) error {
+	return ar.service.DB(ctx, false).Where(" id = ?", accessRoleID).Delete(&models.AccessRole{}).Error
 }
 
 func NewAccessRepository(service *frame.Service) AccessRepository {

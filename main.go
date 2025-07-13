@@ -14,14 +14,14 @@ import (
 	"github.com/antinvestor/service-partition/service/repository"
 	protovalidateinterceptor "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
-	"github.com/pitabwire/frame"
 	"github.com/pitabwire/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	"github.com/pitabwire/frame"
 )
 
 func main() {
-
 	serviceName := "service_partition"
 	ctx := context.Background()
 
@@ -97,7 +97,11 @@ func main() {
 		Service: svc,
 	}
 	partitionSyncQueueURL := cfg.QueuePartitionSyncURL
-	partitionSyncQueue := frame.WithRegisterSubscriber(cfg.PartitionSyncName, partitionSyncQueueURL, &partitionSyncQueueHandler)
+	partitionSyncQueue := frame.WithRegisterSubscriber(
+		cfg.PartitionSyncName,
+		partitionSyncQueueURL,
+		&partitionSyncQueueHandler,
+	)
 	partitionSyncQueueP := frame.WithRegisterPublisher(cfg.PartitionSyncName, partitionSyncQueueURL)
 
 	serviceOptions = append(serviceOptions, partitionSyncQueue, partitionSyncQueueP)
@@ -115,7 +119,6 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("could not run server")
 	}
-
 }
 
 // handleDatabaseMigration performs database migration if configured to do so.

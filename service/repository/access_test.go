@@ -6,11 +6,12 @@ import (
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
-	"github.com/pitabwire/frame"
-	"github.com/pitabwire/frame/tests/testdef"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/pitabwire/frame"
+	"github.com/pitabwire/frame/tests/testdef"
 )
 
 type AccessTestSuite struct {
@@ -72,12 +73,12 @@ func (suite *AccessTestSuite) TestSave() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
-					savedAccess, err := accessRepo.GetByID(ctx, access.GetID())
-					assert.NoError(t, err)
+					savedAccess, fetchErr := accessRepo.GetByID(ctx, access.GetID())
+					require.NoError(t, fetchErr)
 					assert.Equal(t, partition.GetID(), savedAccess.PartitionID, "Access partition id should match parent partition id")
 					assert.Equal(t, tc.profileID, savedAccess.ProfileID, "Access profile id should match provided profile id")
 				}
@@ -144,9 +145,9 @@ func (suite *AccessTestSuite) TestGetByPartitionAndProfile() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Equal(t, partition.GetID(), savedAccess.PartitionID, "Access partition id should match parent partition id")
 					assert.Equal(t, tc.profileID, savedAccess.ProfileID, "Access profile id should match profile id")
 				}
@@ -233,12 +234,12 @@ func (suite *AccessTestSuite) TestSaveRole() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
-					roles, err := accessRepo.GetRoles(ctx, access.GetID())
-					assert.NoError(t, err)
+					roles, rolesErr := accessRepo.GetRoles(ctx, access.GetID())
+					require.NoError(t, rolesErr)
 					assert.Len(t, roles, 1, "There should be one access role")
 					assert.Equal(t, partitionRole.GetID(), roles[0].PartitionRoleID, "Access role should have correct partition role ID")
 				}
@@ -330,20 +331,20 @@ func (suite *AccessTestSuite) TestRemoveRole() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
-					roles, err := accessRepo.GetRoles(ctx, access.GetID())
-					assert.NoError(t, err)
-					assert.Len(t, roles, 0, "There should be no access roles after deletion")
+					roles, rolesErr := accessRepo.GetRoles(ctx, access.GetID())
+					require.NoError(t, rolesErr)
+					assert.Empty(t, roles, "There should be no access roles after deletion")
 				}
 			})
 		}
 	})
 }
 
-// TestAccessRepository runs the access repository test suite
+// TestAccessRepository runs the access repository test suite.
 func TestAccessRepository(t *testing.T) {
 	suite.Run(t, new(AccessTestSuite))
 }

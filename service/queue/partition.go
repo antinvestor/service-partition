@@ -6,6 +6,7 @@ import (
 
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
+
 	"github.com/pitabwire/frame"
 )
 
@@ -14,13 +15,11 @@ type PartitionSyncQueueHandler struct {
 }
 
 func (psq *PartitionSyncQueueHandler) Handle(ctx context.Context, _ map[string]string, payload []byte) error {
-
 	partition := &models.Partition{}
-	err := json.Unmarshal(payload, partition)
+	err := json.Unmarshal(payload, &partition) // Fixed: Added & to properly pass pointer for json.Unmarshal
 	if err != nil {
 		return err
 	}
 
 	return business.SyncPartitionOnHydra(ctx, psq.Service, partition)
-
 }

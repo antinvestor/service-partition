@@ -6,10 +6,11 @@ import (
 	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
-	"github.com/pitabwire/frame/tests/testdef"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/pitabwire/frame/tests/testdef"
 )
 
 type TenantTestSuite struct {
@@ -53,9 +54,9 @@ func (suite *TenantTestSuite) TestSave() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.NotEmpty(t, tenant.GetID(), "Tenant ID should be set after save")
 				}
 			})
@@ -99,9 +100,9 @@ func (suite *TenantTestSuite) TestGetByID() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Equal(t, tenant.GetID(), savedTenant.GetID(), "Tenant ID should match")
 					assert.Equal(t, tc.tenantName, savedTenant.Name, "Tenant name should match")
 					assert.Equal(t, tc.description, savedTenant.Description, "Tenant description should match")
@@ -147,20 +148,20 @@ func (suite *TenantTestSuite) TestDelete() {
 
 				// Verify
 				if tc.shouldError {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 
 					// After deletion, getting the tenant should return an error
-					_, err := tenantRepo.GetByID(ctx, tenant.GetID())
-					assert.Error(t, err, "Should return an error when getting a deleted tenant")
+					_, getErr := tenantRepo.GetByID(ctx, tenant.GetID())
+					require.Error(t, getErr, "Should return an error when getting a deleted tenant")
 				}
 			})
 		}
 	})
 }
 
-// TestTenantRepository runs the tenant repository test suite
+// TestTenantRepository runs the tenant repository test suite.
 func TestTenantRepository(t *testing.T) {
 	suite.Run(t, new(TenantTestSuite))
 }

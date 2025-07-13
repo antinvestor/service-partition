@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/antinvestor/service-partition/service/models"
+
 	"github.com/pitabwire/frame"
 )
 
@@ -38,7 +39,6 @@ func (pr *partitionRepository) Save(ctx context.Context, partition *models.Parti
 }
 
 func (pr *partitionRepository) Delete(ctx context.Context, id string) error {
-
 	partition, err := pr.GetByID(ctx, id)
 	if err != nil {
 		return err
@@ -46,9 +46,9 @@ func (pr *partitionRepository) Delete(ctx context.Context, id string) error {
 	return pr.service.DB(ctx, false).Delete(partition).Error
 }
 
-func (pr *partitionRepository) GetRoles(ctx context.Context, partitionId string) ([]*models.PartitionRole, error) {
+func (pr *partitionRepository) GetRoles(ctx context.Context, partitionID string) ([]*models.PartitionRole, error) {
 	partitionRoles := make([]*models.PartitionRole, 0)
-	err := pr.service.DB(ctx, true).Find(&partitionRoles, "partition_id = ?", partitionId).Error
+	err := pr.service.DB(ctx, true).Find(&partitionRoles, "partition_id = ?", partitionID).Error
 	return partitionRoles, err
 }
 
@@ -62,13 +62,13 @@ func (pr *partitionRepository) SaveRole(ctx context.Context, role *models.Partit
 	return pr.service.DB(ctx, false).Save(role).Error
 }
 
-func (pr *partitionRepository) RemoveRole(ctx context.Context, partitionRoleId string) error {
-	return pr.service.DB(ctx, false).Where("id = ?", partitionRoleId).Delete(&models.PartitionRole{}).Error
+func (pr *partitionRepository) RemoveRole(ctx context.Context, partitionRoleID string) error {
+	return pr.service.DB(ctx, false).Where("id = ?", partitionRoleID).Delete(&models.PartitionRole{}).Error
 }
 
 func NewPartitionRepository(service *frame.Service) PartitionRepository {
-	partitionRepository := partitionRepository{
+	repo := partitionRepository{
 		service: service,
 	}
-	return &partitionRepository
+	return &repo
 }

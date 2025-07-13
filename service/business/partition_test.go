@@ -8,12 +8,13 @@ import (
 	"github.com/antinvestor/service-partition/service/business"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
-	"github.com/pitabwire/frame"
-	"github.com/pitabwire/frame/tests/deps/testoryhydra"
-	"github.com/pitabwire/frame/tests/testdef"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/pitabwire/frame"
+	"github.com/pitabwire/frame/tests/deps/testoryhydra"
+	"github.com/pitabwire/frame/tests/testdef"
 )
 
 type PartitionBusinessTestSuite struct {
@@ -27,7 +28,11 @@ func (p *PartitionBusinessTestSuite) SetupSuite() {
 
 	for _, res := range p.Resources() {
 		if res.GetInternalDS().IsPostgres() {
-			p.hydraContainer = testoryhydra.NewWithCred(testoryhydra.OryHydraImage, testoryhydra.HydraConfiguration, res.GetInternalDS().String())
+			p.hydraContainer = testoryhydra.NewWithCred(
+				testoryhydra.OryHydraImage,
+				testoryhydra.HydraConfiguration,
+				res.GetInternalDS().String(),
+			)
 
 			t := p.T()
 			ctx := t.Context()
@@ -38,7 +43,6 @@ func (p *PartitionBusinessTestSuite) SetupSuite() {
 }
 
 func (p *PartitionBusinessTestSuite) TearDownSuite() {
-
 	if p.hydraContainer != nil {
 		t := p.T()
 		ctx := t.Context()
@@ -61,7 +65,6 @@ func (p *PartitionBusinessTestSuite) TestSyncPartitionOnHydra() {
 	}
 
 	p.WithTestDependancies(p.T(), func(t *testing.T, dep *testdef.DependancyOption) {
-
 		svc, ctx := p.CreateService(t, dep)
 
 		cfg, ok := svc.Config().(*config.PartitionConfig)
@@ -108,7 +111,7 @@ func (p *PartitionBusinessTestSuite) TestSyncPartitionOnHydra() {
 	})
 }
 
-// TestPartitionBusiness runs the partition business test suite
+// TestPartitionBusiness runs the partition business test suite.
 func TestPartitionBusiness(t *testing.T) {
 	suite.Run(t, new(PartitionBusinessTestSuite))
 }
