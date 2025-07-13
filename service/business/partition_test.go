@@ -7,6 +7,7 @@ import (
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
 	"github.com/pitabwire/frame"
+	"github.com/pitabwire/frame/tests/deps/testoryhydra"
 	"github.com/pitabwire/frame/tests/testdef"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,6 +17,34 @@ import (
 
 type PartitionBusinessTestSuite struct {
 	tests.BaseTestSuite
+
+	hydraContainer testdef.TestResource
+}
+
+func (p *PartitionBusinessTestSuite) SetupSuite() {
+	p.BaseTestSuite.SetupSuite()
+
+	for _, res := range p.Resources() {
+		if res.GetInternalDS().IsPostgres() {
+			p.hydraContainer = testoryhydra.NewWithCred(testoryhydra.OryHydraImage, testoryhydra.HydraConfiguration, res.GetInternalDS().String())
+
+			t := p.T()
+			ctx := t.Context()
+			err := p.hydraContainer.Setup(ctx, p.Network)
+			require.NoError(t, err)
+		}
+	}
+}
+
+func (p *PartitionBusinessTestSuite) TearDownSuite() {
+
+	if p.hydraContainer != nil {
+		t := p.T()
+		ctx := t.Context()
+		p.hydraContainer.Cleanup(ctx)
+	}
+
+	p.BaseTestSuite.TearDownSuite()
 }
 
 func (p *PartitionBusinessTestSuite) TestSyncPartitionOnHydra() {
@@ -34,13 +63,9 @@ func (p *PartitionBusinessTestSuite) TestSyncPartitionOnHydra() {
 
 		svc, ctx := p.CreateService(t, dep)
 
-		hydraHost, cleanupContainer, err := p.CreateHydraContainer(t)
-		defer cleanupContainer()
-		require.NoError(t, err)
-
 		cfg, ok := svc.Config().(*config.PartitionConfig)
 		if ok {
-			cfg.Oauth2ServiceAdminURI = hydraHost
+			cfg.Oauth2ServiceAdminURI = p.hydraContainer.GetInternalDS().String()
 		}
 
 		tenantRepo := repository.NewTenantRepository(svc)
@@ -54,7 +79,7 @@ func (p *PartitionBusinessTestSuite) TestSyncPartitionOnHydra() {
 					Description: "Test",
 				}
 
-				err = tenantRepo.Save(ctx, &tenant)
+				err := tenantRepo.Save(ctx, &tenant)
 				require.NoError(t, err)
 
 				partition := &models.Partition{
