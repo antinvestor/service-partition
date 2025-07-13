@@ -276,9 +276,9 @@ func ReQueuePrimaryPartitionsForSync(service *frame.Service) {
 }
 
 func SyncPartitionOnHydra(ctx context.Context, service *frame.Service, partition *models.Partition) error {
-	partitionConfig := service.Config().(*config.PartitionConfig)
+	cfg := service.Config().(*config.PartitionConfig)
 
-	hydraBaseURL := partitionConfig.GetOauth2ServiceAdminURI()
+	hydraBaseURL := cfg.GetOauth2ServiceAdminURI()
 	hydraURL := fmt.Sprintf("%s/admin/clients", hydraBaseURL)
 	httpMethod := http.MethodPost
 

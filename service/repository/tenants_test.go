@@ -1,97 +1,165 @@
 package repository_test
 
 import (
+	"github.com/antinvestor/service-partition/internal/tests"
 	"github.com/antinvestor/service-partition/service/models"
 	"github.com/antinvestor/service-partition/service/repository"
-	"github.com/antinvestor/service-partition/testsutil"
-	"strings"
+	"github.com/pitabwire/frame/tests/testdef"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
-func TestTenantRepository_GetByID(t *testing.T) {
-	ctx, srv, err := testsutil.GetTestService("Tenant Srv")
-	if err != nil {
-		t.Errorf("There was an error getting service : %v", err)
-		return
-	}
-	tenantRepo := repository.NewTenantRepository(srv)
-
-	tenant := models.Tenant{
-		Name:        "Save T",
-		Description: "Test",
-	}
-
-	err = tenantRepo.Save(ctx, &tenant)
-	if err != nil {
-		t.Errorf("There was an error saving tenant : %v", err)
-	}
-
-	savedTenant, err := tenantRepo.GetByID(ctx, tenant.GetID())
-	if err != nil {
-		t.Errorf("There was an error getting tenant : %v", err)
-	}
-
-	if tenant.GetID() != savedTenant.GetID() {
-		t.Errorf("The obtained tenant doesn't match")
-	}
-
+type TenantTestSuite struct {
+	tests.BaseTestSuite
 }
 
-func TestTenantRepository_Save(t *testing.T) {
-
-	ctx, srv, err := testsutil.GetTestService("Tenant Srv")
-	if err != nil {
-		t.Errorf("There was an error getting service : %v", err)
-		return
-	}
-
-	tenantRepo := repository.NewTenantRepository(srv)
-
-	tenant := models.Tenant{
-		Name:        "Save T",
-		Description: "Test",
-	}
-
-	err = tenantRepo.Save(ctx, &tenant)
-	if err != nil {
-		t.Errorf("There was an error saving tenant : %v", err)
-	}
-
+func (suite *TenantTestSuite) SetupTest() {
+	// This will be called before each test
 }
 
-func TestTenantRepository_Delete(t *testing.T) {
-
-	ctx, srv, err := testsutil.GetTestService("Tenant Srv")
-	if err != nil {
-		t.Errorf("There was an error getting service : %v", err)
-		return
+func (suite *TenantTestSuite) TestSave() {
+	// Test cases
+	testCases := []struct {
+		name        string
+		tenantName  string
+		description string
+		shouldError bool
+	}{
+		{
+			name:        "Save valid tenant",
+			tenantName:  "Test Tenant",
+			description: "Test tenant description",
+			shouldError: false,
+		},
 	}
+	
+	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
+		svc, ctx := suite.CreateService(t, dep)
+		tenantRepo := repository.NewTenantRepository(svc)
 
-	tenantRepo := repository.NewTenantRepository(srv)
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				// Setup
+				tenant := models.Tenant{
+					Name:        tc.tenantName,
+					Description: tc.description,
+				}
 
-	tenant := models.Tenant{
-		Name:        "Save T",
-		Description: "Test",
+				// Execute
+				err := tenantRepo.Save(ctx, &tenant)
+
+				// Verify
+				if tc.shouldError {
+					assert.Error(t, err)
+				} else {
+					assert.NoError(t, err)
+					assert.NotEmpty(t, tenant.GetID(), "Tenant ID should be set after save")
+				}
+			})
+		}
+	})
+}
+
+func (suite *TenantTestSuite) TestGetByID() {
+	// Test cases
+	testCases := []struct {
+		name        string
+		tenantName  string
+		description string
+		shouldError bool
+	}{
+		{
+			name:        "Get tenant by ID",
+			tenantName:  "Test Tenant",
+			description: "Test tenant description",
+			shouldError: false,
+		},
 	}
+	
+	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
+		svc, ctx := suite.CreateService(t, dep)
+		tenantRepo := repository.NewTenantRepository(svc)
 
-	err = tenantRepo.Save(ctx, &tenant)
-	if err != nil {
-		t.Errorf("There was an error saving tenant : %v", err)
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				// Setup
+				tenant := models.Tenant{
+					Name:        tc.tenantName,
+					Description: tc.description,
+				}
+
+				err := tenantRepo.Save(ctx, &tenant)
+				require.NoError(t, err)
+
+				// Execute
+				savedTenant, err := tenantRepo.GetByID(ctx, tenant.GetID())
+
+				// Verify
+				if tc.shouldError {
+					assert.Error(t, err)
+				} else {
+					assert.NoError(t, err)
+					assert.Equal(t, tenant.GetID(), savedTenant.GetID(), "Tenant ID should match")
+					assert.Equal(t, tc.tenantName, savedTenant.Name, "Tenant name should match")
+					assert.Equal(t, tc.description, savedTenant.Description, "Tenant description should match")
+				}
+			})
+		}
+	})
+}
+
+func (suite *TenantTestSuite) TestDelete() {
+	// Test cases
+	testCases := []struct {
+		name        string
+		tenantName  string
+		description string
+		shouldError bool
+	}{
+		{
+			name:        "Delete tenant",
+			tenantName:  "Test Tenant",
+			description: "Test tenant description",
+			shouldError: false,
+		},
 	}
+	
+	suite.WithTestDependancies(suite.T(), func(t *testing.T, dep *testdef.DependancyOption) {
+		svc, ctx := suite.CreateService(t, dep)
+		tenantRepo := repository.NewTenantRepository(svc)
 
-	err = tenantRepo.Delete(ctx, tenant.GetID())
-	if err != nil {
-		t.Errorf("There was an error deleting tenant : %v", err)
-	}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				// Setup
+				tenant := models.Tenant{
+					Name:        tc.tenantName,
+					Description: tc.description,
+				}
 
-	deletedTenant, err := tenantRepo.GetByID(ctx, tenant.GetID())
-	if err != nil && !strings.Contains(err.Error(), "record not found") {
+				err := tenantRepo.Save(ctx, &tenant)
+				require.NoError(t, err)
 
-		t.Errorf("There was an error getting tenant : %v", err)
-	}
+				// Execute
+				err = tenantRepo.Delete(ctx, tenant.GetID())
 
-	if deletedTenant != nil && deletedTenant.ID != "" {
-		t.Errorf("Tenant %v is expected to be deleted", deletedTenant)
-	}
+				// Verify
+				if tc.shouldError {
+					assert.Error(t, err)
+				} else {
+					assert.NoError(t, err)
 
+					// After deletion, getting the tenant should return an error
+					_, err := tenantRepo.GetByID(ctx, tenant.GetID())
+					assert.Error(t, err, "Should return an error when getting a deleted tenant")
+				}
+			})
+		}
+	})
+}
+
+// TestTenantRepository runs the tenant repository test suite
+func TestTenantRepository(t *testing.T) {
+	suite.Run(t, new(TenantTestSuite))
 }
