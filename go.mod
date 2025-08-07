@@ -10,7 +10,7 @@ require (
 	github.com/antinvestor/apis/go/partition v1.36.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2
 	github.com/pitabwire/frame v1.50.17
-	github.com/pitabwire/util v0.3.1
+	github.com/pitabwire/util v0.3.4
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.37.0
 	google.golang.org/grpc v1.73.0
