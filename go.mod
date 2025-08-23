@@ -7,7 +7,7 @@ toolchain go1.24.5
 require (
 	buf.build/go/protovalidate v0.13.1
 	github.com/antinvestor/apis/go/common v1.36.1
-	github.com/antinvestor/apis/go/partition v1.36.2
+	github.com/antinvestor/apis/go/partition v1.41.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2
 	github.com/pitabwire/frame v1.50.17
 	github.com/pitabwire/util v0.3.1
